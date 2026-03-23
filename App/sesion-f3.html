@@ -137,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <tr><td class="lbl">Tasa de interés anual (TEA) (%)</td><td><input type="number" id="pp-tea" oninput="calcPP()" placeholder="ej: 20 para 20%"></td></tr>
     <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="pp-plazo" oninput="calcPP()"></td></tr>
     <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="pp-pagados" oninput="calcPP()"></td></tr>
-    <tr><td class="lbl">Cuota mensual actual (₡) — se llena desde Diagnóstico y Margen</td><td><input class="ro-n" readonly id="pp-cuota"></td></tr>
+    <tr><td class="lbl">Cuota mensual actual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="pp-cuota" oninput="calcPP()"></td></tr>
     <tr><td class="lbl">Comisiones pagadas al inicio (₡)</td><td><input type="number" id="pp-comision" oninput="calcPP()"></td></tr>
   </table>
   <div class="section">Indicadores automáticos</div>
@@ -184,7 +184,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <tr><td class="lbl">Monto recibido (₡)</td><td><input type="number" id="pu-monto" oninput="calcPU()"></td></tr>
     <tr><td class="lbl">Monto total a devolver (₡)</td><td><input type="number" id="pu-devolver" oninput="calcPU()"></td></tr>
     <tr><td class="lbl">Plazo en días</td><td><input type="number" id="pu-dias" oninput="calcPU()"></td></tr>
-    <tr><td class="lbl">Cuota que pagás (₡) — se llena desde Diagnóstico y Margen</td><td><input class="ro-n" readonly id="pu-cuota"></td></tr>
+    <tr><td class="lbl">Cuota que pagás (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="pu-cuota" oninput="calcPU()"></td></tr>
     <tr><td class="lbl">Frecuencia de pago</td><td>
       <select id="pu-freq" onchange="calcPU()" style="border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;">
         <option value="7">Semanal</option><option value="15">Quincenal</option><option value="30" selected>Mensual</option>
@@ -227,7 +227,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <tr><td class="lbl">Tasa de interés anual (TEA) (%)</td><td><input type="number" id="cv-tea" oninput="calcCV()" placeholder="ej: 9 para 9%"></td></tr>
     <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="cv-plazo" oninput="calcCV()"></td></tr>
     <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="cv-pagados" oninput="calcCV()"></td></tr>
-    <tr><td class="lbl">Cuota mensual (₡) — se llena desde Diagnóstico y Margen</td><td><input class="ro-n" readonly id="cv-cuota"></td></tr>
+    <tr><td class="lbl">Cuota mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="cv-cuota" oninput="calcCV()"></td></tr>
     <tr><td class="lbl">Seguro del vehículo mensual (₡)</td><td><input type="number" id="cv-seguro" oninput="calcCV()"></td></tr>
     <tr><td class="lbl">Marchamo mensual promedio (₡)</td><td><input type="number" id="cv-marchamo" oninput="calcCV()"></td></tr>
     <tr><td class="lbl">Mantenimiento mensual promedio (₡)</td><td><input type="number" id="cv-mant" oninput="calcCV()"></td></tr>
@@ -273,7 +273,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <tr><td class="lbl">Tasa de interés anual TEA (%)</td><td><input type="number" id="hi-tea" oninput="calcHI()" placeholder="ej: 12 para 12%"></td></tr>
     <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="hi-plazo" oninput="calcHI()"></td></tr>
     <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="hi-pagados" oninput="calcHI()"></td></tr>
-    <tr><td class="lbl">Cuota mensual (₡) — se llena desde Diagnóstico y Margen</td><td><input class="ro-n" readonly id="hi-cuota"></td></tr>
+    <tr><td class="lbl">Cuota mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="hi-cuota" oninput="calcHI()"></td></tr>
     <tr><td class="lbl">Monto TOTAL que podrías pagar por mes (₡) — para el simulador</td><td><input type="number" id="hi-cuota-extra" oninput="calcHI()"></td></tr>
     <tr><td class="lbl">Gastos mensuales asociados — mantenimiento, servicios (₡)</td><td><input type="number" id="hi-gastos-asoc" oninput="calcHI()"></td></tr>
   </table>
@@ -307,7 +307,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <tr><td class="lbl">Saldo actual adeudado (₡)</td><td><input type="number" id="tc-saldo" oninput="calcTC()"></td></tr>
     <tr><td class="lbl">Límite de crédito total (₡)</td><td><input type="number" id="tc-limite" oninput="calcTC()"></td></tr>
     <tr><td class="lbl">Tasa de interés anual TEA (%)</td><td><input type="number" id="tc-tea" oninput="calcTC()" placeholder="ej: 50 para 50%"></td></tr>
-    <tr><td class="lbl">Pago mínimo mensual que hacés (₡) — se llena desde Diagnóstico y Margen</td><td><input class="ro-n" readonly id="tc-minimo"></td></tr>
+    <tr><td class="lbl">Pago mínimo mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="tc-minimo" oninput="calcTC()"></td></tr>
     <tr><td class="lbl">Monto TOTAL que podés pagar por mes (₡)</td><td><input type="number" id="tc-pago-total" oninput="calcTC()"></td></tr>
   </table>
   <div class="section">Indicadores automáticos</div>
@@ -400,11 +400,16 @@ function goTab(i){
 
 // ── Jalar cuotas desde Hoja 1 a todas las hojas ──
 function syncCuotasDesdeHoja1(){
-  set('pp-cuota',nv('d-personal')||'');
-  set('pu-cuota',nv('d-urgente')||'');
-  set('cv-cuota',nv('d-vehiculo')||'');
-  set('hi-cuota',nv('d-hipoteca')||'');
-  set('tc-minimo',nv('d-tarjeta')||'');
+  // Solo llenar si el campo está vacío o en 0 — no sobreescribir si ya fue editado
+  const fillIfEmpty=(id,val)=>{
+    const e=document.getElementById(id);
+    if(e&&(!e.value||e.value==='0'))e.value=val||'';
+  };
+  fillIfEmpty('pp-cuota', nv('d-personal'));
+  fillIfEmpty('pu-cuota', nv('d-urgente'));
+  fillIfEmpty('cv-cuota', nv('d-vehiculo'));
+  fillIfEmpty('hi-cuota', nv('d-hipoteca'));
+  fillIfEmpty('tc-minimo', nv('d-tarjeta'));
 }
 
 function getBase(){
@@ -454,11 +459,10 @@ function calcDiag(){
   setTxt('r-disponible',fmt(disponible));
   setTxt('r-margen',fmtP(rMargen));
 
-  // Diagnóstico — basado en rEnd igual que Excel
+  // Diagnóstico — rangos exactos del Excel
   let diag,dc;
-  if(rEnd<0.15){diag='✅ SALUDABLE — Tenés margen cómodo';dc='g';}
-  else if(rEnd<0.35){diag='⚠️ MODERADO — Manejable pero requiere atención';dc='y';}
-  else if(rEnd<0.50){diag='🔴 ELEVADO — Compromete significativamente el margen';dc='y';}
+  if(rEnd<0.35){diag='✅ SALUDABLE — Tenés margen cómodo';dc='g';}
+  else if(rEnd<0.50){diag='⚠️ MODERADO — Manejable pero requiere atención';dc='y';}
   else{diag='🚨 CRÍTICO — Compromiso excesivo de ingresos';dc='r';}
   setTxt('r-diagnostico',diag);
   document.getElementById('sem-diag').className='sem-box '+dc;
@@ -618,7 +622,7 @@ function calcCV(){
 
   // Simulador
   set('cv-sim-actual',mesesRest>0?mesesRest:0);
-  if(cuotaExtra>cuota&&saldo>0&&r>0){
+  if(cuota>0&&cuotaExtra>cuota&&saldo>0&&r>0){
     const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
     const intSin=cuota*mesesRest-saldo;
     const intCon=cuotaExtra*mesesCon-saldo;
@@ -650,16 +654,17 @@ function calcHI(){
   const eqEl=document.getElementById('hi-equity');
   if(eqEl){eqEl.value=fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
 
-  if(cuota>0&&r>0&&saldo>0){
-    const intTotales=cuota*mesesRest-saldo;
-    set('hi-costo-intereses',fmt(intTotales>0?intTotales:0));
-
-    if(cuotaExtra>cuota){
-      const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
-      const mesesAhorro=Math.max(0,mesesRest-mesesCon);
-      set('hi-meses-ahorro',isFinite(mesesCon)?mesesAhorro:'—');
-      const intCon=cuotaExtra*mesesCon-saldo;
-      set('hi-ahorro-int',isFinite(mesesCon)?fmt(Math.max(0,(intTotales>0?intTotales:0)-(intCon>0?intCon:0))):'—');
+  if(r>0&&saldo>0){
+    if(cuota>0){
+      const intTotales=cuota*mesesRest-saldo;
+      set('hi-costo-intereses',fmt(intTotales>0?intTotales:0));
+      if(cuotaExtra>cuota){
+        const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
+        const mesesAhorro=Math.max(0,mesesRest-mesesCon);
+        set('hi-meses-ahorro',isFinite(mesesCon)?mesesAhorro:'—');
+        const intCon=cuotaExtra*mesesCon-saldo;
+        set('hi-ahorro-int',isFinite(mesesCon)?fmt(Math.max(0,(intTotales>0?intTotales:0)-(intCon>0?intCon:0))):'—');
+      }
     }
   }
 
