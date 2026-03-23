@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Sesión 4 · Dinero Invisible</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
+.topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
+.tinfo{font-size:12px;color:#888;}
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
+.tab{padding:12px 18px;font-size:13px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:500;}
+.page{display:none;padding:24px;max-width:960px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:20px;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.card-sub{font-size:12px;color:#888;margin-bottom:16px;}
+.ti{width:100%;border-collapse:collapse;}
+.ti th{font-size:11px;font-weight:600;color:#888;text-align:left;padding:8px 10px;border-bottom:1px solid #e8e6e0;background:#fafaf8;}
+.ti td{padding:4px 4px;vertical-align:middle;border-bottom:1px solid #f5f4f0;}
+.ti td.lbl{font-size:12px;color:#444;padding:6px 10px;white-space:nowrap;}
+.ti td.cat{font-size:11px;font-weight:700;color:#666;padding:8px 10px;background:#f5f4f0;text-transform:uppercase;letter-spacing:.4px;}
+.ti td input[type=number]{border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;background:#fff;font-family:inherit;text-align:right;}
+.ti td input[type=number]:focus{border-color:#1D9E75;outline:none;}
+.ti td input[readonly]{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;text-align:right;}
+.ti td select{border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;background:#fff;font-family:inherit;cursor:pointer;}
+.ti td select:focus{border-color:#1D9E75;outline:none;}
+.ti td select.mantener{color:#888;}
+.ti td select.reducir{color:#854F0B;background:#FAEEDA;}
+.ti td select.eliminar{color:#A32D2D;background:#FCEBEB;}
+.ti tr.tot td{border-top:2px solid #1D9E75;background:#f0faf5;}
+.ti tr.tot td.lbl{font-weight:700;color:#1D9E75;}
+.ti tr.tot td input[readonly]{background:#f0faf5;color:#0F6E56;font-weight:700;border-color:#9fe1cb;}
+.res-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:16px;}
+.res-card{background:#f5f4f0;border-radius:10px;padding:14px;}
+.res-card.verde{background:#f0faf5;}
+.res-card.rojo{background:#FCEBEB;}
+.res-card.amarillo{background:#FAEEDA;}
+.res-card .rl{font-size:11px;color:#888;margin-bottom:4px;}
+.res-card .rv{font-size:20px;font-weight:700;color:#1a1a1a;}
+.res-card.verde .rv{color:#0F6E56;}
+.res-card.rojo .rv{color:#A32D2D;}
+.res-card.amarillo .rv{color:#854F0B;}
+.res-card .rn{font-size:11px;color:#666;margin-top:4px;line-height:1.5;}
+.nota-final{background:#f0faf5;border-radius:8px;padding:14px 16px;margin-top:16px;font-size:13px;color:#0F6E56;line-height:1.6;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;z-index:50;}
+.ss{font-size:12px;}
+.ss.ok{color:#0F6E56;}.ss.err{color:#A32D2D;}
+.btn-p{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:none;background:#1D9E75;color:#fff;}
+.btn-p:hover{background:#0F6E56;}
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px;}
+.ov p{font-size:14px;color:#888;}
+.spin{width:32px;height:32px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<div id="overlay" class="ov"><div class="spin"></div><p>Cargando...</p></div>
+
+<div class="topbar">
+  <div class="logo">Tomá el <span>Volante</span></div>
+  <div class="tinfo" id="tinfo">Sesión 4 · Dinero Invisible</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="goTab(0)" id="tab0">Gastos Fijos Ocultos</div>
+  <div class="tab" onclick="goTab(1)" id="tab1">Gastos Estacionales</div>
+  <div class="tab" onclick="goTab(2)" id="tab2">Resumen y Comparación</div>
+</div>
+
+<!-- HOJA 1: GASTOS FIJOS OCULTOS -->
+<div class="page active" id="page0">
+  <div class="card">
+    <div class="card-title">Gastos Fijos que Esconden Dinero</div>
+    <div class="card-sub">Fase 2 · Claridad — Identificá el dinero que se escapa cada mes sin que lo notes</div>
+    <table class="ti">
+      <tr>
+        <th style="width:38%">Concepto</th>
+        <th style="width:16%">Monto Actual (₡)</th>
+        <th style="width:14%">Decisión</th>
+        <th style="width:16%">Nuevo Monto (₡)</th>
+        <th style="width:16%">Ahorro Mensual (₡)</th>
+      </tr>
+
+      <tr><td class="cat" colspan="5">📱 Servicios de Telecomunicaciones</td></tr>
+      <tr><td class="lbl">Plan de celular</td><td><input type="number" id="gf-1" oninput="calcGF()"></td><td><select id="gf-1d" onchange="updDec('gf-1d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-1n" oninput="calcGF()"></td><td><input readonly id="gf-1a"></td></tr>
+      <tr><td class="lbl">Internet hogar</td><td><input type="number" id="gf-2" oninput="calcGF()"></td><td><select id="gf-2d" onchange="updDec('gf-2d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-2n" oninput="calcGF()"></td><td><input readonly id="gf-2a"></td></tr>
+      <tr><td class="lbl">Cable / TV streaming pago</td><td><input type="number" id="gf-3" oninput="calcGF()"></td><td><select id="gf-3d" onchange="updDec('gf-3d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-3n" oninput="calcGF()"></td><td><input readonly id="gf-3a"></td></tr>
+      <tr><td class="lbl">Paquete adicional de datos</td><td><input type="number" id="gf-4" oninput="calcGF()"></td><td><select id="gf-4d" onchange="updDec('gf-4d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-4n" oninput="calcGF()"></td><td><input readonly id="gf-4a"></td></tr>
+
+      <tr><td class="cat" colspan="5">🚗 Seguro de Vehículo</td></tr>
+      <tr><td class="lbl">Seguro INS vehículo (mensualizado)</td><td><input type="number" id="gf-5" oninput="calcGF()"></td><td><select id="gf-5d" onchange="updDec('gf-5d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-5n" oninput="calcGF()"></td><td><input readonly id="gf-5a"></td></tr>
+      <tr><td class="lbl">Seguro privado vehículo (mensualizado)</td><td><input type="number" id="gf-6" oninput="calcGF()"></td><td><select id="gf-6d" onchange="updDec('gf-6d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-6n" oninput="calcGF()"></td><td><input readonly id="gf-6a"></td></tr>
+
+      <tr><td class="cat" colspan="5">🏦 Comisiones Bancarias y Seguros de Tarjeta</td></tr>
+      <tr><td class="lbl">Comisión cuenta corriente / ahorro</td><td><input type="number" id="gf-7" oninput="calcGF()"></td><td><select id="gf-7d" onchange="updDec('gf-7d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-7n" oninput="calcGF()"></td><td><input readonly id="gf-7a"></td></tr>
+      <tr><td class="lbl">Membresía / anualidad tarjeta de crédito</td><td><input type="number" id="gf-8" oninput="calcGF()"></td><td><select id="gf-8d" onchange="updDec('gf-8d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-8n" oninput="calcGF()"></td><td><input readonly id="gf-8a"></td></tr>
+      <tr><td class="lbl">Seguro de vida tarjeta de crédito</td><td><input type="number" id="gf-9" oninput="calcGF()"></td><td><select id="gf-9d" onchange="updDec('gf-9d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-9n" oninput="calcGF()"></td><td><input readonly id="gf-9a"></td></tr>
+      <tr><td class="lbl">Seguro de desempleo tarjeta de crédito</td><td><input type="number" id="gf-10" oninput="calcGF()"></td><td><select id="gf-10d" onchange="updDec('gf-10d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-10n" oninput="calcGF()"></td><td><input readonly id="gf-10a"></td></tr>
+
+      <tr><td class="cat" colspan="5">🏠 Servicios del Hogar con Contrato</td></tr>
+      <tr><td class="lbl">Alarma / seguridad del hogar</td><td><input type="number" id="gf-11" oninput="calcGF()"></td><td><select id="gf-11d" onchange="updDec('gf-11d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-11n" oninput="calcGF()"></td><td><input readonly id="gf-11a"></td></tr>
+      <tr><td class="lbl">Servicio de limpieza fijo</td><td><input type="number" id="gf-12" oninput="calcGF()"></td><td><select id="gf-12d" onchange="updDec('gf-12d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-12n" oninput="calcGF()"></td><td><input readonly id="gf-12a"></td></tr>
+      <tr><td class="lbl">Mantenimiento jardín / piscina</td><td><input type="number" id="gf-13" oninput="calcGF()"></td><td><select id="gf-13d" onchange="updDec('gf-13d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-13n" oninput="calcGF()"></td><td><input readonly id="gf-13a"></td></tr>
+      <tr><td class="lbl">Otros servicios con contrato</td><td><input type="number" id="gf-14" oninput="calcGF()"></td><td><select id="gf-14d" onchange="updDec('gf-14d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-14n" oninput="calcGF()"></td><td><input readonly id="gf-14a"></td></tr>
+
+      <tr><td class="cat" colspan="5">📺 Suscripciones Digitales</td></tr>
+      <tr><td class="lbl">Netflix / Prime / Disney+ / Apple TV</td><td><input type="number" id="gf-15" oninput="calcGF()"></td><td><select id="gf-15d" onchange="updDec('gf-15d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-15n" oninput="calcGF()"></td><td><input readonly id="gf-15a"></td></tr>
+      <tr><td class="lbl">Spotify / música</td><td><input type="number" id="gf-16" oninput="calcGF()"></td><td><select id="gf-16d" onchange="updDec('gf-16d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-16n" oninput="calcGF()"></td><td><input readonly id="gf-16a"></td></tr>
+      <tr><td class="lbl">Software / aplicaciones de pago</td><td><input type="number" id="gf-17" oninput="calcGF()"></td><td><select id="gf-17d" onchange="updDec('gf-17d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-17n" oninput="calcGF()"></td><td><input readonly id="gf-17a"></td></tr>
+      <tr><td class="lbl">Almacenamiento en la nube (iCloud, Google)</td><td><input type="number" id="gf-18" oninput="calcGF()"></td><td><select id="gf-18d" onchange="updDec('gf-18d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-18n" oninput="calcGF()"></td><td><input readonly id="gf-18a"></td></tr>
+      <tr><td class="lbl">Otras suscripciones digitales</td><td><input type="number" id="gf-19" oninput="calcGF()"></td><td><select id="gf-19d" onchange="updDec('gf-19d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-19n" oninput="calcGF()"></td><td><input readonly id="gf-19a"></td></tr>
+
+      <tr><td class="cat" colspan="5">🎓 Cuotas Educativas y Extracurriculares</td></tr>
+      <tr><td class="lbl">Cuota mensual colegio / academia</td><td><input type="number" id="gf-20" oninput="calcGF()"></td><td><select id="gf-20d" onchange="updDec('gf-20d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-20n" oninput="calcGF()"></td><td><input readonly id="gf-20a"></td></tr>
+      <tr><td class="lbl">Clases extracurriculares (deportes, arte, etc.)</td><td><input type="number" id="gf-21" oninput="calcGF()"></td><td><select id="gf-21d" onchange="updDec('gf-21d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-21n" oninput="calcGF()"></td><td><input readonly id="gf-21a"></td></tr>
+      <tr><td class="lbl">Plataformas educativas online</td><td><input type="number" id="gf-22" oninput="calcGF()"></td><td><select id="gf-22d" onchange="updDec('gf-22d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-22n" oninput="calcGF()"></td><td><input readonly id="gf-22a"></td></tr>
+      <tr><td class="lbl">Útiles por suscripción mensual</td><td><input type="number" id="gf-23" oninput="calcGF()"></td><td><select id="gf-23d" onchange="updDec('gf-23d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-23n" oninput="calcGF()"></td><td><input readonly id="gf-23a"></td></tr>
+
+      <tr><td class="cat" colspan="5">🛋️ Conveniencia</td></tr>
+      <tr><td class="lbl">Comida a domicilio / Delivery</td><td><input type="number" id="gf-24" oninput="calcGF()"></td><td><select id="gf-24d" onchange="updDec('gf-24d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-24n" oninput="calcGF()"></td><td><input readonly id="gf-24a"></td></tr>
+      <tr><td class="lbl">Alimentación Extra</td><td><input type="number" id="gf-25" oninput="calcGF()"></td><td><select id="gf-25d" onchange="updDec('gf-25d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-25n" oninput="calcGF()"></td><td><input readonly id="gf-25a"></td></tr>
+      <tr><td class="lbl">Otros</td><td><input type="number" id="gf-26" oninput="calcGF()"></td><td><select id="gf-26d" onchange="updDec('gf-26d');calcGF()"><option>Mantener</option><option>Reducir</option><option>Eliminar</option></select></td><td><input type="number" id="gf-26n" oninput="calcGF()"></td><td><input readonly id="gf-26a"></td></tr>
+
+      <tr class="tot">
+        <td class="lbl" colspan="4">💰 TOTAL AHORRO MENSUAL — GASTOS FIJOS</td>
+        <td><input readonly id="gf-total"></td>
+      </tr>
+    </table>
+  </div>
+  <div class="save-bar"><span class="ss" id="ss0"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 2: GASTOS ESTACIONALES -->
+<div class="page" id="page1">
+  <div class="card">
+    <div class="card-title">Gastos Estacionales</div>
+    <div class="card-sub">Fase 2 · Claridad — Compará el impacto de pagar de un solo golpe vs. provisionarlo mensualmente</div>
+    <table class="ti">
+      <tr>
+        <th style="width:38%">Concepto</th>
+        <th style="width:20%">Monto Anual (₡)</th>
+        <th style="width:21%">Pago de golpe (₡/año)</th>
+        <th style="width:21%">Provisión mensual (÷12)</th>
+      </tr>
+
+      <tr><td class="cat" colspan="4">🚗 Marchamo</td></tr>
+      <tr><td class="lbl">Marchamo vehículo</td><td><input type="number" id="ge-1" oninput="calcGE()"></td><td><input readonly id="ge-1p"></td><td><input readonly id="ge-1m"></td></tr>
+
+      <tr><td class="cat" colspan="4">📋 Impuestos y Obligaciones</td></tr>
+      <tr><td class="lbl">Impuesto sobre bienes inmuebles</td><td><input type="number" id="ge-2" oninput="calcGE()"></td><td><input readonly id="ge-2p"></td><td><input readonly id="ge-2m"></td></tr>
+      <tr><td class="lbl">Impuesto de renta (si aplica)</td><td><input type="number" id="ge-3" oninput="calcGE()"></td><td><input readonly id="ge-3p"></td><td><input readonly id="ge-3m"></td></tr>
+      <tr><td class="lbl">Renovación de patente / permisos</td><td><input type="number" id="ge-4" oninput="calcGE()"></td><td><input readonly id="ge-4p"></td><td><input readonly id="ge-4m"></td></tr>
+
+      <tr><td class="cat" colspan="4">🎒 Regreso a Clases</td></tr>
+      <tr><td class="lbl">Útiles escolares</td><td><input type="number" id="ge-5" oninput="calcGE()"></td><td><input readonly id="ge-5p"></td><td><input readonly id="ge-5m"></td></tr>
+      <tr><td class="lbl">Uniformes</td><td><input type="number" id="ge-6" oninput="calcGE()"></td><td><input readonly id="ge-6p"></td><td><input readonly id="ge-6m"></td></tr>
+      <tr><td class="lbl">Cuota de matrícula</td><td><input type="number" id="ge-7" oninput="calcGE()"></td><td><input readonly id="ge-7p"></td><td><input readonly id="ge-7m"></td></tr>
+      <tr><td class="lbl">Libros / materiales</td><td><input type="number" id="ge-8" oninput="calcGE()"></td><td><input readonly id="ge-8p"></td><td><input readonly id="ge-8m"></td></tr>
+
+      <tr><td class="cat" colspan="4">🎄 Temporada Navideña</td></tr>
+      <tr><td class="lbl">Regalos navideños</td><td><input type="number" id="ge-9" oninput="calcGE()"></td><td><input readonly id="ge-9p"></td><td><input readonly id="ge-9m"></td></tr>
+      <tr><td class="lbl">Cenas / reuniones familiares</td><td><input type="number" id="ge-10" oninput="calcGE()"></td><td><input readonly id="ge-10p"></td><td><input readonly id="ge-10m"></td></tr>
+      <tr><td class="lbl">Decoración</td><td><input type="number" id="ge-11" oninput="calcGE()"></td><td><input readonly id="ge-11p"></td><td><input readonly id="ge-11m"></td></tr>
+
+      <tr><td class="cat" colspan="4">🏥 Servicios Médicos / Odontológicos</td></tr>
+      <tr><td class="lbl">Control médico anual / exámenes</td><td><input type="number" id="ge-12" oninput="calcGE()"></td><td><input readonly id="ge-12p"></td><td><input readonly id="ge-12m"></td></tr>
+      <tr><td class="lbl">Tratamiento dental</td><td><input type="number" id="ge-13" oninput="calcGE()"></td><td><input readonly id="ge-13p"></td><td><input readonly id="ge-13m"></td></tr>
+      <tr><td class="lbl">Lentes / examen visual</td><td><input type="number" id="ge-14" oninput="calcGE()"></td><td><input readonly id="ge-14p"></td><td><input readonly id="ge-14m"></td></tr>
+      <tr><td class="lbl">Medicamentos de uso estacional</td><td><input type="number" id="ge-15" oninput="calcGE()"></td><td><input readonly id="ge-15p"></td><td><input readonly id="ge-15m"></td></tr>
+
+      <tr><td class="cat" colspan="4">🔧 Renovaciones y Mantenimiento</td></tr>
+      <tr><td class="lbl">Mantenimiento vehículo (servicio anual)</td><td><input type="number" id="ge-16" oninput="calcGE()"></td><td><input readonly id="ge-16p"></td><td><input readonly id="ge-16m"></td></tr>
+      <tr><td class="lbl">Revisión técnica vehicular (RITEVE)</td><td><input type="number" id="ge-17" oninput="calcGE()"></td><td><input readonly id="ge-17p"></td><td><input readonly id="ge-17m"></td></tr>
+      <tr><td class="lbl">Reparaciones del hogar</td><td><input type="number" id="ge-18" oninput="calcGE()"></td><td><input readonly id="ge-18p"></td><td><input readonly id="ge-18m"></td></tr>
+      <tr><td class="lbl">Renovación de seguro del hogar</td><td><input type="number" id="ge-19" oninput="calcGE()"></td><td><input readonly id="ge-19p"></td><td><input readonly id="ge-19m"></td></tr>
+      <tr><td class="lbl">Otros gastos de renovación</td><td><input type="number" id="ge-20" oninput="calcGE()"></td><td><input readonly id="ge-20p"></td><td><input readonly id="ge-20m"></td></tr>
+
+      <tr class="tot">
+        <td class="lbl">💰 TOTALES ESTACIONALES</td>
+        <td><input readonly id="ge-total-anual"></td>
+        <td><input readonly id="ge-total-golpe"></td>
+        <td><input readonly id="ge-total-mes"></td>
+      </tr>
+    </table>
+  </div>
+  <div class="save-bar"><span class="ss" id="ss1"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 3: RESUMEN -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="card-title">Dinero Recuperado</div>
+    <div class="card-sub">Este es el dinero que ya tenías… pero que no podías ver</div>
+
+    <div class="slbl" style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;">Gastos Fijos — Antes y Después</div>
+    <table class="ti">
+      <tr><th style="width:34%">Concepto</th><th>Antes de reducción (₡/mes)</th><th>Reducción lograda (₡/mes)</th><th>Después de reducción (₡/mes)</th></tr>
+      <tr>
+        <td class="lbl">Total Gastos Fijos Mensuales</td>
+        <td><input readonly id="res-gf-antes"></td>
+        <td><input readonly id="res-gf-red"></td>
+        <td><input readonly id="res-gf-despues"></td>
+      </tr>
+    </table>
+
+    <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px;">Gastos Estacionales — Impacto Mensual</div>
+    <table class="ti">
+      <tr><th style="width:34%">Concepto</th><th>Pago de golpe — anual (₡)</th><th>Provisión mensual ÷12 (₡)</th><th>Impacto mensual real (₡)</th></tr>
+      <tr>
+        <td class="lbl">Total Gastos Estacionales</td>
+        <td><input readonly id="res-ge-anual"></td>
+        <td><input readonly id="res-ge-mes"></td>
+        <td><input readonly id="res-ge-impacto"></td>
+      </tr>
+    </table>
+
+    <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px;">💡 Dinero que podés recuperar cada mes</div>
+    <table class="ti">
+      <tr><th style="width:34%">Concepto</th><th>Flujo mensual actual (₡)</th><th>Dinero recuperado (₡/mes)</th><th>Flujo mensual optimizado (₡)</th></tr>
+      <tr class="tot">
+        <td class="lbl">Gastos fijos + provisión estacional</td>
+        <td><input readonly id="res-flujo-actual"></td>
+        <td><input readonly id="res-flujo-rec"></td>
+        <td><input readonly id="res-flujo-opt"></td>
+      </tr>
+    </table>
+
+    <div class="nota-final">
+      💬 El dinero recuperado en gastos fijos + la provisión mensual de estacionales = dinero real que ya tenías pero que no podías ver ni controlar.
+    </div>
+  </div>
+  <div class="save-bar"><span class="ss" id="ss2"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<script>
+const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
+const KEY='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY};
+const TBL='sesiones_data_f2';
+
+let CID=null;
+const P=new URLSearchParams(location.search);
+if(P.get('c'))CID=P.get('c');
+
+function fmt(n){return isNaN(n)||!isFinite(n)?'—':'₡'+Math.round(n).toLocaleString('es-CR');}
+function nv(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function sfmt(id,v){const e=document.getElementById(id);if(e)e.value=v>0?fmt(v):'';}
+function sv(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function status(id,msg,ok=true){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='ss '+(ok?'ok':'err');if(ok)setTimeout(()=>{e.textContent='';e.className='ss';},3000);}
+
+function goTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  if(i===2) calcResumen();
+}
+
+// Actualizar color del dropdown
+function updDec(id){
+  const e=document.getElementById(id);if(!e)return;
+  e.className=e.value==='Reducir'?'reducir':e.value==='Eliminar'?'eliminar':'mantener';
+}
+
+// Inicializar colores de todos los dropdowns
+function initDropdowns(){
+  for(let i=1;i<=26;i++) updDec('gf-'+i+'d');
+}
+
+// ── CÁLCULO GASTOS FIJOS ──
+function calcGF(){
+  let totalAhorro=0;
+  let totalActual=0;
+  for(let i=1;i<=26;i++){
+    const actual=nv('gf-'+i);
+    const dec=document.getElementById('gf-'+i+'d')?.value||'Mantener';
+    const nuevo=nv('gf-'+i+'n');
+    let ahorro=0;
+    if(dec==='Eliminar') ahorro=actual;
+    else if(dec==='Reducir') ahorro=actual-nuevo;
+    sfmt('gf-'+i+'a', ahorro>0?ahorro:0);
+    totalAhorro+=ahorro>0?ahorro:0;
+    totalActual+=actual;
+  }
+  sfmt('gf-total',totalAhorro);
+  // Guardar para resumen
+  window._gfTotal=totalAhorro;
+  window._gfActual=totalActual;
+  calcResumen();
+}
+
+// ── CÁLCULO GASTOS ESTACIONALES ──
+function calcGE(){
+  let totalAnual=0, totalMes=0;
+  for(let i=1;i<=20;i++){
+    const anual=nv('ge-'+i);
+    const mes=anual/12;
+    sfmt('ge-'+i+'p', anual>0?anual:0);
+    const em=document.getElementById('ge-'+i+'m');
+    if(em) em.value=anual>0?fmt(mes):'';
+    totalAnual+=anual;
+    totalMes+=mes;
+  }
+  sfmt('ge-total-anual',totalAnual);
+  sfmt('ge-total-golpe',totalAnual);
+  const em=document.getElementById('ge-total-mes');
+  if(em) em.value=totalMes>0?fmt(totalMes):'';
+  window._geAnual=totalAnual;
+  window._geMes=totalMes;
+  calcResumen();
+}
+
+// ── RESUMEN ──
+function calcResumen(){
+  const gfActual=window._gfActual||0;
+  const gfAhorro=window._gfTotal||0;
+  const gfDespues=gfActual-gfAhorro;
+  const geAnual=window._geAnual||0;
+  const geMes=window._geMes||0;
+  const flujoActual=gfActual+geMes;
+  const flujoOpt=gfDespues+geMes;
+
+  sfmt('res-gf-antes',gfActual);
+  sfmt('res-gf-red',gfAhorro);
+  sfmt('res-gf-despues',gfDespues>0?gfDespues:0);
+  sfmt('res-ge-anual',geAnual);
+  sfmt('res-ge-mes',geMes);
+  sfmt('res-ge-impacto',geMes);
+  sfmt('res-flujo-actual',flujoActual);
+  sfmt('res-flujo-rec',gfAhorro);
+  sfmt('res-flujo-opt',flujoOpt>0?flujoOpt:0);
+}
+
+// ── API ──
+async function db(path,method='GET',body=null){
+  const o={method,headers:H};
+  if(body)o.body=JSON.stringify(body);
+  const r=await fetch(SUPA+'/rest/v1/'+path,o);
+  if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
+  return method==='GET'?r.json():r;
+}
+
+// ── GUARDAR ──
+async function guardar(){
+  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
+  const activeTab=document.querySelector('.tab.active');
+  const idx=[...document.querySelectorAll('.tab')].indexOf(activeTab);
+  const ssId='ss'+idx;
+  status(ssId,'Guardando...');
+
+  const campos={};
+  document.querySelectorAll('input:not([readonly]),select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  const payload={campos,ts:new Date().toISOString()};
+
+  try{
+    const existe=await db(TBL+'?clienta_id=eq.'+CID);
+    if(existe&&existe.length>0){
+      await db(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:payload,updated_at:new Date().toISOString()});
+    }else{
+      await db(TBL,'POST',{clienta_id:CID,datos:payload,updated_at:new Date().toISOString()});
+    }
+    status(ssId,'✅ Guardado');
+  }catch(e){status(ssId,'❌ Error',false);console.error(e);}
+}
+
+// ── CARGAR ──
+async function cargar(){
+  document.getElementById('overlay').style.display='flex';
+  if(!CID){document.getElementById('overlay').style.display='none';return;}
+  try{
+    // Nombre de la clienta
+    const rc=await db('clientas?id=eq.'+CID);
+    if(rc&&rc[0]){
+      document.getElementById('tinfo').textContent=rc[0].nombre+' — Sesión 4 · Dinero Invisible';
+    }
+    // Datos guardados
+    const rd=await db(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    if(rd&&rd[0]&&rd[0].datos&&rd[0].datos.campos){
+      const campos=rd[0].datos.campos;
+      Object.entries(campos).forEach(([id,val])=>{
+        const e=document.getElementById(id);
+        if(e&&!e.readOnly)e.value=val;
+      });
+      initDropdowns();
+      calcGF();
+      calcGE();
+      calcResumen();
+    }
+  }catch(e){console.error('Error cargando:',e);}
+  document.getElementById('overlay').style.display='none';
+}
+
+// Init
+initDropdowns();
+cargar();
+</script>
+</body>
+</html>
