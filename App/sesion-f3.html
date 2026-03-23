@@ -429,13 +429,12 @@ function calcCapacidades(cuotaEstaDeuda){
   return{limMax,capPago,capEnd,rEnd};
 }
 
-function calcSaldoPV(monto,teaAnual,plazoTotal,mesesPagados){
-  if(!monto||!teaAnual||!plazoTotal)return 0;
+function calcSaldoPV(cuotaReal,teaAnual,mesesRestantes){
+  // Usa la cuota real del banco (no la teórica) para calcular el saldo pendiente
+  // Formula: PV = cuota * (1-(1+r)^-n) / r
+  if(!cuotaReal||!teaAnual||!mesesRestantes||mesesRestantes<=0)return 0;
   const r=teaAnual/12;
-  const n=plazoTotal-mesesPagados;
-  if(n<=0)return 0;
-  const cuota=monto*(r*Math.pow(1+r,plazoTotal))/(Math.pow(1+r,plazoTotal)-1);
-  return cuota*(1-Math.pow(1+r,-n))/r;
+  return cuotaReal*(1-Math.pow(1+r,-mesesRestantes))/r;
 }
 
 function calcMesesPago(saldo,r,cuota){
@@ -490,7 +489,7 @@ function calcPP(){
   const r=tea/12,mesesRest=plazo-pagados;
   if(!monto||!tea||!plazo)return;
 
-  const saldo=calcSaldoPV(monto,tea,plazo,pagados);
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
   set('pp-saldo',fmt(saldo));
   set('pp-meses-rest',mesesRest>0?mesesRest:0);
 
@@ -601,7 +600,7 @@ function calcCV(){
   const valorActual=valor*Math.pow(0.85,aniosPag);
   set('cv-valor-actual',fmt(valorActual));
 
-  const saldo=calcSaldoPV(monto,tea,plazo,pagados);
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
   set('cv-saldo',fmt(saldo));
 
   const equity=valorActual-saldo;
@@ -647,7 +646,7 @@ function calcHI(){
   set('hi-costo-mensual',fmt(costoMensual));
   set('hi-pct-ingreso',b.ingreso>0?fmtP(costoMensual/b.ingreso):'—');
 
-  const saldo=calcSaldoPV(monto,tea,plazo,pagados);
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
   set('hi-saldo',fmt(saldo));
 
   const equity=valor-saldo;
