@@ -5,23 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tomá el Volante — Fase 3 · Diagnóstico y Estrategia de Deudas</title>
 <style>
-/* ── SHARED ── */
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
 .topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
 #tinfo{font-size:12px;color:#888;}
-
-/* ── SESSION SELECTOR ── */
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;z-index:40;overflow-x:auto;}
+.tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600;}
+.tab.locked{color:#ccc;cursor:default;}
+/* SESSION BAR */
 .ses-bar{background:#fff;border-bottom:2px solid #e8e6e0;padding:0 24px;display:flex;position:sticky;top:49px;z-index:45;}
-.ses-btn{padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#888;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;transition:all .15s;}
+.ses-btn{padding:11px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#888;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;}
 .ses-btn.active{color:#B74A34;border-bottom-color:#B74A34;}
 .ses-btn.locked{color:#ccc;cursor:default;}
-.ses-btn .lock{font-size:11px;}
-.ses-content{display:none;}
-.ses-content.active{display:block;}
-
-/* ── S5 STYLES ── */
+.ses-wrap{display:none;}
+.ses-wrap.active{display:block;}
+/* S6 page */
+.s6page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
+.s6page.active{display:block;}
+/* OVERLAY */
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
+.spin{width:28px;height:28px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+/* S5 STYLES */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
@@ -79,8 +86,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ro-neg{background:#FCEBEB;color:#A32D2D;font-weight:600;border:1px solid #f7c1c1;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
 .ro-pos{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
 
-
-/* ── S6 STYLES ── */
+/* S6 STYLES */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
@@ -90,8 +96,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
 .tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
 .tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600;}
-.page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
-.page.active{display:block;}
+  .s6page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
+.s6page.active{display:block;}
 .card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:20px;margin-bottom:16px;}
 .card-title{font-size:14px;font-weight:700;color:#1A3A5C;margin-bottom:4px;}
 .card-sub{font-size:11px;color:#888;margin-bottom:16px;}
@@ -123,9 +129,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .nota{background:#FFFFF2CC;border:1px solid #FFD966;border-radius:6px;padding:8px 12px;font-size:11px;color:#7F6000;margin-top:10px;line-height:1.5;}
 .nota-azul{background:#EBF5FB;border:1px solid #2E6DA4;border-radius:6px;padding:8px 12px;font-size:11px;color:#1A3A5C;margin-top:10px;}
 
-
-/* overlay shared */
-.ov{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
 </style>
 </head>
 <body>
@@ -134,24 +137,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <div class="topbar">
   <div class="logo">Tomá el <span>Volante</span></div>
-  <div id="tinfo">Fase 3 · Deudas</div>
+  <div id="tinfo">Fase 3 · Diagnóstico y Estrategia de Deudas</div>
 </div>
 
-<!-- SELECTOR DE SESIÓN -->
+<!-- SELECTOR SESIÓN -->
 <div class="ses-bar">
-  <div class="ses-btn active" id="sbtn0" onclick="showSesion(0)">📋 Sesión 5 — Diagnóstico de Deudas</div>
-  <div class="ses-btn locked" id="sbtn1" onclick="showSesion(1)">🎯 Sesión 6 — Estrategia <span class="lock" id="s6lock">🔒</span></div>
+  <div class="ses-btn active" id="sbtn0" onclick="showSes(0)">📋 Sesión 5 — Diagnóstico de Deudas</div>
+  <div class="ses-btn locked" id="sbtn1" onclick="showSes(1)">🎯 Sesión 6 — Estrategia <span id="s6lock">🔒</span></div>
 </div>
 
 <!-- SESIÓN 5 -->
-<div class="ses-content active" id="ses0">
-
-<div id="overlay" class="ov"><div class="spin"></div><p id="ov-msg">Cargando...</p></div>
-<div class="topbar">
-  <div class="logo">Tomá el <span>Volante</span></div>
-  <div style="font-size:12px;color:#888;" id="tinfo">Sesión 5 · Diagnóstico de Deudas</div>
-</div>
-<div class="tabs">
+<div class="ses-wrap active" id="sw0">
+<div class="tabs" id="s5-tabs" style="top:98px;">
   <div class="tab active" onclick="goTab(0)">🧮 Diagnóstico y Margen</div>
   <div class="tab" onclick="goTab(1)">💼 Préstamo Personal</div>
   <div class="tab" onclick="goTab(2)">🚨 Préstamo Urgente</div>
@@ -160,7 +157,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="tab" onclick="goTab(5)">💳 Tarjeta</div>
   <div class="tab" onclick="goTab(6)">🔍 Simulador Tarjeta</div>
 </div>
-
 <!-- HOJA 1: DIAGNÓSTICO Y MARGEN -->
 <div class="page active" id="page0">
 <div class="card">
@@ -455,27 +451,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <div class="save-bar"><span class="ss" id="ss6"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
 </div>
-
-
 </div>
 
 <!-- SESIÓN 6 -->
-<div class="ses-content" id="ses1">
-
-<div id="overlay"><div class="spin"></div><p>Cargando...</p></div>
-<div class="topbar">
-  <div class="logo">Tomá el <span>Volante</span></div>
-  <div id="tinfo">Sesión 6 · Estrategia de Deudas</div>
+<div class="ses-wrap" id="sw1">
+<div id="s6-tabs" class="tabs" style="top:98px;">
+  <div class="tab active" onclick="showTabS6(0)">📝 Datos de la Clienta</div>
+  <div class="tab" onclick="showTabS6(1)">🎯 Daños y Método de Ataque</div>
+  <div class="tab" onclick="showTabS6(2)">📊 Análisis y Recomendación</div>
+  <div class="tab" onclick="showTabS6(3)">📈 Negociación y Ahorro</div>
 </div>
-<div class="tabs">
-  <div class="tab active" onclick="showTab(0)">📝 Datos de la Clienta</div>
-  <div class="tab" onclick="showTab(1)">🎯 Daños y Método de Ataque</div>
-  <div class="tab" onclick="showTab(2)">📊 Análisis y Recomendación</div>
-  <div class="tab" onclick="showTab(3)">📈 Negociación y Ahorro</div>
-</div>
+  
 
 <!-- HOJA 1 -->
-<div class="page active" id="page0">
+<div class="s6page active" id="s6p0">
 <div class="card">
   <div class="card-title">📝 Datos de la Clienta · Tomá el Volante</div>
   <div class="card-sub">Campos en azul: vos los ingresás. Sin color: se calculan automáticamente. TEA se ingresa como número entero (ej: 26 para 26%).</div>
@@ -590,7 +579,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 2: DAÑOS -->
-<div class="page" id="page1">
+<div class="s6page" id="s6p1">
 <div class="card">
   <div class="card-title">🎯 Diagnóstico de Daños y Método de Ataque</div>
   <div class="card-sub">Ingresá un número del 0 al 3 · 0 = No presente · 1 = Leve · 2 = Moderado · 3 = Severo</div>
@@ -623,7 +612,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 3: ANÁLISIS -->
-<div class="page" id="page2">
+<div class="s6page" id="s6p2">
 <div class="card">
   <div class="card-title">📊 Análisis y Estrategia Recomendada · Tomá el Volante</div>
   <div class="shdr">🔍 Diagnóstico por Tipo de Deuda</div>
@@ -661,7 +650,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 4: NEGOCIACIÓN -->
-<div class="page" id="page3">
+<div class="s6page" id="s6p3">
 <div class="card">
   <div class="card-title">📈 Negociación y Ahorro Proyectado · Tomá el Volante</div>
   <div class="card-sub">Parte 1: condiciones actuales &nbsp;|&nbsp; Parte 2: propuesta del banco &nbsp;|&nbsp; Parte 3: proyección de ahorro estimado</div>
@@ -780,66 +769,57 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="save-bar"><button class="btn-save" onclick="guardar()">💾 Guardar sesión</button></div>
-
-
+<div class="save-bar" style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:flex-end;z-index:40;">
+  <button id="s6-save-btn" style="background:#1D9E75;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;" onclick="guardarS6()">💾 Guardar sesión</button>
+</div>
 </div>
 
 <script>
-// ════════════════════════════════════════════
-// SHARED CONFIG
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════
+// CONFIG COMPARTIDA
+// ═══════════════════════════════════════
 const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
-const KEY5='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
-const KEY6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
+const KEY_S5='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const KEY_S6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const TBL='sesiones_data_f3';
 let CID=null;
-const P=new URLSearchParams(location.search);
-if(P.get('c'))CID=P.get('c');
+const _P=new URLSearchParams(location.search);
+if(_P.get('c'))CID=_P.get('c');
 
-// SESSION STATE
 let s6Unlocked=false;
 let currentSes=0;
 
-function showSesion(i){
-  if(i===1 && !s6Unlocked){
-    alert('Sesión 6 bloqueada. Desbloqueala desde el panel consultora cuando S5 esté completa.');
-    return;
-  }
+function showSes(i){
+  if(i===1&&!s6Unlocked){alert('Sesión 6 bloqueada. Completá la Sesión 5 primero.');return;}
   currentSes=i;
-  document.querySelectorAll('.ses-btn').forEach((b,j)=>b.classList.toggle('active',i===j));
-  document.querySelectorAll('.ses-content').forEach((c,j)=>c.classList.toggle('active',i===j));
+  document.querySelectorAll('.ses-btn').forEach((b,j)=>{b.classList.toggle('active',i===j&&(j===0||s6Unlocked));});
+  document.querySelectorAll('.ses-wrap').forEach((w,j)=>w.classList.toggle('active',i===j));
 }
 
 function unlockS6(){
   s6Unlocked=true;
-  const btn=document.getElementById('sbtn1');
-  btn.classList.remove('locked');
-  btn.classList.add('active');
+  const b=document.getElementById('sbtn1');
+  b.classList.remove('locked');
   document.getElementById('s6lock').textContent='🔓';
-  // Save unlock state
-  if(CID) localStorage.setItem('s6_unlocked_'+CID,'1');
+  if(CID)localStorage.setItem('s6u_'+CID,'1');
 }
-
-// Check if S6 was previously unlocked
-if(CID && localStorage.getItem('s6_unlocked_'+CID)==='1') unlockS6();
-
-// Expose unlock globally for panel
+if(CID&&localStorage.getItem('s6u_'+CID)==='1')unlockS6();
 window.unlockS6=unlockS6;
 
-// ════════════════════════════════════════════
+// ═══════════════════════════════════════
 // DB HELPERS
-// ════════════════════════════════════════════
-async function dbReq5(path,method='GET',body=null){
-  const H5={'Content-Type':'application/json','apikey':KEY5,'Authorization':'Bearer '+KEY5};
+// ═══════════════════════════════════════
+const H5={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
+const H6={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
+
+async function dbReq(path,method='GET',body=null){
   const o={method,headers:H5};
   if(body)o.body=JSON.stringify(body);
   const r=await fetch(SUPA+'/rest/v1/'+path,o);
   if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
   return method==='GET'?r.json():r;
 }
-
 async function dbReq6(url,method='GET',body=null){
-  const H6={'Content-Type':'application/json','apikey':KEY6,'Authorization':'Bearer '+KEY6,'Prefer':'return=representation'};
   const opts={method,headers:H6};
   if(body)opts.body=JSON.stringify(body);
   const r=await fetch(url,opts);
@@ -847,23 +827,19 @@ async function dbReq6(url,method='GET',body=null){
   return r.json();
 }
 
-// Alias for S5 code
-const dbReq=(path,method,body)=>dbReq5(path,method,body);
-
-// ════════════════════════════════════════════
-// S5 FUNCTIONS (from sesion-f3.html)
-// ════════════════════════════════════════════
-
-// const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
-// const KEY='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+// ═══════════════════════════════════════
+// S5 JAVASCRIPT
+// ═══════════════════════════════════════
+// removed-header
+// removed-header
 const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY};
-// const TBL='sesiones_data_f3';
-// let CID - shared above
-// const P - shared above
-// CID set above
+// removed-header
+// removed-header
+// removed-header
+// removed-header
 
-const fmt=n=>isNaN(n)||!isFinite(n)?'—':'₡'+Math.round(n).toLocaleString('es-CR');
-const fmtP=n=>isNaN(n)||!isFinite(n)?'—':(n*100).toFixed(1)+'%';
+// removed-fmt
+// removed-fmtP
 const fmtX=n=>isNaN(n)||!isFinite(n)?'—':n.toFixed(2)+'x';
 const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
 function set(id,v){const e=document.getElementById(id);if(e)e.value=v;}
@@ -871,12 +847,7 @@ function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function sv(id,v){const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;}
 function status(id,msg,ok=true){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='ss '+(ok?'ok':'err');if(ok)setTimeout(()=>{e.textContent='';e.className='ss';},3000);}
 
-function goTab(i){
-  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
-  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
-  syncCuotasDesdeHoja1();
-  recalcAll();
-}
+// goTab overridden below
 
 // ── Jalar cuotas desde Hoja 1 a todas las hojas ──
 function syncCuotasDesdeHoja1(){
@@ -1265,58 +1236,50 @@ function recalcAll(){
 }
 
 // ── GUARDAR / CARGAR ──
-async function dbReq_s5_orig(path,method='GET',body=null){
-  const o={method,headers:H};if(body)o.body=JSON.stringify(body);
-  const r=await fetch(SUPA+'/rest/v1/'+path,o);
-  if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
-  return method==='GET'?r.json():r;
+// S5 dbReq removed - using shared dbReq above
+
+
+
+
+
+
+// Override goTab to only affect S5 tabs
+function goTab(i){
+  document.querySelectorAll('#s5-tabs .tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('#sw0 .page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  syncCuotasDesdeHoja1();
+  recalcAll();
 }
 
+// ═══════════════════════════════════════
+// S5 SAVE
+// ═══════════════════════════════════════
 async function guardar(){
   if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
-  const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'));
-  const ssId='ss'+idx;status(ssId,'Guardando...');
+  const idx=[...document.querySelectorAll('#s5-tabs .tab')].findIndex(t=>t.classList.contains('active'));
+  const ssId='ss'+idx;
+  status(ssId,'Guardando...');
   const campos={};
-  document.querySelectorAll('input:not([readonly]),select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  document.querySelectorAll('#sw0 input:not([readonly]),#sw0 select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
   try{
     const existe=await dbReq(TBL+'?clienta_id=eq.'+CID);
-    if(existe&&existe.length>0) await dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
-    else await dbReq(TBL,'POST',{clienta_id:CID,datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
+    const prevDatos=existe&&existe.length>0?(existe[0].datos||{}):{};
+    const newDatos={...prevDatos,s5:{campos,ts:new Date().toISOString()}};
+    if(existe&&existe.length>0) await dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:newDatos,updated_at:new Date().toISOString()});
+    else await dbReq(TBL,'POST',{clienta_id:CID,datos:newDatos,updated_at:new Date().toISOString()});
     status(ssId,'✅ Guardado');
   }catch(e){status(ssId,'❌ Error',false);console.error(e);}
 }
 
-async function cargar(){
-  document.getElementById('overlay').style.display='flex';
-  if(!CID){document.getElementById('overlay').style.display='none';return;}
-  try{
-    const rc=await dbReq('clientas?id=eq.'+CID);
-    if(rc&&rc[0]) document.getElementById('tinfo').textContent=rc[0].nombre+' — Sesión 5 · Diagnóstico de Deudas';
-    const rd=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
-    if(rd&&rd[0]&&rd[0].datos?.campos){
-      const c=rd[0].datos.campos;
-      Object.entries(c).forEach(([id,val])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=val;});
-      calcDiag();recalcAll();
-    }
-  }catch(e){console.error(e);}
-  document.getElementById('overlay').style.display='none';
-}
-
-// cargar called below
-
-
-// Fix dbReq alias back
-async function dbReq(path,method='GET',body=null){return dbReq5(path,method,body);}
-
-// ════════════════════════════════════════════
-// S6 FUNCTIONS (from sesion-f3-s6.html)  
-// ════════════════════════════════════════════
-
+// ═══════════════════════════════════════
+// S6 JAVASCRIPT
+// ═══════════════════════════════════════
+// KEYS defined above
 // ─── CONSTANTES ──────────────────────────────────────────
-// const SUPA s6='https://syxlgphermluvmpbnylb.supabase.co';
-// const KEY s6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
-const HDR={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY,'Prefer':'return=representation'};
-// const CID s6=new URLSearchParams(location.search).get('c')||'';
+// removed-header
+// removed-header
+// removed-header
+// removed-header
 const KEYS=['tc','ve','hi','pe','ur'];
 
 // TEA_CAMBIO: tipo de cambio USD → CRC para mostrar equivalente
@@ -1334,10 +1297,7 @@ const fmtP=n=>n!=null?n.toFixed(1)+'%':'—';
 const teaDec=k=>num('t_'+k)/100;
 const teaDecN=v=>v/100; // para valores directos
 
-function showTab(i){
-  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
-  document.querySelectorAll('.page').forEach((p,idx)=>p.classList.toggle('active',idx===i));
-}
+// showTabS6 defined below
 
 // NPER: dado TEA decimal, cuota mensual y saldo → meses
 function nperCalc(teaDec,c,s){
@@ -1786,110 +1746,58 @@ function setCampos(c){
   recalc();recalcDanos();
 }
 
-async function dbReq6alias(url,method='GET',body=null){
-  const opts={method,headers:{...HDR}};
-  if(body)opts.body=JSON.stringify(body);
-  const r=await fetch(url,opts);
-  if(r.status===204)return null;
-  return r.json();
+// S6 dbReq removed - using dbReq6 above
+
+
+
+
+
+function showTabS6(i){
+  document.querySelectorAll('#s6-tabs .tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.s6page').forEach((p,j)=>p.classList.toggle('active',i===j));
 }
 
-async function guardar(){
-  if(!CID){alert('Sin clienta. Abrí esta sesión desde el panel consultora.');return;}
-  const b=document.querySelector('.btn-save');
+// ═══════════════════════════════════════
+// S6 SAVE
+// ═══════════════════════════════════════
+async function guardarS6(){
+  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
+  const b=document.getElementById('s6-save-btn');
   b.textContent='Guardando...';
   try{
     const datos={s6:{campos:getCampos(),ts:new Date().toISOString()}};
-    const ex=await dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}&limit=1`);
+    const ex=await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID+'&limit=1');
     if(ex&&ex.length>0){
       const prev=ex[0].datos||{};
-      await dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}`,'PATCH',{datos:{...prev,...datos}});
+      await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{...prev,...datos},updated_at:new Date().toISOString()});
     }else{
-      await dbReq(`${SUPA}/rest/v1/sesiones_data_f3`,'POST',{clienta_id:CID,datos});
+      await dbReq6(SUPA+'/rest/v1/'+TBL,'POST',{clienta_id:CID,datos});
     }
     b.textContent='✅ Guardado';
     setTimeout(()=>{b.textContent='💾 Guardar sesión';},2000);
-  }catch(e){
-    b.textContent='💾 Guardar sesión';
-    alert('Error al guardar: '+e.message+'\n\nRevisá la conexión e intentá de nuevo.');
-  }
+  }catch(e){b.textContent='💾 Guardar sesión';alert('Error al guardar: '+e.message);}
 }
 
-async function cargar(){
-  if(!CID){$('overlay').style.display='none';return;}
-  try{
-    const rc=await dbReq(`${SUPA}/rest/v1/clientas?id=eq.${CID}&limit=1`);
-    if(rc&&rc[0])$('tinfo').textContent=rc[0].nombre+' — Sesión 6 · Estrategia de Deudas';
-    const rd=await dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}&limit=1`);
-    if(rd&&rd[0]&&rd[0].datos&&rd[0].datos.s6)setCampos(rd[0].datos.s6.campos||{});
-  }catch(e){console.error(e);}
-  $('overlay').style.display='none';
-}
-// cargar6 called below
-
-
-// Fix S6 dbReq to use KEY6
-async function dbReq6alias(url,method='GET',body=null){return dbReq6(url,method,body);}
-
-// ════════════════════════════════════════════
-// UNIFIED SAVE/LOAD
-// ════════════════════════════════════════════
-async function guardar(){
-  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
-  if(currentSes===0){
-    // S5 guardar logic
-    const idx=[...document.querySelectorAll('#ses0 .tab')].findIndex(t=>t.classList.contains('active'));
-    const ssId='ss'+idx;
-    status(ssId,'Guardando...');
-    const campos={};
-    document.querySelectorAll('#ses0 input:not([readonly]),#ses0 select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
-    try{
-      const existe=await dbReq5(TBL+'?clienta_id=eq.'+CID);
-      if(existe&&existe.length>0) await dbReq5(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{s5:{campos,ts:new Date().toISOString()}},updated_at:new Date().toISOString()});
-      else await dbReq5(TBL,'POST',{clienta_id:CID,datos:{s5:{campos,ts:new Date().toISOString()}},updated_at:new Date().toISOString()});
-      status(ssId,'✅ Guardado');
-    }catch(e){status(ssId,'❌ Error',false);console.error(e);}
-  } else {
-    // S6 guardar logic
-    const b=document.querySelector('#ses1 .btn-save');
-    if(b)b.textContent='Guardando...';
-    try{
-      const datos={s6:{campos:getCampos(),ts:new Date().toISOString()}};
-      const ex=await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID+'&limit=1');
-      if(ex&&ex.length>0){
-        const prev=ex[0].datos||{};
-        await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{...prev,...datos},updated_at:new Date().toISOString()});
-      }else{
-        await dbReq6(SUPA+'/rest/v1/'+TBL,'POST',{clienta_id:CID,datos});
-      }
-      if(b){b.textContent='✅ Guardado';setTimeout(()=>{b.textContent='💾 Guardar sesión';},2000);}
-    }catch(e){if(b)b.textContent='💾 Guardar sesión';alert('Error al guardar: '+e.message);}
-  }
-}
-
+// ═══════════════════════════════════════
+// CARGA INICIAL
+// ═══════════════════════════════════════
 async function cargar(){
   document.getElementById('overlay').style.display='flex';
   if(!CID){document.getElementById('overlay').style.display='none';return;}
   try{
-    const rc=await dbReq5('clientas?id=eq.'+CID);
-    if(rc&&rc[0]) document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 3 · Deudas';
-    const rd=await dbReq5(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    const rc=await dbReq('clientas?id=eq.'+CID);
+    if(rc&&rc[0])document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 3 · Deudas';
+    const rd=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
     if(rd&&rd[0]&&rd[0].datos){
-      // Load S5
-      if(rd[0].datos.s5?.campos){
-        const c=rd[0].datos.s5.campos;
-        Object.entries(c).forEach(([id,val])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=val;});
-        calcDiag();recalcAll();
-      } else if(rd[0].datos.campos){
-        // Legacy format
-        const c=rd[0].datos.campos;
-        Object.entries(c).forEach(([id,val])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=val;});
+      const d=rd[0].datos;
+      // Cargar S5
+      const c5=d.s5?.campos||(d.campos)||null;
+      if(c5){
+        Object.entries(c5).forEach(([id,v])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;});
         calcDiag();recalcAll();
       }
-      // Load S6
-      if(rd[0].datos.s6?.campos){
-        setCampos(rd[0].datos.s6.campos);
-      }
+      // Cargar S6
+      if(d.s6?.campos)setCampos(d.s6.campos);
     }
   }catch(e){console.error(e);}
   document.getElementById('overlay').style.display='none';
