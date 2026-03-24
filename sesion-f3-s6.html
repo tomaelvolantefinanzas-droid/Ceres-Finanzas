@@ -384,6 +384,7 @@ const num=id=>parseFloat($(id)?.value)||0;
 const val=id=>$(id)?.value||'';
 const set=(id,v)=>{if($(id))$(id).textContent=v;};
 const fmt=n=>n?'₡'+Math.round(n).toLocaleString('es-CR'):'—';
+const fmtMon=(n,mon)=>n?(mon==='usd'?'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'₡'+Math.round(n).toLocaleString('es-CR')):'—';
 const fmtP=n=>n!=null?n.toFixed(1)+'%':'—';
 // TEA se ingresa como entero (26 = 26%). Internamente la convertimos a decimal para cálculos.
 const teaDec=k=>num('t_'+k)/100;
@@ -420,13 +421,26 @@ function getStrategy(k,s,tDec,c,d,p,mon,d4Nivel){
   if(k==='tc'){
     if(d4Nivel>=2){nom='🚨 Prioridad Legal — Arreglo de Pago urgente';why='Acción legal activa. Prioridad absoluta.';acc='Contactar abogado hoy';}
     else if(d>30){nom='Arreglo de Pago';why='Mora activa: banco puede reportar a SUGEF. Actuar hoy.';acc='Llamar al banco hoy';}
-    else if(tDec>=0.36){nom='🚨 USURA — Actuar de inmediato';why='Tasa ilegal (usura). Denunciar y salir inmediatamente.';acc='Contactar gestor bancario hoy';}
-    else if(tDec>=0.3){nom='Consolidación';why='Tasa crítica. Consolidar en préstamo único de largo plazo.';acc='Contactar gestor bancario hoy';}
-    else if(tDec>=0.23&&p<=36){nom='Refinanciamiento a Préstamo Personal';why='Tasa alta con plazo corto. Convertir saldo en préstamo personal fijo.';acc='Solicitar reunión con ejecutivo';}
-    else if(tDec>=0.15&&p<=12){nom='Traslado de Saldo';why='Tasa moderada-alta. Trasladar saldo a entidad con menor tasa.';acc='Solicitar estado de cuenta';}
-    else if(tDec>=0.23){nom='Refinanciamiento a Préstamo Personal';why='Tasa alta. Convertir saldo en préstamo personal fijo.';acc='Solicitar reunión con ejecutivo';}
-    else if(tDec>=0.15){nom='Traslado de Saldo';why='Tasa moderada-alta. Trasladar saldo a entidad con menor tasa.';acc='Solicitar estado de cuenta';}
-    else{nom='Abono Extraordinario';why='Tasa aceptable. Abono extraordinario cuando haya flujo disponible.';acc='Solicitar estado de cuenta';}
+    else if(mon==='usd'){
+      // Lógica dólares exacta del Excel
+      if(tDec>=0.28){nom='Pagar mínimo y cancelar tarjeta';why='Tasa en límite. Pagar mínimo para frenar Late Fee y cancelar tarjeta.';acc='Llamar al banco hoy y solicitar cierre';}
+      else if(tDec>=0.26&&p<=36){nom='Salida Urgente a Préstamo Personal';why='Tasa muy alta en dólares. Salir urgente a préstamo personal.';acc='Llamar al banco hoy y solicitar cierre';}
+      else if(tDec>=0.2&&p<=24){nom='Conversión a Colones';why='Tasa alta en dólares. Convertir saldo a colones para eliminar riesgo cambiario.';acc='Solicitar conversión al banco';}
+      else if(tDec>=0.14&&p<=12){nom='Abono Extraordinario';why='Tasa moderada en dólares. Abono extraordinario reduce el saldo rápidamente.';acc='Solicitar estado de cuenta actualizado';}
+      else if(tDec>=0.26){nom='Salida Urgente a Préstamo Personal';why='Tasa muy alta en dólares. Salir urgente a préstamo personal.';acc='Llamar al banco hoy y solicitar cierre';}
+      else if(tDec>=0.2){nom='Conversión a Colones';why='Tasa alta en dólares. Convertir saldo a colones para eliminar riesgo cambiario.';acc='Solicitar conversión al banco';}
+      else{nom='Abono Extraordinario';why='Tasa moderada en dólares. Abono extraordinario reduce el saldo rápidamente.';acc='Solicitar estado de cuenta actualizado';}
+    } else {
+      // Lógica colones exacta del Excel
+      if(tDec>=0.36){nom='🚨 USURA — Actuar de inmediato';why='Tasa ilegal (usura). Denunciar y salir inmediatamente.';acc='Contactar gestor bancario hoy';}
+      else if(tDec>=0.2&&p>48){nom='Consolidación';why='Tasa alta con plazo largo. Consolidar en préstamo único.';acc='Contactar gestor bancario hoy';}
+      else if(tDec>=0.23&&p<=36){nom='Refinanciamiento a Préstamo Personal';why='Tasa alta. Convertir saldo en préstamo personal fijo.';acc='Solicitar reunión con ejecutivo';}
+      else if(tDec>=0.15&&p<=12){nom='Traslado de Saldo';why='Tasa moderada-alta. Trasladar saldo a entidad con menor tasa.';acc='Solicitar estado de cuenta';}
+      else if(tDec>=0.3){nom='Consolidación';why='Tasa crítica. Consolidar en préstamo único de largo plazo.';acc='Contactar gestor bancario hoy';}
+      else if(tDec>=0.23){nom='Refinanciamiento a Préstamo Personal';why='Tasa alta. Convertir saldo en préstamo personal fijo.';acc='Solicitar reunión con ejecutivo';}
+      else if(tDec>=0.15){nom='Traslado de Saldo';why='Tasa moderada-alta. Trasladar saldo a entidad con menor tasa.';acc='Solicitar estado de cuenta';}
+      else{nom='Abono Extraordinario';why='Tasa aceptable. Abono extraordinario cuando haya flujo disponible.';acc='Solicitar estado de cuenta';}
+    }
     cuota='Reduce entre 20-40%';costo='Aumenta (más plazo)';
   }
   else if(k==='ve'){
@@ -496,7 +510,7 @@ function getStrategy(k,s,tDec,c,d,p,mon,d4Nivel){
 }
 
 // ─── PRIORIDAD ────────────────────────────────────────────
-function getPrioridad(k,s,tDec,d,d4Nivel){
+function getPrioridad(k,s,tDec,d,d4Nivel,mon){
   if(!s)return'—';
   if(d4Nivel>=2)return'🚨 Prioridad Legal';
   if(d>30)return'🔴 URGENTE';
@@ -505,6 +519,28 @@ function getPrioridad(k,s,tDec,d,d4Nivel){
     if(tDec>=0.28)return'🔴 URGENTE';
     if(d>0)return'🟡 ALTA';
     return'🟢 NORMAL';
+  }
+  if(k==='ve'){
+    if(mon==='usd'){
+      if(tDec>0.1)return'🔴 URGENTE';
+      if(d>0)return'🟡 ALTA';
+      return'🟢 NORMAL';
+    } else {
+      if(tDec>0.18)return'🔴 URGENTE';
+      if(d>0)return'🟡 ALTA';
+      return'🟢 NORMAL';
+    }
+  }
+  if(k==='hi'){
+    if(mon==='usd'){
+      if(tDec>0.08)return'🔴 URGENTE';
+      if(d>0)return'🟡 ALTA';
+      return'🟢 NORMAL';
+    } else {
+      if(tDec>0.14)return'🔴 URGENTE';
+      if(d>0)return'🟡 ALTA';
+      return'🟢 NORMAL';
+    }
   }
   if(k==='ur'){
     if(d>0)return'🔴 URGENTE';
@@ -587,8 +623,8 @@ function recalc(){
     // Costo total restante
     const ct=p&&c?p*c:null;
     COSTOS_TOT[k]=ct;
-    set('ct_'+k, ct?fmt(ct):'—');
-    set('it_'+k, ct&&s?fmt(ct-s):'—');
+    set('ct_'+k, ct?fmtMon(ct,MON[k]):'—');
+    set('it_'+k, ct&&s?fmtMon(ct-s,MON[k]):'—');
   });
 
   // Totales fila
@@ -625,12 +661,12 @@ function recalc(){
   const d4n=num('d4');
   KEYS.forEach(k=>{
     const tDec=T[k]/100;
-    set('a_s_'+k, S[k]?fmt(S[k]):'—');
+    set('a_s_'+k, S[k]?fmtMon(S[k],MON[k]):'—');
     set('a_t_'+k, T[k]?fmtP(T[k]):'—');
-    set('a_c_'+k, C[k]?fmt(C[k]):'—');
+    set('a_c_'+k, C[k]?fmtMon(C[k],MON[k]):'—');
     set('a_d_'+k, S[k]?(D[k]+' días'):'—');
     set('a_w_'+k, S[k]&&totS?((S[k]/totS*100).toFixed(1)+'%'):'—');
-    set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n));
+    set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n,MON[k]));
     const st=getStrategy(k,S[k],tDec,C[k],D[k],PLAZOS[k]||0,MON[k],d4n);
     STRATS[k]=st;
     set('e_'+k,st?st.nom:'—');
@@ -651,13 +687,13 @@ function recalc(){
   KEYS.forEach(k=>{
     const p=PLAZOS[k];
     const ct=COSTOS_TOT[k];
-    set('n1_s_'+k, S[k]?fmt(S[k]):'—');
+    set('n1_s_'+k, S[k]?fmtMon(S[k],MON[k]):'—');
     set('n1_t_'+k, T[k]?fmtP(T[k]):'—');
     set('n1_p_'+k, p?p+' meses':'—');
-    set('n1_c_'+k, C[k]?fmt(C[k]):'—');
-    set('n1_ct_'+k, ct?fmt(ct):'—');
-    set('n1_it_'+k, ct&&S[k]?fmt(ct-S[k]):'—');
-    set('p3_ca_'+k, ct?fmt(ct):'—');
+    set('n1_c_'+k, C[k]?fmtMon(C[k],MON[k]):'—');
+    set('n1_ct_'+k, ct?fmtMon(ct,MON[k]):'—');
+    set('n1_it_'+k, ct&&S[k]?fmtMon(ct-S[k],MON[k]):'—');
+    set('p3_ca_'+k, ct?fmtMon(ct,MON[k]):'—');
   });
   const n1totP=KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
   set('n1_tot_s',fmt(totS));
@@ -814,7 +850,9 @@ async function dbReq(url,method='GET',body=null){
 }
 
 async function guardar(){
-  if(!CID){alert('Sin clienta.');return;}
+  if(!CID){alert('Sin clienta. Abrí esta sesión desde el panel consultora.');return;}
+  const b=document.querySelector('.btn-save');
+  b.textContent='Guardando...';
   try{
     const datos={s6:{campos:getCampos(),ts:new Date().toISOString()}};
     const ex=await dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}&limit=1`);
@@ -824,10 +862,12 @@ async function guardar(){
     }else{
       await dbReq(`${SUPA}/rest/v1/sesiones_data_f3`,'POST',{clienta_id:CID,datos});
     }
-    const b=document.querySelector('.btn-save');
     b.textContent='✅ Guardado';
     setTimeout(()=>{b.textContent='💾 Guardar sesión';},2000);
-  }catch(e){alert('Error: '+e.message);}
+  }catch(e){
+    b.textContent='💾 Guardar sesión';
+    alert('Error al guardar: '+e.message+'\n\nRevisá la conexión e intentá de nuevo.');
+  }
 }
 
 async function cargar(){
