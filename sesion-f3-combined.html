@@ -1510,128 +1510,128 @@ function recalc(){
     const tDec=T[k]/100;
 
     // Plazo display
-    if(!s)s6set('p_'+k,'—');
-    else if(k==='ve') s6set('p_'+k, p?p+' meses':'—');
-    else if(!T[k]||!c) s6set('p_'+k,'—');
-    else if(!p) s6set('p_'+k,'⚠️ Cuota < Interés');
-    else s6set('p_'+k, p+' meses');
+    if(!s)s6s6set('p_'+k,'—');
+    else if(k==='ve') s6s6set('p_'+k, p?p+' meses':'—');
+    else if(!T[k]||!c) s6s6set('p_'+k,'—');
+    else if(!p) s6s6set('p_'+k,'⚠️ Cuota < Interés');
+    else s6s6set('p_'+k, p+' meses');
 
     // Costo total restante
     const ct=p&&c?p*c:null;
     COSTOS_TOT[k]=ct;
-    s6set('ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
-    s6set('it_'+k, ct&&s?s6fmtMon(ct-s,MON[k]):'—');
+    s6s6set('ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
+    s6s6set('it_'+k, ct&&s?s6fmtMon(ct-s,MON[k]):'—');
   });
 
   // Totales fila
   const totS=S6_KEYS.reduce((a,k)=>a+S[k],0);
   const totC=S6_KEYS.reduce((a,k)=>a+C[k],0);
-  s6set('tot_s',s6fmt(totS));
-  s6set('tot_c',s6fmt(totC));
+  s6s6set('tot_s',s6fmt(totS));
+  s6s6set('tot_c',s6fmt(totC));
 
   // TEA ponderada (promedio ponderado por saldo)
   const sumST=S6_KEYS.reduce((a,k)=>a+T[k]*S[k],0);
   const sumS=S6_KEYS.filter(k=>S[k]>0).reduce((a,k)=>a+S[k],0);
-  s6set('tot_t', sumS ? s6fmtP(sumST/sumS) : '—');
+  s6s6set('tot_t', sumS ? s6fmtP(sumST/sumS) : '—');
 
   // Plazo total
   const totP=S6_KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
-  s6set('tot_p',totP?totP+' meses':'—');
+  s6s6set('tot_p',totP?totP+' meses':'—');
 
   // Costo total e intereses totales
   const totCT=S6_KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
-  s6set('tot_ct',s6fmt(totCT));
+  s6s6set('tot_ct',s6fmt(totCT));
   const totIT=S6_KEYS.reduce((a,k)=>{const ct=COSTOS_TOT[k];return a+(ct&&S[k]?ct-S[k]:0);},0);
-  s6set('tot_it',s6fmt(totIT));
+  s6s6set('tot_it',s6fmt(totIT));
 
   // Resumen carga financiera
   const ing=s6num('ingreso');
-  s6set('res_deuda',s6fmt(totS));
-  s6set('res_cuota',s6fmt(totC));
-  s6set('res_ingreso',s6fmt(ing));
+  s6s6set('res_deuda',s6fmt(totS));
+  s6s6set('res_cuota',s6fmt(totC));
+  s6s6set('res_ingreso',s6fmt(ing));
   const idx=ing?totC/ing:0;
-  s6set('res_idx', idx ? s6fmtP(idx*100) : '—');
-  s6set('res_sem', idx?(idx<=0.3?'🟢 BAJO':idx<=0.4?'🟡 MODERADO':idx<=0.5?'🟠 ALTO':'🔴 CRÍTICO'):'—');
+  s6s6set('res_idx', idx ? s6fmtP(idx*100) : '—');
+  s6s6set('res_sem', idx?(idx<=0.3?'🟢 BAJO':idx<=0.4?'🟡 MODERADO':idx<=0.5?'🟠 ALTO':'🔴 CRÍTICO'):'—');
 
   // Hoja 3
   const d4n=s6num('d4');
   S6_KEYS.forEach(k=>{
     const tDec=T[k]/100;
-    s6set('a_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
-    s6set('a_t_'+k, T[k]?s6fmtP(T[k]):'—');
-    s6set('a_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
-    s6set('a_d_'+k, S[k]?(D[k]+' días'):'—');
-    s6set('a_w_'+k, S[k]&&totS?((S[k]/totS*100).toFixed(1)+'%'):'—');
-    s6set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n,MON[k]));
+    s6s6set('a_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
+    s6s6set('a_t_'+k, T[k]?s6fmtP(T[k]):'—');
+    s6s6set('a_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
+    s6s6set('a_d_'+k, S[k]?(D[k]+' días'):'—');
+    s6s6set('a_w_'+k, S[k]&&totS?((S[k]/totS*100).toFixed(1)+'%'):'—');
+    s6s6set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n,MON[k]));
     const st=getStrategy(k,S[k],tDec,C[k],D[k],PLAZOS[k]||0,MON[k],d4n);
     STRATS[k]=st;
-    s6set('e_'+k,st?st.nom:'—');
-    s6set('e_why_'+k,st?st.why:'—');
-    s6set('e_imp_'+k,st?st.cuota:'—');
-    s6set('e_cos_'+k,st?st.costo:'—');
-    s6set('e_acc_'+k,st?st.acc:'—');
-    s6set('n2_e_'+k,st?st.nom:'—');
+    s6s6set('e_'+k,st?st.nom:'—');
+    s6s6set('e_why_'+k,st?st.why:'—');
+    s6s6set('e_imp_'+k,st?st.cuota:'—');
+    s6s6set('e_cos_'+k,st?st.costo:'—');
+    s6s6set('e_acc_'+k,st?st.acc:'—');
+    s6s6set('n2_e_'+k,st?st.nom:'—');
   });
 
   const gidx=ing?totC/ing:0;
-  s6set('g_idx',gidx?s6fmtP(gidx*100):'—');
-  s6set('g_sit',gidx?(gidx<=0.3?'✅ Situación saludable. Evaluá estrategias de optimización para reducir costo total.':gidx<=0.4?'⚠️ Situación de atención. Renegociar las deudas de mayor tasa es prioritario para liberar flujo de caja.':gidx<=0.5?'🔶 Situación de riesgo. La carga de deuda supera el 40% del ingreso. Actuar pronto.':'🚨 Situación crítica. La carga de deuda supera el 50% del ingreso. Actuar de inmediato.'):'—');
+  s6s6set('g_idx',gidx?s6fmtP(gidx*100):'—');
+  s6s6set('g_sit',gidx?(gidx<=0.3?'✅ Situación saludable. Evaluá estrategias de optimización para reducir costo total.':gidx<=0.4?'⚠️ Situación de atención. Renegociar las deudas de mayor tasa es prioritario para liberar flujo de caja.':gidx<=0.5?'🔶 Situación de riesgo. La carga de deuda supera el 40% del ingreso. Actuar pronto.':'🚨 Situación crítica. La carga de deuda supera el 50% del ingreso. Actuar de inmediato.'):'—');
 
   // Hoja 4 Parte 1
-  s6set('n4n',s6val('nombre')||'—');
-  s6set('n4i',s6fmt(ing));
+  s6s6set('n4n',s6val('nombre')||'—');
+  s6s6set('n4i',s6fmt(ing));
   S6_KEYS.forEach(k=>{
     const p=PLAZOS[k];
     const ct=COSTOS_TOT[k];
-    s6set('n1_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
-    s6set('n1_t_'+k, T[k]?s6fmtP(T[k]):'—');
-    s6set('n1_p_'+k, p?p+' meses':'—');
-    s6set('n1_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
-    s6set('n1_ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
-    s6set('n1_it_'+k, ct&&S[k]?s6fmtMon(ct-S[k],MON[k]):'—');
-    s6set('p3_ca_'+k, ct?s6fmtMon(ct,MON[k]):'—');
+    s6s6set('n1_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
+    s6s6set('n1_t_'+k, T[k]?s6fmtP(T[k]):'—');
+    s6s6set('n1_p_'+k, p?p+' meses':'—');
+    s6s6set('n1_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
+    s6s6set('n1_ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
+    s6s6set('n1_it_'+k, ct&&S[k]?s6fmtMon(ct-S[k],MON[k]):'—');
+    s6s6set('p3_ca_'+k, ct?s6fmtMon(ct,MON[k]):'—');
   });
   const n1totP=S6_KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
-  s6set('n1_tot_s',s6fmt(totS));
-  s6set('n1_tot_c',s6fmt(totC));
-  s6set('n1_tot_ct',s6fmt(totCT));
-  s6set('n1_tot_it',s6fmt(totIT));
-  s6set('n1_tot_t', sumS?s6fmtP(sumST/sumS):'—');
-  s6set('n1_tot_p', n1totP?n1totP+' meses':'—');
-  s6set('p3_tot_ca',s6fmt(totCT));
+  s6s6set('n1_tot_s',s6fmt(totS));
+  s6s6set('n1_tot_c',s6fmt(totC));
+  s6s6set('n1_tot_ct',s6fmt(totCT));
+  s6s6set('n1_tot_it',s6fmt(totIT));
+  s6s6set('n1_tot_t', sumS?s6fmtP(sumST/sumS):'—');
+  s6s6set('n1_tot_p', n1totP?n1totP+' meses':'—');
+  s6s6set('p3_tot_ca',s6fmt(totCT));
 
   // Parte 3
   let totEst=0, hayEst=false;
   S6_KEYS.forEach(k=>{
     const st=STRATS[k];
     const s=S[k], tDec=T[k]/100, c=C[k], p=PLAZOS[k], ct=COSTOS_TOT[k], mon=MON[k];
-    if(!s||!ct){s6set('p3_ce_'+k,'—');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');return;}
+    if(!s||!ct){s6s6set('p3_ce_'+k,'—');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');return;}
     const nom=st?st.nom:'';
     // Estrategias sin cálculo posible
     if(!nom||nom.includes('USURA')||nom.includes('Ver recomendación')||nom.includes('Venta')||nom.includes('Mantener')){
-      s6set('p3_ce_'+k,'📌 Ver recomendación');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');return;
+      s6s6set('p3_ce_'+k,'📌 Ver recomendación');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');return;
     }
     const est=getCostoEstimado(nom,s,tDec,c,p||0,mon);
     if(est&&est>0){
-      s6set('p3_ce_'+k,s6fmt(est));
+      s6s6set('p3_ce_'+k,s6fmt(est));
       const ah=ct-est;
-      s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmt(ah)+' en total':'⚠️ Costo sube con esta estrategia');
-      s6set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
+      s6s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmt(ah)+' en total':'⚠️ Costo sube con esta estrategia');
+      s6s6set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
       totEst+=est;hayEst=true;
     } else {
-      s6set('p3_ce_'+k,'📌 Ver recomendación');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');
+      s6s6set('p3_ce_'+k,'📌 Ver recomendación');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');
     }
   });
-  s6set('p3_tot_ce',hayEst?s6fmt(totEst):'—');
+  s6s6set('p3_tot_ce',hayEst?s6fmt(totEst):'—');
   const ahEst=hayEst?totCT-totEst:0;
-  s6set('p3_tot_ah',ahEst>0?'✅ Ahorro total estimado: '+s6fmt(ahEst):'—');
-  s6set('p3_tot_m',ahEst>0&&totC?Math.round(ahEst/totC)+' meses en total':'—');
+  s6s6set('p3_tot_ah',ahEst>0?'✅ Ahorro total estimado: '+s6fmt(ahEst):'—');
+  s6s6set('p3_tot_m',ahEst>0&&totC?Math.round(ahEst/totC)+' meses en total':'—');
 
   // Resumen total
-  s6set('rs_sin',s6fmt(totCT));
-  s6set('rs_est',hayEst?s6fmt(totEst):'—');
-  s6set('rs_ahe',ahEst>0?'✅ Ahorrás '+s6fmt(ahEst)+' en total':'Sin datos suficientes');
-  s6set('rs_mes',ahEst>0&&totC?Math.round(ahEst/totC)+' meses de cuota libre estimados':'—');
+  s6s6set('rs_sin',s6fmt(totCT));
+  s6s6set('rs_est',hayEst?s6fmt(totEst):'—');
+  s6s6set('rs_ahe',ahEst>0?'✅ Ahorrás '+s6fmt(ahEst)+' en total':'Sin datos suficientes');
+  s6s6set('rs_mes',ahEst>0&&totC?Math.round(ahEst/totC)+' meses de cuota libre estimados':'—');
 
   recalcNeg();
 }
@@ -1651,50 +1651,50 @@ function recalcNeg(){
     const nct=nc&&np?nc*np:0;
     totNC+=nc;totNCT+=nct;
 
-    s6set('n2_nc_'+k, nc?s6fmt(nc):'—');
-    s6set('n2_nct_'+k, nct?s6fmt(nct):'—');
+    s6s6set('n2_nc_'+k, nc?s6fmt(nc):'—');
+    s6s6set('n2_nct_'+k, nct?s6fmt(nct):'—');
 
     const c=s6num('c_'+k);
     const ct=COSTOS_TOT[k];
 
     if(nc&&c){
       const diff=nc-c;
-      s6set('n2_cc_'+k, diff<0?'✅ Baja ₡'+Math.abs(Math.round(diff)).toLocaleString('es-CR')+'/mes':diff===0?'➡️ Sin cambio':'⚠️ Sube ₡'+Math.round(diff).toLocaleString('es-CR')+'/mes');
-    }else s6set('n2_cc_'+k,'—');
+      s6s6set('n2_cc_'+k, diff<0?'✅ Baja ₡'+Math.abs(Math.round(diff)).toLocaleString('es-CR')+'/mes':diff===0?'➡️ Sin cambio':'⚠️ Sube ₡'+Math.round(diff).toLocaleString('es-CR')+'/mes');
+    }else s6s6set('n2_cc_'+k,'—');
 
     if(nc&&np&&ct){
       const d2=nct-ct;
-      s6set('n2_cct_'+k, d2<0?'✅ Ahorrás ₡'+Math.abs(Math.round(d2)).toLocaleString('es-CR')+' en total':d2===0?'➡️ Sin cambio':'❌ Pagás ₡'+Math.round(d2).toLocaleString('es-CR')+' más en total');
-    }else s6set('n2_cct_'+k,'—');
+      s6s6set('n2_cct_'+k, d2<0?'✅ Ahorrás ₡'+Math.abs(Math.round(d2)).toLocaleString('es-CR')+' en total':d2===0?'➡️ Sin cambio':'❌ Pagás ₡'+Math.round(d2).toLocaleString('es-CR')+' más en total');
+    }else s6s6set('n2_cct_'+k,'—');
 
     // Veredicto
     const s=s6num('s_'+k);
-    if(!s){s6set('v_'+k,'—');return;}
-    if(!nc){s6set('v_'+k,'Sin datos del banco aún — ingresá Parte 2');return;}
-    if(nc<c&&nct<ct)s6set('v_'+k,'✅ Mejora cuota Y costo total');
-    else if(nc<c)s6set('v_'+k,'⚠️ Cuota baja pero costo total sube');
-    else if(nct<ct)s6set('v_'+k,'⚠️ Costo total baja pero cuota sube');
-    else s6set('v_'+k,'❌ No mejora las condiciones');
+    if(!s){s6s6set('v_'+k,'—');return;}
+    if(!nc){s6s6set('v_'+k,'Sin datos del banco aún — ingresá Parte 2');return;}
+    if(nc<c&&nct<ct)s6s6set('v_'+k,'✅ Mejora cuota Y costo total');
+    else if(nc<c)s6s6set('v_'+k,'⚠️ Cuota baja pero costo total sube');
+    else if(nct<ct)s6s6set('v_'+k,'⚠️ Costo total baja pero cuota sube');
+    else s6s6set('v_'+k,'❌ No mejora las condiciones');
   });
 
-  s6set('n2_tot_nc',totNC?s6fmt(totNC):'—');
-  s6set('n2_tot_nct',totNCT?s6fmt(totNCT):'—');
+  s6s6set('n2_tot_nc',totNC?s6fmt(totNC):'—');
+  s6s6set('n2_tot_nct',totNCT?s6fmt(totNCT):'—');
 
   const ntVals=S6_KEYS.filter(k=>s6num('nt_'+k));
-  s6set('n2_tot_t', ntVals.length?s6fmtP(ntVals.reduce((a,k)=>a+s6num('nt_'+k),0)/ntVals.length):'—');
+  s6s6set('n2_tot_t', ntVals.length?s6fmtP(ntVals.reduce((a,k)=>a+s6num('nt_'+k),0)/ntVals.length):'—');
   const npVals=S6_KEYS.filter(k=>s6num('np_'+k));
-  s6set('n2_tot_p', npVals.length?(npVals.reduce((a,k)=>a+s6num('np_'+k),0)/npVals.length).toFixed(0)+' meses':'—');
-  s6set('n2_tot_m', s6fmt(S6_KEYS.reduce((a,k)=>a+s6num('nm_'+k),0)));
+  s6s6set('n2_tot_p', npVals.length?(npVals.reduce((a,k)=>a+s6num('np_'+k),0)/npVals.length).toFixed(0)+' meses':'—');
+  s6s6set('n2_tot_m', s6fmt(S6_KEYS.reduce((a,k)=>a+s6num('nm_'+k),0)));
 
   const dC=totNC-totC;
-  s6set('n2_tot_cc', totNC&&totC?(dC<0?'✅ Baja ₡'+Math.abs(Math.round(dC)).toLocaleString('es-CR')+'/mes total':'⚠️ Sube ₡'+Math.round(dC).toLocaleString('es-CR')+'/mes total'):'—');
+  s6s6set('n2_tot_cc', totNC&&totC?(dC<0?'✅ Baja ₡'+Math.abs(Math.round(dC)).toLocaleString('es-CR')+'/mes total':'⚠️ Sube ₡'+Math.round(dC).toLocaleString('es-CR')+'/mes total'):'—');
   const dCT=totNCT-totCT;
-  s6set('n2_tot_cct', totNCT&&totCT?(dCT<0?'✅ Ahorrás ₡'+Math.abs(Math.round(dCT)).toLocaleString('es-CR')+' en total':'❌ Pagás ₡'+Math.round(dCT).toLocaleString('es-CR')+' más en total'):'—');
+  s6s6set('n2_tot_cct', totNCT&&totCT?(dCT<0?'✅ Ahorrás ₡'+Math.abs(Math.round(dCT)).toLocaleString('es-CR')+' en total':'❌ Pagás ₡'+Math.round(dCT).toLocaleString('es-CR')+' más en total'):'—');
 
   // Resumen
-  s6set('rs_real', totNCT?s6fmt(totNCT):'Sin datos aún');
+  s6s6set('rs_real', totNCT?s6fmt(totNCT):'Sin datos aún');
   const ahReal=totNCT?totCT-totNCT:null;
-  s6set('rs_ahr', ahReal!=null?s6fmt(ahReal):'Sin datos aún');
+  s6s6set('rs_ahr', ahReal!=null?s6fmt(ahReal):'Sin datos aún');
 }
 
 // ─── DAÑOS ───────────────────────────────────────────────
@@ -1708,20 +1708,20 @@ const DANO_DESC=[
 
 function recalcDanos(){
   const d=[s6num('d1'),s6num('d2'),s6num('d3'),s6num('d4'),s6num('d5')];
-  for(let i=0;i<5;i++){const v=Math.min(Math.max(Math.round(d[i]),0),3);s6set('d'+(i+1)+'d',DANO_DESC[i][v]);}
+  for(let i=0;i<5;i++){const v=Math.min(Math.max(Math.round(d[i]),0),3);s6s6set('d'+(i+1)+'d',DANO_DESC[i][v]);}
   const tot=d.reduce((a,v)=>a+v,0);
-  s6set('puntaje',tot);
-  s6set('puntaje_d', d[3]>0?'⚠️ Daño Legal activo · Prioridad máxima':tot<=3?'🟢 Daño bajo · Situación manejable':tot<=7?'🟡 Daño moderado · Requiere plan estructurado':tot<=11?'🟠 Daño alto · Urgencia de acción inmediata':'🔴 Daño crítico · Múltiples frentes simultáneos');
+  s6s6set('puntaje',tot);
+  s6s6set('puntaje_d', d[3]>0?'⚠️ Daño Legal activo · Prioridad máxima':tot<=3?'🟢 Daño bajo · Situación manejable':tot<=7?'🟡 Daño moderado · Requiere plan estructurado':tot<=11?'🟠 Daño alto · Urgencia de acción inmediata':'🔴 Daño crítico · Múltiples frentes simultáneos');
   const mx=Math.max(...d);
   const nms=['💸 Daño 1 · Financiero','🧠 Daño 2 · Psicológico','👥 Daño 3 · Relacional','⚖️ Daño 4 · Legal','🏛️ Daño 5 · Patrimonial'];
   const cnt=d.filter(v=>v===mx).length;
-  s6set('dano_dom',cnt>1?(d[3]===mx?'⚖️ Daño 4 · Legal (con empate)':'⚠️ Varios daños al mismo nivel · Ver detalle'):nms[d.indexOf(mx)]);
+  s6s6set('dano_dom',cnt>1?(d[3]===mx?'⚖️ Daño 4 · Legal (con empate)':'⚠️ Varios daños al mismo nivel · Ver detalle'):nms[d.indexOf(mx)]);
   let m,w,o;
   if(d[3]>0){m='⚡ MÉTODO HÍBRIDO';w='Daño Legal activo detectado. Resolver primero la urgencia legal/embargo antes de cualquier otra deuda, luego aplicar Avalancha con el flujo liberado.';o='1° Deuda en embargo o cobro judicial activo  →  2° Deuda con garantía en riesgo de remate  →  3° Deuda de mayor TEA';}
   else if(d[1]>=2){m='⛄ BOLA DE NIEVE';w='Daño Psicológico moderado o severo. La clienta necesita victorias rápidas para no rendirse. Se ataca primero la deuda de menor saldo para generar momentum emocional.';o='1° Deuda de menor saldo (cierre rápido)  →  2° Siguiente menor saldo  →  3° Continuar la secuencia hasta limpiar todo';}
   else if(d[0]>=2&&d[1]<=1){m='⚡ MÉTODO HÍBRIDO';w='Daño Financiero alto sin bloqueo emocional. La clienta puede sostener la disciplina, pero la urgencia financiera requiere un enfoque mixto: cerrar deudas pequeñas para liberar flujo, luego atacar por tasa.';o='1° Deudas pequeñas que liberen flujo rápido  →  2° Luego ordenar el resto por mayor TEA  →  3° Continuar hasta limpiar todo';}
   else{m='🏔️ AVALANCHA';w='Sin urgencias legales ni bloqueo emocional severo. Atacar la deuda de mayor TEA primero para minimizar el costo total de intereses pagados.';o='1° Deuda de mayor TEA  →  2° Siguiente mayor TEA  →  3° Continuar la secuencia hasta limpiar todo';}
-  s6set('metodo',m);s6set('metodo_why',w);s6set('metodo_orden',o);
+  s6s6set('metodo',m);s6s6set('metodo_why',w);s6s6set('metodo_orden',o);
   recalc();
 }
 
