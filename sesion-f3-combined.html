@@ -770,7 +770,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <script>
 // ═══ SHARED ═══
 const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
-const KEY_S5='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const KEY_S5='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const KEY_S6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const TBL='sesiones_data_f3';
 let CID=new URLSearchParams(location.search).get('c')||'';
@@ -1243,6 +1243,8 @@ async function s5guardar(){
 async function s5cargar(){
   document.getElementById('overlay').style.display='flex';
   if(!CID){document.getElementById('overlay').style.display='none';return;}
+  // Safety timeout — always hide after 5 seconds
+  setTimeout(()=>{document.getElementById('overlay').style.display='none';},5000);
   try{
     const rc=await s5dbReq('clientas?id=eq.'+CID);
     if(rc&&rc[0]) document.getElementById('tinfo').textContent=rc[0].nombre+' — Sesión 5 · Diagnóstico de Deudas';
@@ -1783,6 +1785,8 @@ async function guardar(){
 async function cargar(){
   document.getElementById('overlay').style.display='flex';
   if(!CID){document.getElementById('overlay').style.display='none';return;}
+  // Safety timeout — always hide after 5 seconds
+  setTimeout(()=>{document.getElementById('overlay').style.display='none';},5000);
   try{
     const rc=await s5dbReq('clientas?id=eq.'+CID);
     if(rc&&rc[0])document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 3 · Deudas';
