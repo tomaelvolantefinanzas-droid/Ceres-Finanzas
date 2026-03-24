@@ -86,8 +86,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
         <button class="btn" style="background:#f0faf5;color:#0F6E56;border-color:#9fe1cb;" onclick="accionAbrir()">Abrir Sesión F1</button>
         <button class="btn" style="background:#EEEDFE;color:#534AB7;border-color:#AFA9EC;" onclick="accionAbrirF2()">Abrir Sesión F2</button>
-        <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirF3()">Abrir Sesión F3-S5</button>
-        <button class="btn" style="background:#FDE8D8;color:#8B3A1A;border-color:#E8A87C;" onclick="accionAbrirF3S6()">Abrir Sesión F3-S6</button>
+        <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirF3()">Abrir Sesión F3</button>
         <button class="btn" style="color:#185FA5;" onclick="accionModificar()">Modificar</button>
         <button class="btn" style="color:#A32D2D;" onclick="accionEliminar()">Eliminar</button>
         <button class="btn btn-primary" onclick="document.getElementById('modal-nueva').classList.add('open')">+ Nueva clienta</button>
@@ -369,12 +368,7 @@ function accionAbrirF2() {
 
 function accionAbrirF3() {
   const checks = getChecked(); if (!checks) return;
-  checks.forEach(c => window.open('sesion-f3.html?c=' + c.value, '_blank'));
-}
-
-function accionAbrirF3S6() {
-  const checks = getChecked(); if (!checks) return;
-  checks.forEach(c => window.open('sesion-f3-s6.html?c=' + c.value, '_blank'));
+  checks.forEach(c => window.open('sesion-f3-combined.html?c=' + c.value, '_blank'));
 }
 
 function accionModificar() {
