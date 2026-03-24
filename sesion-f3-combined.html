@@ -3,32 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tomá el Volante — Fase 3 · Diagnóstico y Estrategia de Deudas</title>
+<title>Tomá el Volante — Fase 3 · Deudas</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
 .topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
 .logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
 #tinfo{font-size:12px;color:#888;}
-.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;z-index:40;overflow-x:auto;}
-.tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
-.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600;}
-.tab.locked{color:#ccc;cursor:default;}
-/* SESSION BAR */
 .ses-bar{background:#fff;border-bottom:2px solid #e8e6e0;padding:0 24px;display:flex;position:sticky;top:49px;z-index:45;}
-.ses-btn{padding:11px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#888;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;}
+.ses-btn{padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#888;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;transition:all .15s;user-select:none;}
 .ses-btn.active{color:#B74A34;border-bottom-color:#B74A34;}
 .ses-btn.locked{color:#ccc;cursor:default;}
-.ses-wrap{display:none;}
-.ses-wrap.active{display:block;}
-/* S6 page */
-.s6page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
-.s6page.active{display:block;}
-/* OVERLAY */
-.ov{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
-.spin{width:28px;height:28px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-/* S5 STYLES */
+.ses-content{display:none;}
+.ses-content.active{display:block;}
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
@@ -86,7 +73,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .ro-neg{background:#FCEBEB;color:#A32D2D;font-weight:600;border:1px solid #f7c1c1;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
 .ro-pos{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
 
-/* S6 STYLES */
 
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
@@ -96,8 +82,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
 .tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
 .tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600;}
-  .s6page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
-.s6page.active{display:block;}
+.page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;}
 .card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:20px;margin-bottom:16px;}
 .card-title{font-size:14px;font-weight:700;color:#1A3A5C;margin-bottom:4px;}
 .card-sub{font-size:11px;color:#888;margin-bottom:16px;}
@@ -129,26 +115,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .nota{background:#FFFFF2CC;border:1px solid #FFD966;border-radius:6px;padding:8px 12px;font-size:11px;color:#7F6000;margin-top:10px;line-height:1.5;}
 .nota-azul{background:#EBF5FB;border:1px solid #2E6DA4;border-radius:6px;padding:8px 12px;font-size:11px;color:#1A3A5C;margin-top:10px;}
 
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
 </style>
 </head>
 <body>
-
 <div id="overlay" class="ov"><div class="spin"></div><p id="ov-msg">Cargando...</p></div>
-
 <div class="topbar">
   <div class="logo">Tomá el <span>Volante</span></div>
-  <div id="tinfo">Fase 3 · Diagnóstico y Estrategia de Deudas</div>
+  <div id="tinfo" style="font-size:12px;color:#888;">Fase 3 · Deudas</div>
 </div>
-
-<!-- SELECTOR SESIÓN -->
 <div class="ses-bar">
   <div class="ses-btn active" id="sbtn0" onclick="showSes(0)">📋 Sesión 5 — Diagnóstico de Deudas</div>
   <div class="ses-btn locked" id="sbtn1" onclick="showSes(1)">🎯 Sesión 6 — Estrategia <span id="s6lock">🔒</span></div>
 </div>
+<!-- S5 -->
+<div class="ses-content active" id="ses0">
 
-<!-- SESIÓN 5 -->
-<div class="ses-wrap active" id="sw0">
-<div class="tabs" id="s5-tabs" style="top:98px;">
+<div id="overlay" class="ov"><div class="spin"></div><p id="ov-msg">Cargando...</p></div>
+<div class="topbar">
+  <div class="logo">Tomá el <span>Volante</span></div>
+  <div style="font-size:12px;color:#888;" id="tinfo">Sesión 5 · Diagnóstico de Deudas</div>
+</div>
+<div class="tabs">
   <div class="tab active" onclick="goTab(0)">🧮 Diagnóstico y Margen</div>
   <div class="tab" onclick="goTab(1)">💼 Préstamo Personal</div>
   <div class="tab" onclick="goTab(2)">🚨 Préstamo Urgente</div>
@@ -157,6 +145,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="tab" onclick="goTab(5)">💳 Tarjeta</div>
   <div class="tab" onclick="goTab(6)">🔍 Simulador Tarjeta</div>
 </div>
+
 <!-- HOJA 1: DIAGNÓSTICO Y MARGEN -->
 <div class="page active" id="page0">
 <div class="card">
@@ -451,20 +440,26 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 <div class="save-bar"><span class="ss" id="ss6"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
 </div>
-</div>
 
-<!-- SESIÓN 6 -->
-<div class="ses-wrap" id="sw1">
-<div id="s6-tabs" class="tabs" style="top:98px;">
-  <div class="tab active" onclick="showTabS6(0)">📝 Datos de la Clienta</div>
-  <div class="tab" onclick="showTabS6(1)">🎯 Daños y Método de Ataque</div>
-  <div class="tab" onclick="showTabS6(2)">📊 Análisis y Recomendación</div>
-  <div class="tab" onclick="showTabS6(3)">📈 Negociación y Ahorro</div>
+
 </div>
-  
+<!-- S6 -->
+<div class="ses-content" id="ses1">
+
+<div id="overlay"><div class="spin"></div><p>Cargando...</p></div>
+<div class="topbar">
+  <div class="logo">Tomá el <span>Volante</span></div>
+  <div id="tinfo">Sesión 6 · Estrategia de Deudas</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="showTab(0)">📝 Datos de la Clienta</div>
+  <div class="tab" onclick="showTab(1)">🎯 Daños y Método de Ataque</div>
+  <div class="tab" onclick="showTab(2)">📊 Análisis y Recomendación</div>
+  <div class="tab" onclick="showTab(3)">📈 Negociación y Ahorro</div>
+</div>
 
 <!-- HOJA 1 -->
-<div class="s6page active" id="s6p0">
+<div class="page active" id="page0">
 <div class="card">
   <div class="card-title">📝 Datos de la Clienta · Tomá el Volante</div>
   <div class="card-sub">Campos en azul: vos los ingresás. Sin color: se calculan automáticamente. TEA se ingresa como número entero (ej: 26 para 26%).</div>
@@ -579,7 +574,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 2: DAÑOS -->
-<div class="s6page" id="s6p1">
+<div class="page" id="page1">
 <div class="card">
   <div class="card-title">🎯 Diagnóstico de Daños y Método de Ataque</div>
   <div class="card-sub">Ingresá un número del 0 al 3 · 0 = No presente · 1 = Leve · 2 = Moderado · 3 = Severo</div>
@@ -612,7 +607,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 3: ANÁLISIS -->
-<div class="s6page" id="s6p2">
+<div class="page" id="page2">
 <div class="card">
   <div class="card-title">📊 Análisis y Estrategia Recomendada · Tomá el Volante</div>
   <div class="shdr">🔍 Diagnóstico por Tipo de Deuda</div>
@@ -650,7 +645,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <!-- HOJA 4: NEGOCIACIÓN -->
-<div class="s6page" id="s6p3">
+<div class="page" id="page3">
 <div class="card">
   <div class="card-title">📈 Negociación y Ahorro Proyectado · Tomá el Volante</div>
   <div class="card-sub">Parte 1: condiciones actuales &nbsp;|&nbsp; Parte 2: propuesta del banco &nbsp;|&nbsp; Parte 3: proyección de ahorro estimado</div>
@@ -769,33 +764,25 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="save-bar"><button class="btn-save" onclick="guardar()">💾 Guardar sesión</button></div>
-<div class="save-bar" style="position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:flex-end;z-index:40;">
-  <button id="s6-save-btn" style="background:#1D9E75;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;" onclick="guardarS6()">💾 Guardar sesión</button>
-</div>
-</div>
 
+
+</div>
 <script>
-// ═══════════════════════════════════════
-// CONFIG COMPARTIDA
-// ═══════════════════════════════════════
+// ═══ SHARED ═══
 const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
 const KEY_S5='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
 const KEY_S6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const TBL='sesiones_data_f3';
-let CID=null;
-const _P=new URLSearchParams(location.search);
-if(_P.get('c'))CID=_P.get('c');
-
-let s6Unlocked=false;
+let CID=new URLSearchParams(location.search).get('c')||'';
 let currentSes=0;
+let s6Unlocked=false;
 
 function showSes(i){
   if(i===1&&!s6Unlocked){alert('Sesión 6 bloqueada. Completá la Sesión 5 primero.');return;}
   currentSes=i;
-  document.querySelectorAll('.ses-btn').forEach((b,j)=>{b.classList.toggle('active',i===j&&(j===0||s6Unlocked));});
-  document.querySelectorAll('.ses-wrap').forEach((w,j)=>w.classList.toggle('active',i===j));
+  document.querySelectorAll('.ses-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.ses-content').forEach((c,j)=>c.classList.toggle('active',j===i));
 }
-
 function unlockS6(){
   s6Unlocked=true;
   const b=document.getElementById('sbtn1');
@@ -803,43 +790,40 @@ function unlockS6(){
   document.getElementById('s6lock').textContent='🔓';
   if(CID)localStorage.setItem('s6u_'+CID,'1');
 }
-if(CID&&localStorage.getItem('s6u_'+CID)==='1')unlockS6();
-window.unlockS6=unlockS6;
+if(CID&&localStorage.getItem('s6u_'+CID)==='1')s6Unlocked=true;
+function _updateS6Btn(){
+  if(s6Unlocked){document.getElementById('sbtn1').classList.remove('locked');document.getElementById('s6lock').textContent='🔓';}
+}
 
-// ═══════════════════════════════════════
-// DB HELPERS
-// ═══════════════════════════════════════
-const H5={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
-const H6={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
-
-async function dbReq(path,method='GET',body=null){
-  const o={method,headers:H5};
+async function s5dbReq(path,method='GET',body=null){
+  const H={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
+  const o={method,headers:H};
   if(body)o.body=JSON.stringify(body);
   const r=await fetch(SUPA+'/rest/v1/'+path,o);
   if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
   return method==='GET'?r.json():r;
 }
-async function dbReq6(url,method='GET',body=null){
-  const opts={method,headers:H6};
+async function s6dbReq(url,method='GET',body=null){
+  const H={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
+  const opts={method,headers:H};
   if(body)opts.body=JSON.stringify(body);
   const r=await fetch(url,opts);
   if(r.status===204)return null;
   return r.json();
 }
 
-// ═══════════════════════════════════════
-// S5 JAVASCRIPT
-// ═══════════════════════════════════════
-// removed-header
-// removed-header
-const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY};
-// removed-header
-// removed-header
-// removed-header
-// removed-header
+// ═══ S5 CODE ═══
 
-// removed-fmt
-// removed-fmtP
+// SUPA shared
+// KEY shared
+const H={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
+// TBL shared
+// CID shared
+// P shared
+// CID set in shared
+
+const s5fmt=n=>isNaN(n)||!isFinite(n)?'—':'₡'+Math.round(n).toLocaleString('es-CR');
+const s5fmtP=n=>isNaN(n)||!isFinite(n)?'—':(n*100).toFixed(1)+'%';
 const fmtX=n=>isNaN(n)||!isFinite(n)?'—':n.toFixed(2)+'x';
 const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
 function set(id,v){const e=document.getElementById(id);if(e)e.value=v;}
@@ -847,7 +831,12 @@ function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
 function sv(id,v){const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;}
 function status(id,msg,ok=true){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='ss '+(ok?'ok':'err');if(ok)setTimeout(()=>{e.textContent='';e.className='ss';},3000);}
 
-// goTab overridden below
+function goTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  syncCuotasDesdeHoja1();
+  recalcAll();
+}
 
 // ── Jalar cuotas desde Hoja 1 a todas las hojas ──
 function syncCuotasDesdeHoja1(){
@@ -897,17 +886,17 @@ function calcMesesPago(saldo,r,cuota){
 function calcDiag(){
   const ing=nv('d-ingreso');
   const total=[nv('d-tarjeta'),nv('d-vehiculo'),nv('d-hipoteca'),nv('d-personal'),nv('d-urgente'),nv('d-app'),nv('d-familiar'),nv('d-otra')].reduce((a,v)=>a+v,0);
-  set('d-total',fmt(total));
+  set('d-total',s5fmt(total));
   if(!ing)return;
 
   const rEnd=total/ing;
   const disponible=ing-total;
   const rMargen=disponible/ing;
 
-  setTxt('r-total-deudas',fmt(total));
-  setTxt('r-end',fmtP(rEnd));
-  setTxt('r-disponible',fmt(disponible));
-  setTxt('r-margen',fmtP(rMargen));
+  setTxt('r-total-deudas',s5fmt(total));
+  setTxt('r-end',s5fmtP(rEnd));
+  setTxt('r-disponible',s5fmt(disponible));
+  setTxt('r-margen',s5fmtP(rMargen));
 
   // Diagnóstico — rangos exactos del Excel
   let diag,dc;
@@ -941,19 +930,19 @@ function calcPP(){
   if(!monto||!tea||!plazo)return;
 
   const saldo=calcSaldoPV(cuota,tea,mesesRest);
-  set('pp-saldo',fmt(saldo));
+  set('pp-saldo',s5fmt(saldo));
   set('pp-meses-rest',mesesRest>0?mesesRest:0);
 
   const costoTotal=cuota*plazo+comision;
   const intereses=costoTotal-monto;
-  set('pp-costo-total',fmt(costoTotal));
-  set('pp-intereses',fmt(intereses>0?intereses:0));
+  set('pp-costo-total',s5fmt(costoTotal));
+  set('pp-intereses',s5fmt(intereses>0?intereses:0));
 
   const ratioCosto=monto>0?costoTotal/monto:0;
   set('pp-ratio-costo',fmtX(ratioCosto));
 
   const amortizado=monto>0?(monto-saldo)/monto:0;
-  set('pp-amortizado',fmtP(amortizado));
+  set('pp-amortizado',s5fmtP(amortizado));
 
   // Tasa razonable CR 2026
   let tasaText;
@@ -976,15 +965,15 @@ function calcPP(){
   if(saldo>0&&cuota>0&&r>0){
     set('pp-sim-actual',mesesRest>0?mesesRest:0);
     const intSin=cuota*mesesRest-saldo;
-    set('pp-sim-int-sin',fmt(intSin>0?intSin:0));
+    set('pp-sim-int-sin',s5fmt(intSin>0?intSin:0));
     if(abono>0){
       const cuotaConAbono=cuota+abono;
       const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaConAbono));
       const intCon=cuotaConAbono*mesesCon-saldo;
       set('pp-sim-extra',isFinite(mesesCon)?mesesCon:'—');
       set('pp-sim-meses-ah',isFinite(mesesCon)?Math.max(0,mesesRest-mesesCon):'—');
-      set('pp-sim-int-con',isFinite(mesesCon)?fmt(intCon>0?intCon:0):'—');
-      set('pp-sim-ahorro',isFinite(mesesCon)?fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
+      set('pp-sim-int-con',isFinite(mesesCon)?s5fmt(intCon>0?intCon:0):'—');
+      set('pp-sim-ahorro',isFinite(mesesCon)?s5fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
     } else {
       set('pp-sim-extra','—');set('pp-sim-meses-ah','—');
       set('pp-sim-int-con','—');set('pp-sim-ahorro','—');
@@ -992,7 +981,7 @@ function calcPP(){
   }
 
   const cap=calcCapacidades(cuota);
-  set('pp-r-end',fmtP(cap.rEnd));setFmtColor('pp-cap-pago',cap.capPago);set('pp-lim-max',fmt(cap.limMax));setFmtColor('pp-cap-end',cap.capEnd);
+  set('pp-r-end',s5fmtP(cap.rEnd));setFmtColor('pp-cap-pago',cap.capPago);set('pp-lim-max',s5fmt(cap.limMax));setFmtColor('pp-cap-end',cap.capEnd);
 }
 
 // ── HOJA 3: PRÉSTAMO URGENTE ──
@@ -1006,10 +995,10 @@ function calcPU(){
   if(!monto||!devolver)return;
 
   const saldo=devolver-(cuota*pagos);
-  set('pu-saldo',fmt(saldo>0?saldo:0));
+  set('pu-saldo',s5fmt(saldo>0?saldo:0));
 
   const costo=devolver-monto;
-  setTxt('pu-costo',fmt(costo));
+  setTxt('pu-costo',s5fmt(costo));
 
   const tasaPeriodo=monto>0?costo/monto:0;
   setTxt('pu-tasa-periodo',(tasaPeriodo*100).toFixed(2)+'%');
@@ -1032,7 +1021,7 @@ function calcPU(){
   setTxt('pu-riesgo',riesgo);
 
   const cap=calcCapacidades(cuota);
-  set('pu-r-end',fmtP(cap.rEnd));setFmtColor('pu-cap-pago',cap.capPago);setFmtColor('pu-cap-end',cap.capEnd);
+  set('pu-r-end',s5fmtP(cap.rEnd));setFmtColor('pu-cap-pago',cap.capPago);setFmtColor('pu-cap-end',cap.capEnd);
 }
 
 // ── HOJA 4: CRÉDITO VEHICULAR ──
@@ -1043,29 +1032,29 @@ function calcCV(){
   if(!monto&&!valor)return;
 
   const costoMensual=cuota+seguro+marchamo+mant+gasolina;
-  set('cv-costo-mensual',fmt(costoMensual));
-  set('cv-pct-ingreso',b.ingreso>0?fmtP(costoMensual/b.ingreso):'—');
+  set('cv-costo-mensual',s5fmt(costoMensual));
+  set('cv-pct-ingreso',b.ingreso>0?s5fmtP(costoMensual/b.ingreso):'—');
   set('cv-meses-rest',mesesRest>0?mesesRest:0);
 
   const aniosPag=pagados/12;
   const valorActual=valor*Math.pow(0.85,aniosPag);
-  set('cv-valor-actual',fmt(valorActual));
+  set('cv-valor-actual',s5fmt(valorActual));
 
   const saldo=calcSaldoPV(cuota,tea,mesesRest);
-  set('cv-saldo',fmt(saldo));
+  set('cv-saldo',s5fmt(saldo));
 
   const equity=valorActual-saldo;
   const eqEl=document.getElementById('cv-equity');
-  if(eqEl){eqEl.value=fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
+  if(eqEl){eqEl.value=s5fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
 
   const costoTotal=cuota*plazo+prima;
-  set('cv-costo-total',fmt(costoTotal));
+  set('cv-costo-total',s5fmt(costoTotal));
 
   const sobrecosto=valor>0?(costoTotal-valor)/valor:0;
-  set('cv-sobrecosto',fmtP(sobrecosto));
+  set('cv-sobrecosto',s5fmtP(sobrecosto));
 
   const rEnd=b.ingreso>0?cuota/b.ingreso:0;
-  set('cv-r-end',fmtP(rEnd));
+  set('cv-r-end',s5fmtP(rEnd));
 
   const cap=calcCapacidades(cuota);
   setFmtColor('cv-cap-pago',cap.capPago);
@@ -1078,9 +1067,9 @@ function calcCV(){
     const intCon=cuotaExtra*mesesCon-saldo;
     set('cv-sim-extra',isFinite(mesesCon)?mesesCon:'—');
     set('cv-sim-meses',isFinite(mesesCon)?Math.max(0,mesesRest-mesesCon):'—');
-    set('cv-sim-int-sin',fmt(intSin>0?intSin:0));
-    set('cv-sim-int-con',isFinite(mesesCon)?fmt(intCon>0?intCon:0):'—');
-    set('cv-sim-ahorro',isFinite(mesesCon)?fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
+    set('cv-sim-int-sin',s5fmt(intSin>0?intSin:0));
+    set('cv-sim-int-con',isFinite(mesesCon)?s5fmt(intCon>0?intCon:0):'—');
+    set('cv-sim-ahorro',isFinite(mesesCon)?s5fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
   }
 }
 
@@ -1094,36 +1083,36 @@ function calcHI(){
   set('hi-meses-rest',mesesRest>0?mesesRest:0);
 
   const costoMensual=cuota+gastosAsoc;
-  set('hi-costo-mensual',fmt(costoMensual));
-  set('hi-pct-ingreso',b.ingreso>0?fmtP(costoMensual/b.ingreso):'—');
+  set('hi-costo-mensual',s5fmt(costoMensual));
+  set('hi-pct-ingreso',b.ingreso>0?s5fmtP(costoMensual/b.ingreso):'—');
 
   const saldo=calcSaldoPV(cuota,tea,mesesRest);
-  set('hi-saldo',fmt(saldo));
+  set('hi-saldo',s5fmt(saldo));
 
   const equity=valor-saldo;
   const eqEl=document.getElementById('hi-equity');
-  if(eqEl){eqEl.value=fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
+  if(eqEl){eqEl.value=s5fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
 
   if(r>0&&saldo>0){
     if(cuota>0){
       const intTotales=cuota*mesesRest-saldo;
-      set('hi-costo-intereses',fmt(intTotales>0?intTotales:0));
+      set('hi-costo-intereses',s5fmt(intTotales>0?intTotales:0));
       if(cuotaExtra>cuota){
         const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
         const mesesAhorro=Math.max(0,mesesRest-mesesCon);
         set('hi-meses-ahorro',isFinite(mesesCon)?mesesAhorro:'—');
         const intCon=cuotaExtra*mesesCon-saldo;
-        set('hi-ahorro-int',isFinite(mesesCon)?fmt(Math.max(0,(intTotales>0?intTotales:0)-(intCon>0?intCon:0))):'—');
+        set('hi-ahorro-int',isFinite(mesesCon)?s5fmt(Math.max(0,(intTotales>0?intTotales:0)-(intCon>0?intCon:0))):'—');
       }
     }
   }
 
   const costoReal=b.ingreso>0?costoMensual/b.ingreso:0;
-  set('hi-costo-real',fmtP(costoReal));
-  set('hi-sobrecosto',monto>0?fmtP((cuota*plazo-monto)/monto):'—');
+  set('hi-costo-real',s5fmtP(costoReal));
+  set('hi-sobrecosto',monto>0?s5fmtP((cuota*plazo-monto)/monto):'—');
 
   const rEnd=b.ingreso>0?cuota/b.ingreso:0;
-  set('hi-r-end',fmtP(rEnd));
+  set('hi-r-end',s5fmtP(rEnd));
 
   const cap=calcCapacidades(cuota);
   setFmtColor('hi-cap-pago',cap.capPago);setFmtColor('hi-cap-end',cap.capEnd);
@@ -1134,9 +1123,9 @@ function calcTC(){
   const saldo=nv('tc-saldo'),limite=nv('tc-limite'),tea=nv('tc-tea')/100,minimo=nv('tc-minimo'),pagoTotal=nv('tc-pago-total');
   const r=tea/12;
 
-  set('tc-utilizacion',limite>0?fmtP(saldo/limite):'—');
+  set('tc-utilizacion',limite>0?s5fmtP(saldo/limite):'—');
   const intMensual=saldo*r;
-  setTxt('tc-int-mensual',fmt(intMensual)+' por mes');
+  setTxt('tc-int-mensual',s5fmt(intMensual)+' por mes');
   setTxt('tc-cubre',minimo>intMensual?'✅ SÍ cubre — la deuda baja mes a mes':'🔴 NO cubre — la deuda crece aunque estés pagando');
 
   if(minimo<=intMensual){
@@ -1146,25 +1135,25 @@ function calcTC(){
     const mesesMin=Math.ceil(calcMesesPago(saldo,r,minimo));
     setTxt('tc-meses-min',isFinite(mesesMin)?mesesMin+' meses':'—');
     const costoMin=minimo*mesesMin;
-    setTxt('tc-costo-min',fmt(costoMin));
+    setTxt('tc-costo-min',s5fmt(costoMin));
   }
 
   if(pagoTotal>intMensual){
     const mesesExtra=Math.ceil(calcMesesPago(saldo,r,pagoTotal));
     set('tc-meses-extra',isFinite(mesesExtra)?mesesExtra+' meses':'—');
     const intExtra=pagoTotal*mesesExtra-saldo;
-    set('tc-int-extra',fmt(intExtra>0?intExtra:0));
+    set('tc-int-extra',s5fmt(intExtra>0?intExtra:0));
     if(minimo>intMensual){
       const mesesMin2=Math.ceil(calcMesesPago(saldo,r,minimo));
       const intMin=minimo*mesesMin2-saldo;
-      set('tc-ahorro',fmt(Math.max(0,(intMin>0?intMin:0)-(intExtra>0?intExtra:0))));
+      set('tc-ahorro',s5fmt(Math.max(0,(intMin>0?intMin:0)-(intExtra>0?intExtra:0))));
     }
   } else if(pagoTotal>0){
     set('tc-meses-extra','⛔ Ese pago no cubre los intereses mensuales');
   }
 
   const cap=calcCapacidades(minimo);
-  set('tc-r-end',fmtP(cap.rEnd));setFmtColor('tc-cap-pago',cap.capPago);set('tc-lim-max',fmt(cap.limMax));setFmtColor('tc-cap-end',cap.capEnd);
+  set('tc-r-end',s5fmtP(cap.rEnd));setFmtColor('tc-cap-pago',cap.capPago);set('tc-lim-max',s5fmt(cap.limMax));setFmtColor('tc-cap-end',cap.capEnd);
 }
 
 // ── HOJA 7: SIMULADOR TARJETA ──
@@ -1172,7 +1161,7 @@ function calcSI(){
   const saldo=nv('si-saldo'),limite=nv('si-limite'),tea=nv('si-tea')/100,minimo=nv('si-minimo'),pagoB=nv('si-b-pago'),teaC=nv('si-c-tea')/100,plazoC=nv('si-c-plazo');
   const r=tea/12,intMensual=saldo*r;
 
-  set('si-utilizacion',limite>0?fmtP(saldo/limite):'—');
+  set('si-utilizacion',limite>0?s5fmtP(saldo/limite):'—');
 
   // Escenario A
   if(minimo<=intMensual){
@@ -1183,8 +1172,8 @@ function calcSI(){
     const mesesA=Math.ceil(calcMesesPago(saldo,r,minimo));
     setTxt('si-a-meses',mesesA+' meses');
     const intA=minimo*mesesA-saldo;
-    setTxt('si-a-intereses',fmt(intA>0?intA:0));
-    setTxt('si-a-total',fmt(saldo+(intA>0?intA:0)));
+    setTxt('si-a-intereses',s5fmt(intA>0?intA:0));
+    setTxt('si-a-total',s5fmt(saldo+(intA>0?intA:0)));
   }
 
   // Escenario B
@@ -1192,11 +1181,11 @@ function calcSI(){
     const mesesB=Math.ceil(calcMesesPago(saldo,r,pagoB));
     set('si-b-meses',mesesB+' meses');
     const intB=pagoB*mesesB-saldo;
-    set('si-b-intereses',fmt(intB>0?intB:0));
+    set('si-b-intereses',s5fmt(intB>0?intB:0));
     if(minimo>intMensual){
       const mesesA2=Math.ceil(calcMesesPago(saldo,r,minimo));
       const intA2=minimo*mesesA2-saldo;
-      set('si-b-ahorro',fmt(Math.max(0,(intA2>0?intA2:0)-(intB>0?intB:0))));
+      set('si-b-ahorro',s5fmt(Math.max(0,(intA2>0?intA2:0)-(intB>0?intB:0))));
     }
   } else if(pagoB>0){
     set('si-b-meses','⛔ Ese pago no cubre los intereses');
@@ -1212,7 +1201,7 @@ function calcSI(){
       const rC=teaC/12;
       const cuotaC=saldo*(rC*Math.pow(1+rC,plazoC))/(Math.pow(1+rC,plazoC)-1);
       const costoC=cuotaC*plazoC;
-      set('si-c-cuota',fmt(cuotaC));set('si-c-costo',fmt(costoC));
+      set('si-c-cuota',s5fmt(cuotaC));set('si-c-costo',s5fmt(costoC));
       if(minimo>intMensual){
         const mesesA3=Math.ceil(calcMesesPago(saldo,r,minimo));
         const costoA=minimo*mesesA3;
@@ -1226,7 +1215,7 @@ function calcSI(){
 
 function setFmtColor(id,v){
   const e=document.getElementById(id);if(!e)return;
-  e.value=fmt(v);
+  e.value=s5fmt(v);
   e.className=v<0?'ro-neg':'ro';
 }
 
@@ -1236,68 +1225,68 @@ function recalcAll(){
 }
 
 // ── GUARDAR / CARGAR ──
-// S5 dbReq removed - using shared dbReq above
 
-
-
-
-
-
-// Override goTab to only affect S5 tabs
-function goTab(i){
-  document.querySelectorAll('#s5-tabs .tab').forEach((t,j)=>t.classList.toggle('active',i===j));
-  document.querySelectorAll('#sw0 .page').forEach((p,j)=>p.classList.toggle('active',i===j));
-  syncCuotasDesdeHoja1();
-  recalcAll();
-}
-
-// ═══════════════════════════════════════
-// S5 SAVE
-// ═══════════════════════════════════════
-async function guardar(){
+async function s5guardar(){
   if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
-  const idx=[...document.querySelectorAll('#s5-tabs .tab')].findIndex(t=>t.classList.contains('active'));
-  const ssId='ss'+idx;
-  status(ssId,'Guardando...');
+  const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'));
+  const ssId='ss'+idx;status(ssId,'Guardando...');
   const campos={};
-  document.querySelectorAll('#sw0 input:not([readonly]),#sw0 select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  document.querySelectorAll('input:not([readonly]),select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
   try{
-    const existe=await dbReq(TBL+'?clienta_id=eq.'+CID);
-    const prevDatos=existe&&existe.length>0?(existe[0].datos||{}):{};
-    const newDatos={...prevDatos,s5:{campos,ts:new Date().toISOString()}};
-    if(existe&&existe.length>0) await dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:newDatos,updated_at:new Date().toISOString()});
-    else await dbReq(TBL,'POST',{clienta_id:CID,datos:newDatos,updated_at:new Date().toISOString()});
+    const existe=await s5dbReq(TBL+'?clienta_id=eq.'+CID);
+    if(existe&&existe.length>0) await s5dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
+    else await s5dbReq(TBL,'POST',{clienta_id:CID,datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
     status(ssId,'✅ Guardado');
   }catch(e){status(ssId,'❌ Error',false);console.error(e);}
 }
 
-// ═══════════════════════════════════════
-// S6 JAVASCRIPT
-// ═══════════════════════════════════════
-// KEYS defined above
+async function s5cargar(){
+  document.getElementById('overlay').style.display='flex';
+  if(!CID){document.getElementById('overlay').style.display='none';return;}
+  try{
+    const rc=await s5dbReq('clientas?id=eq.'+CID);
+    if(rc&&rc[0]) document.getElementById('tinfo').textContent=rc[0].nombre+' — Sesión 5 · Diagnóstico de Deudas';
+    const rd=await s5dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    if(rd&&rd[0]&&rd[0].datos?.campos){
+      const c=rd[0].datos.campos;
+      Object.entries(c).forEach(([id,val])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=val;});
+      calcDiag();recalcAll();
+    }
+  }catch(e){console.error(e);}
+  document.getElementById('overlay').style.display='none';
+}
+
+// s5cargar called from unified
+
+
+// ═══ S6 CODE ═══
+
 // ─── CONSTANTES ──────────────────────────────────────────
-// removed-header
-// removed-header
-// removed-header
-// removed-header
-const KEYS=['tc','ve','hi','pe','ur'];
+// SUPA shared
+// KEY shared
+const HDR={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
+// CID shared
+const S6_KEYS=['tc','ve','hi','pe','ur'];
 
 // TEA_CAMBIO: tipo de cambio USD → CRC para mostrar equivalente
 const TC_USD=520;
 
 // ─── UTILS ───────────────────────────────────────────────
-const $=id=>document.getElementById(id);
-const num=id=>parseFloat($(id)?.value)||0;
-const val=id=>$(id)?.value||'';
-const set=(id,v)=>{if($(id))$(id).textContent=v;};
-const fmt=n=>n?'₡'+Math.round(n).toLocaleString('es-CR'):'—';
-const fmtMon=(n,mon)=>n?(mon==='usd'?'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'₡'+Math.round(n).toLocaleString('es-CR')):'—';
-const fmtP=n=>n!=null?n.toFixed(1)+'%':'—';
+const s6el=id=>document.getElementById(id);
+const s6num=id=>parseFloat(s6el(id)?.value)||0;
+const s6val=id=>s6el(id)?.value||'';
+const s6set=(id,v)=>{if(s6el(id))s6el(id).textContent=v;};
+const s6fmt=n=>n?'₡'+Math.round(n).toLocaleString('es-CR'):'—';
+const s6fmtMon=(n,mon)=>n?(mon==='usd'?'$'+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}):'₡'+Math.round(n).toLocaleString('es-CR')):'—';
+const s6fmtP=n=>n!=null?n.toFixed(1)+'%':'—';
 // TEA se ingresa como entero (26 = 26%). Internamente la convertimos a decimal para cálculos.
-const teaDec=k=>num('t_'+k)/100;
-const teaDecN=v=>v/100; // para valores directos
+const s6teaDec=k=>s6num('t_'+k)/100;
+const s6teaDecN=v=>v/100; // para valores directos
 
-// showTabS6 defined below
+function s6showTab(i){
+  document.querySelectorAll('.tab').forEach((t,idx)=>t.classList.toggle('active',idx===i));
+  document.querySelectorAll('.page').forEach((p,idx)=>p.classList.toggle('active',idx===i));
+}
 
 // NPER: dado TEA decimal, cuota mensual y saldo → meses
 function nperCalc(teaDec,c,s){
@@ -1497,213 +1486,213 @@ let MON={tc:'col',ve:'col',hi:'col',pe:'col',ur:'col'};
 
 function recalc(){
   const S={},T={},C={},D={};
-  KEYS.forEach(k=>{
-    S[k]=num('s_'+k);
-    T[k]=num('t_'+k);
-    C[k]=num('c_'+k);
-    D[k]=num('d_'+k);
-    MON[k]=val('m_'+k)||'col';
+  S6_KEYS.forEach(k=>{
+    S[k]=s6num('s_'+k);
+    T[k]=s6num('t_'+k);
+    C[k]=s6num('c_'+k);
+    D[k]=s6num('d_'+k);
+    MON[k]=s6val('m_'+k)||'col';
   });
 
   // Plazo: Tarjeta, Hipoteca, Personal, Urgente = calculado; Vehículo = manual
-  PLAZOS.tc = S.tc&&T.tc&&C.tc ? (nperCalc(teaDec('tc'),C.tc,S.tc)||null) : null;
-  PLAZOS.ve = num('p_ve')||null;
-  PLAZOS.hi = S.hi&&T.hi&&C.hi ? (nperCalc(teaDec('hi'),C.hi,S.hi)||null) : null;
-  PLAZOS.pe = S.pe&&T.pe&&C.pe ? (nperCalc(teaDec('pe'),C.pe,S.pe)||null) : null;
-  PLAZOS.ur = S.ur&&T.ur&&C.ur ? (nperCalc(teaDec('ur'),C.ur,S.ur)||null) : null;
+  PLAZOS.tc = S.tc&&T.tc&&C.tc ? (nperCalc(s6teaDec('tc'),C.tc,S.tc)||null) : null;
+  PLAZOS.ve = s6num('p_ve')||null;
+  PLAZOS.hi = S.hi&&T.hi&&C.hi ? (nperCalc(s6teaDec('hi'),C.hi,S.hi)||null) : null;
+  PLAZOS.pe = S.pe&&T.pe&&C.pe ? (nperCalc(s6teaDec('pe'),C.pe,S.pe)||null) : null;
+  PLAZOS.ur = S.ur&&T.ur&&C.ur ? (nperCalc(s6teaDec('ur'),C.ur,S.ur)||null) : null;
 
-  KEYS.forEach(k=>{
+  S6_KEYS.forEach(k=>{
     const p=PLAZOS[k];
     const c=C[k];
     const s=S[k];
     const tDec=T[k]/100;
 
     // Plazo display
-    if(!s)set('p_'+k,'—');
-    else if(k==='ve') set('p_'+k, p?p+' meses':'—');
-    else if(!T[k]||!c) set('p_'+k,'—');
-    else if(!p) set('p_'+k,'⚠️ Cuota < Interés');
-    else set('p_'+k, p+' meses');
+    if(!s)s6set('p_'+k,'—');
+    else if(k==='ve') s6set('p_'+k, p?p+' meses':'—');
+    else if(!T[k]||!c) s6set('p_'+k,'—');
+    else if(!p) s6set('p_'+k,'⚠️ Cuota < Interés');
+    else s6set('p_'+k, p+' meses');
 
     // Costo total restante
     const ct=p&&c?p*c:null;
     COSTOS_TOT[k]=ct;
-    set('ct_'+k, ct?fmtMon(ct,MON[k]):'—');
-    set('it_'+k, ct&&s?fmtMon(ct-s,MON[k]):'—');
+    s6set('ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
+    s6set('it_'+k, ct&&s?s6fmtMon(ct-s,MON[k]):'—');
   });
 
   // Totales fila
-  const totS=KEYS.reduce((a,k)=>a+S[k],0);
-  const totC=KEYS.reduce((a,k)=>a+C[k],0);
-  set('tot_s',fmt(totS));
-  set('tot_c',fmt(totC));
+  const totS=S6_KEYS.reduce((a,k)=>a+S[k],0);
+  const totC=S6_KEYS.reduce((a,k)=>a+C[k],0);
+  s6set('tot_s',s6fmt(totS));
+  s6set('tot_c',s6fmt(totC));
 
   // TEA ponderada (promedio ponderado por saldo)
-  const sumST=KEYS.reduce((a,k)=>a+T[k]*S[k],0);
-  const sumS=KEYS.filter(k=>S[k]>0).reduce((a,k)=>a+S[k],0);
-  set('tot_t', sumS ? fmtP(sumST/sumS) : '—');
+  const sumST=S6_KEYS.reduce((a,k)=>a+T[k]*S[k],0);
+  const sumS=S6_KEYS.filter(k=>S[k]>0).reduce((a,k)=>a+S[k],0);
+  s6set('tot_t', sumS ? s6fmtP(sumST/sumS) : '—');
 
   // Plazo total
-  const totP=KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
-  set('tot_p',totP?totP+' meses':'—');
+  const totP=S6_KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
+  s6set('tot_p',totP?totP+' meses':'—');
 
   // Costo total e intereses totales
-  const totCT=KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
-  set('tot_ct',fmt(totCT));
-  const totIT=KEYS.reduce((a,k)=>{const ct=COSTOS_TOT[k];return a+(ct&&S[k]?ct-S[k]:0);},0);
-  set('tot_it',fmt(totIT));
+  const totCT=S6_KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
+  s6set('tot_ct',s6fmt(totCT));
+  const totIT=S6_KEYS.reduce((a,k)=>{const ct=COSTOS_TOT[k];return a+(ct&&S[k]?ct-S[k]:0);},0);
+  s6set('tot_it',s6fmt(totIT));
 
   // Resumen carga financiera
-  const ing=num('ingreso');
-  set('res_deuda',fmt(totS));
-  set('res_cuota',fmt(totC));
-  set('res_ingreso',fmt(ing));
+  const ing=s6num('ingreso');
+  s6set('res_deuda',s6fmt(totS));
+  s6set('res_cuota',s6fmt(totC));
+  s6set('res_ingreso',s6fmt(ing));
   const idx=ing?totC/ing:0;
-  set('res_idx', idx ? fmtP(idx*100) : '—');
-  set('res_sem', idx?(idx<=0.3?'🟢 BAJO':idx<=0.4?'🟡 MODERADO':idx<=0.5?'🟠 ALTO':'🔴 CRÍTICO'):'—');
+  s6set('res_idx', idx ? s6fmtP(idx*100) : '—');
+  s6set('res_sem', idx?(idx<=0.3?'🟢 BAJO':idx<=0.4?'🟡 MODERADO':idx<=0.5?'🟠 ALTO':'🔴 CRÍTICO'):'—');
 
   // Hoja 3
-  const d4n=num('d4');
-  KEYS.forEach(k=>{
+  const d4n=s6num('d4');
+  S6_KEYS.forEach(k=>{
     const tDec=T[k]/100;
-    set('a_s_'+k, S[k]?fmtMon(S[k],MON[k]):'—');
-    set('a_t_'+k, T[k]?fmtP(T[k]):'—');
-    set('a_c_'+k, C[k]?fmtMon(C[k],MON[k]):'—');
-    set('a_d_'+k, S[k]?(D[k]+' días'):'—');
-    set('a_w_'+k, S[k]&&totS?((S[k]/totS*100).toFixed(1)+'%'):'—');
-    set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n,MON[k]));
+    s6set('a_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
+    s6set('a_t_'+k, T[k]?s6fmtP(T[k]):'—');
+    s6set('a_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
+    s6set('a_d_'+k, S[k]?(D[k]+' días'):'—');
+    s6set('a_w_'+k, S[k]&&totS?((S[k]/totS*100).toFixed(1)+'%'):'—');
+    s6set('a_pri_'+k, getPrioridad(k,S[k],tDec,D[k],d4n,MON[k]));
     const st=getStrategy(k,S[k],tDec,C[k],D[k],PLAZOS[k]||0,MON[k],d4n);
     STRATS[k]=st;
-    set('e_'+k,st?st.nom:'—');
-    set('e_why_'+k,st?st.why:'—');
-    set('e_imp_'+k,st?st.cuota:'—');
-    set('e_cos_'+k,st?st.costo:'—');
-    set('e_acc_'+k,st?st.acc:'—');
-    set('n2_e_'+k,st?st.nom:'—');
+    s6set('e_'+k,st?st.nom:'—');
+    s6set('e_why_'+k,st?st.why:'—');
+    s6set('e_imp_'+k,st?st.cuota:'—');
+    s6set('e_cos_'+k,st?st.costo:'—');
+    s6set('e_acc_'+k,st?st.acc:'—');
+    s6set('n2_e_'+k,st?st.nom:'—');
   });
 
   const gidx=ing?totC/ing:0;
-  set('g_idx',gidx?fmtP(gidx*100):'—');
-  set('g_sit',gidx?(gidx<=0.3?'✅ Situación saludable. Evaluá estrategias de optimización para reducir costo total.':gidx<=0.4?'⚠️ Situación de atención. Renegociar las deudas de mayor tasa es prioritario para liberar flujo de caja.':gidx<=0.5?'🔶 Situación de riesgo. La carga de deuda supera el 40% del ingreso. Actuar pronto.':'🚨 Situación crítica. La carga de deuda supera el 50% del ingreso. Actuar de inmediato.'):'—');
+  s6set('g_idx',gidx?s6fmtP(gidx*100):'—');
+  s6set('g_sit',gidx?(gidx<=0.3?'✅ Situación saludable. Evaluá estrategias de optimización para reducir costo total.':gidx<=0.4?'⚠️ Situación de atención. Renegociar las deudas de mayor tasa es prioritario para liberar flujo de caja.':gidx<=0.5?'🔶 Situación de riesgo. La carga de deuda supera el 40% del ingreso. Actuar pronto.':'🚨 Situación crítica. La carga de deuda supera el 50% del ingreso. Actuar de inmediato.'):'—');
 
   // Hoja 4 Parte 1
-  set('n4n',val('nombre')||'—');
-  set('n4i',fmt(ing));
-  KEYS.forEach(k=>{
+  s6set('n4n',s6val('nombre')||'—');
+  s6set('n4i',s6fmt(ing));
+  S6_KEYS.forEach(k=>{
     const p=PLAZOS[k];
     const ct=COSTOS_TOT[k];
-    set('n1_s_'+k, S[k]?fmtMon(S[k],MON[k]):'—');
-    set('n1_t_'+k, T[k]?fmtP(T[k]):'—');
-    set('n1_p_'+k, p?p+' meses':'—');
-    set('n1_c_'+k, C[k]?fmtMon(C[k],MON[k]):'—');
-    set('n1_ct_'+k, ct?fmtMon(ct,MON[k]):'—');
-    set('n1_it_'+k, ct&&S[k]?fmtMon(ct-S[k],MON[k]):'—');
-    set('p3_ca_'+k, ct?fmtMon(ct,MON[k]):'—');
+    s6set('n1_s_'+k, S[k]?s6fmtMon(S[k],MON[k]):'—');
+    s6set('n1_t_'+k, T[k]?s6fmtP(T[k]):'—');
+    s6set('n1_p_'+k, p?p+' meses':'—');
+    s6set('n1_c_'+k, C[k]?s6fmtMon(C[k],MON[k]):'—');
+    s6set('n1_ct_'+k, ct?s6fmtMon(ct,MON[k]):'—');
+    s6set('n1_it_'+k, ct&&S[k]?s6fmtMon(ct-S[k],MON[k]):'—');
+    s6set('p3_ca_'+k, ct?s6fmtMon(ct,MON[k]):'—');
   });
-  const n1totP=KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
-  set('n1_tot_s',fmt(totS));
-  set('n1_tot_c',fmt(totC));
-  set('n1_tot_ct',fmt(totCT));
-  set('n1_tot_it',fmt(totIT));
-  set('n1_tot_t', sumS?fmtP(sumST/sumS):'—');
-  set('n1_tot_p', n1totP?n1totP+' meses':'—');
-  set('p3_tot_ca',fmt(totCT));
+  const n1totP=S6_KEYS.reduce((a,k)=>a+(PLAZOS[k]||0),0);
+  s6set('n1_tot_s',s6fmt(totS));
+  s6set('n1_tot_c',s6fmt(totC));
+  s6set('n1_tot_ct',s6fmt(totCT));
+  s6set('n1_tot_it',s6fmt(totIT));
+  s6set('n1_tot_t', sumS?s6fmtP(sumST/sumS):'—');
+  s6set('n1_tot_p', n1totP?n1totP+' meses':'—');
+  s6set('p3_tot_ca',s6fmt(totCT));
 
   // Parte 3
   let totEst=0, hayEst=false;
-  KEYS.forEach(k=>{
+  S6_KEYS.forEach(k=>{
     const st=STRATS[k];
     const s=S[k], tDec=T[k]/100, c=C[k], p=PLAZOS[k], ct=COSTOS_TOT[k], mon=MON[k];
-    if(!s||!ct){set('p3_ce_'+k,'—');set('p3_ah_'+k,'—');set('p3_m_'+k,'—');return;}
+    if(!s||!ct){s6set('p3_ce_'+k,'—');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');return;}
     const nom=st?st.nom:'';
     // Estrategias sin cálculo posible
     if(!nom||nom.includes('USURA')||nom.includes('Ver recomendación')||nom.includes('Venta')||nom.includes('Mantener')){
-      set('p3_ce_'+k,'📌 Ver recomendación');set('p3_ah_'+k,'—');set('p3_m_'+k,'—');return;
+      s6set('p3_ce_'+k,'📌 Ver recomendación');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');return;
     }
     const est=getCostoEstimado(nom,s,tDec,c,p||0,mon);
     if(est&&est>0){
-      set('p3_ce_'+k,fmt(est));
+      s6set('p3_ce_'+k,s6fmt(est));
       const ah=ct-est;
-      set('p3_ah_'+k, ah>0?'✅ Ahorrás '+fmt(ah)+' en total':'⚠️ Costo sube con esta estrategia');
-      set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
+      s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmt(ah)+' en total':'⚠️ Costo sube con esta estrategia');
+      s6set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
       totEst+=est;hayEst=true;
     } else {
-      set('p3_ce_'+k,'📌 Ver recomendación');set('p3_ah_'+k,'—');set('p3_m_'+k,'—');
+      s6set('p3_ce_'+k,'📌 Ver recomendación');s6set('p3_ah_'+k,'—');s6set('p3_m_'+k,'—');
     }
   });
-  set('p3_tot_ce',hayEst?fmt(totEst):'—');
+  s6set('p3_tot_ce',hayEst?s6fmt(totEst):'—');
   const ahEst=hayEst?totCT-totEst:0;
-  set('p3_tot_ah',ahEst>0?'✅ Ahorro total estimado: '+fmt(ahEst):'—');
-  set('p3_tot_m',ahEst>0&&totC?Math.round(ahEst/totC)+' meses en total':'—');
+  s6set('p3_tot_ah',ahEst>0?'✅ Ahorro total estimado: '+s6fmt(ahEst):'—');
+  s6set('p3_tot_m',ahEst>0&&totC?Math.round(ahEst/totC)+' meses en total':'—');
 
   // Resumen total
-  set('rs_sin',fmt(totCT));
-  set('rs_est',hayEst?fmt(totEst):'—');
-  set('rs_ahe',ahEst>0?'✅ Ahorrás '+fmt(ahEst)+' en total':'Sin datos suficientes');
-  set('rs_mes',ahEst>0&&totC?Math.round(ahEst/totC)+' meses de cuota libre estimados':'—');
+  s6set('rs_sin',s6fmt(totCT));
+  s6set('rs_est',hayEst?s6fmt(totEst):'—');
+  s6set('rs_ahe',ahEst>0?'✅ Ahorrás '+s6fmt(ahEst)+' en total':'Sin datos suficientes');
+  s6set('rs_mes',ahEst>0&&totC?Math.round(ahEst/totC)+' meses de cuota libre estimados':'—');
 
   recalcNeg();
 }
 
 // ─── RECALC NEGOCIACIÓN ───────────────────────────────────
 function recalcNeg(){
-  const totCT=KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
-  const totC=KEYS.reduce((a,k)=>a+num('c_'+k),0);
+  const totCT=S6_KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
+  const totC=S6_KEYS.reduce((a,k)=>a+s6num('c_'+k),0);
 
   let totNC=0,totNCT=0;
-  KEYS.forEach(k=>{
-    const nt=num('nt_'+k); // TEA nueva como entero
-    const np=num('np_'+k);
-    const nm=num('nm_'+k);
+  S6_KEYS.forEach(k=>{
+    const nt=s6num('nt_'+k); // TEA nueva como entero
+    const np=s6num('np_'+k);
+    const nm=s6num('nm_'+k);
     const ntDec=nt/100;
     const nc=nt&&np&&nm?pmtCalc(ntDec,np,nm):0;
     const nct=nc&&np?nc*np:0;
     totNC+=nc;totNCT+=nct;
 
-    set('n2_nc_'+k, nc?fmt(nc):'—');
-    set('n2_nct_'+k, nct?fmt(nct):'—');
+    s6set('n2_nc_'+k, nc?s6fmt(nc):'—');
+    s6set('n2_nct_'+k, nct?s6fmt(nct):'—');
 
-    const c=num('c_'+k);
+    const c=s6num('c_'+k);
     const ct=COSTOS_TOT[k];
 
     if(nc&&c){
       const diff=nc-c;
-      set('n2_cc_'+k, diff<0?'✅ Baja ₡'+Math.abs(Math.round(diff)).toLocaleString('es-CR')+'/mes':diff===0?'➡️ Sin cambio':'⚠️ Sube ₡'+Math.round(diff).toLocaleString('es-CR')+'/mes');
-    }else set('n2_cc_'+k,'—');
+      s6set('n2_cc_'+k, diff<0?'✅ Baja ₡'+Math.abs(Math.round(diff)).toLocaleString('es-CR')+'/mes':diff===0?'➡️ Sin cambio':'⚠️ Sube ₡'+Math.round(diff).toLocaleString('es-CR')+'/mes');
+    }else s6set('n2_cc_'+k,'—');
 
     if(nc&&np&&ct){
       const d2=nct-ct;
-      set('n2_cct_'+k, d2<0?'✅ Ahorrás ₡'+Math.abs(Math.round(d2)).toLocaleString('es-CR')+' en total':d2===0?'➡️ Sin cambio':'❌ Pagás ₡'+Math.round(d2).toLocaleString('es-CR')+' más en total');
-    }else set('n2_cct_'+k,'—');
+      s6set('n2_cct_'+k, d2<0?'✅ Ahorrás ₡'+Math.abs(Math.round(d2)).toLocaleString('es-CR')+' en total':d2===0?'➡️ Sin cambio':'❌ Pagás ₡'+Math.round(d2).toLocaleString('es-CR')+' más en total');
+    }else s6set('n2_cct_'+k,'—');
 
     // Veredicto
-    const s=num('s_'+k);
-    if(!s){set('v_'+k,'—');return;}
-    if(!nc){set('v_'+k,'Sin datos del banco aún — ingresá Parte 2');return;}
-    if(nc<c&&nct<ct)set('v_'+k,'✅ Mejora cuota Y costo total');
-    else if(nc<c)set('v_'+k,'⚠️ Cuota baja pero costo total sube');
-    else if(nct<ct)set('v_'+k,'⚠️ Costo total baja pero cuota sube');
-    else set('v_'+k,'❌ No mejora las condiciones');
+    const s=s6num('s_'+k);
+    if(!s){s6set('v_'+k,'—');return;}
+    if(!nc){s6set('v_'+k,'Sin datos del banco aún — ingresá Parte 2');return;}
+    if(nc<c&&nct<ct)s6set('v_'+k,'✅ Mejora cuota Y costo total');
+    else if(nc<c)s6set('v_'+k,'⚠️ Cuota baja pero costo total sube');
+    else if(nct<ct)s6set('v_'+k,'⚠️ Costo total baja pero cuota sube');
+    else s6set('v_'+k,'❌ No mejora las condiciones');
   });
 
-  set('n2_tot_nc',totNC?fmt(totNC):'—');
-  set('n2_tot_nct',totNCT?fmt(totNCT):'—');
+  s6set('n2_tot_nc',totNC?s6fmt(totNC):'—');
+  s6set('n2_tot_nct',totNCT?s6fmt(totNCT):'—');
 
-  const ntVals=KEYS.filter(k=>num('nt_'+k));
-  set('n2_tot_t', ntVals.length?fmtP(ntVals.reduce((a,k)=>a+num('nt_'+k),0)/ntVals.length):'—');
-  const npVals=KEYS.filter(k=>num('np_'+k));
-  set('n2_tot_p', npVals.length?(npVals.reduce((a,k)=>a+num('np_'+k),0)/npVals.length).toFixed(0)+' meses':'—');
-  set('n2_tot_m', fmt(KEYS.reduce((a,k)=>a+num('nm_'+k),0)));
+  const ntVals=S6_KEYS.filter(k=>s6num('nt_'+k));
+  s6set('n2_tot_t', ntVals.length?s6fmtP(ntVals.reduce((a,k)=>a+s6num('nt_'+k),0)/ntVals.length):'—');
+  const npVals=S6_KEYS.filter(k=>s6num('np_'+k));
+  s6set('n2_tot_p', npVals.length?(npVals.reduce((a,k)=>a+s6num('np_'+k),0)/npVals.length).toFixed(0)+' meses':'—');
+  s6set('n2_tot_m', s6fmt(S6_KEYS.reduce((a,k)=>a+s6num('nm_'+k),0)));
 
   const dC=totNC-totC;
-  set('n2_tot_cc', totNC&&totC?(dC<0?'✅ Baja ₡'+Math.abs(Math.round(dC)).toLocaleString('es-CR')+'/mes total':'⚠️ Sube ₡'+Math.round(dC).toLocaleString('es-CR')+'/mes total'):'—');
+  s6set('n2_tot_cc', totNC&&totC?(dC<0?'✅ Baja ₡'+Math.abs(Math.round(dC)).toLocaleString('es-CR')+'/mes total':'⚠️ Sube ₡'+Math.round(dC).toLocaleString('es-CR')+'/mes total'):'—');
   const dCT=totNCT-totCT;
-  set('n2_tot_cct', totNCT&&totCT?(dCT<0?'✅ Ahorrás ₡'+Math.abs(Math.round(dCT)).toLocaleString('es-CR')+' en total':'❌ Pagás ₡'+Math.round(dCT).toLocaleString('es-CR')+' más en total'):'—');
+  s6set('n2_tot_cct', totNCT&&totCT?(dCT<0?'✅ Ahorrás ₡'+Math.abs(Math.round(dCT)).toLocaleString('es-CR')+' en total':'❌ Pagás ₡'+Math.round(dCT).toLocaleString('es-CR')+' más en total'):'—');
 
   // Resumen
-  set('rs_real', totNCT?fmt(totNCT):'Sin datos aún');
+  s6set('rs_real', totNCT?s6fmt(totNCT):'Sin datos aún');
   const ahReal=totNCT?totCT-totNCT:null;
-  set('rs_ahr', ahReal!=null?fmt(ahReal):'Sin datos aún');
+  s6set('rs_ahr', ahReal!=null?s6fmt(ahReal):'Sin datos aún');
 }
 
 // ─── DAÑOS ───────────────────────────────────────────────
@@ -1716,21 +1705,21 @@ const DANO_DESC=[
 ];
 
 function recalcDanos(){
-  const d=[num('d1'),num('d2'),num('d3'),num('d4'),num('d5')];
-  for(let i=0;i<5;i++){const v=Math.min(Math.max(Math.round(d[i]),0),3);set('d'+(i+1)+'d',DANO_DESC[i][v]);}
+  const d=[s6num('d1'),s6num('d2'),s6num('d3'),s6num('d4'),s6num('d5')];
+  for(let i=0;i<5;i++){const v=Math.min(Math.max(Math.round(d[i]),0),3);s6set('d'+(i+1)+'d',DANO_DESC[i][v]);}
   const tot=d.reduce((a,v)=>a+v,0);
-  set('puntaje',tot);
-  set('puntaje_d', d[3]>0?'⚠️ Daño Legal activo · Prioridad máxima':tot<=3?'🟢 Daño bajo · Situación manejable':tot<=7?'🟡 Daño moderado · Requiere plan estructurado':tot<=11?'🟠 Daño alto · Urgencia de acción inmediata':'🔴 Daño crítico · Múltiples frentes simultáneos');
+  s6set('puntaje',tot);
+  s6set('puntaje_d', d[3]>0?'⚠️ Daño Legal activo · Prioridad máxima':tot<=3?'🟢 Daño bajo · Situación manejable':tot<=7?'🟡 Daño moderado · Requiere plan estructurado':tot<=11?'🟠 Daño alto · Urgencia de acción inmediata':'🔴 Daño crítico · Múltiples frentes simultáneos');
   const mx=Math.max(...d);
   const nms=['💸 Daño 1 · Financiero','🧠 Daño 2 · Psicológico','👥 Daño 3 · Relacional','⚖️ Daño 4 · Legal','🏛️ Daño 5 · Patrimonial'];
   const cnt=d.filter(v=>v===mx).length;
-  set('dano_dom',cnt>1?(d[3]===mx?'⚖️ Daño 4 · Legal (con empate)':'⚠️ Varios daños al mismo nivel · Ver detalle'):nms[d.indexOf(mx)]);
+  s6set('dano_dom',cnt>1?(d[3]===mx?'⚖️ Daño 4 · Legal (con empate)':'⚠️ Varios daños al mismo nivel · Ver detalle'):nms[d.indexOf(mx)]);
   let m,w,o;
   if(d[3]>0){m='⚡ MÉTODO HÍBRIDO';w='Daño Legal activo detectado. Resolver primero la urgencia legal/embargo antes de cualquier otra deuda, luego aplicar Avalancha con el flujo liberado.';o='1° Deuda en embargo o cobro judicial activo  →  2° Deuda con garantía en riesgo de remate  →  3° Deuda de mayor TEA';}
   else if(d[1]>=2){m='⛄ BOLA DE NIEVE';w='Daño Psicológico moderado o severo. La clienta necesita victorias rápidas para no rendirse. Se ataca primero la deuda de menor saldo para generar momentum emocional.';o='1° Deuda de menor saldo (cierre rápido)  →  2° Siguiente menor saldo  →  3° Continuar la secuencia hasta limpiar todo';}
   else if(d[0]>=2&&d[1]<=1){m='⚡ MÉTODO HÍBRIDO';w='Daño Financiero alto sin bloqueo emocional. La clienta puede sostener la disciplina, pero la urgencia financiera requiere un enfoque mixto: cerrar deudas pequeñas para liberar flujo, luego atacar por tasa.';o='1° Deudas pequeñas que liberen flujo rápido  →  2° Luego ordenar el resto por mayor TEA  →  3° Continuar hasta limpiar todo';}
   else{m='🏔️ AVALANCHA';w='Sin urgencias legales ni bloqueo emocional severo. Atacar la deuda de mayor TEA primero para minimizar el costo total de intereses pagados.';o='1° Deuda de mayor TEA  →  2° Siguiente mayor TEA  →  3° Continuar la secuencia hasta limpiar todo';}
-  set('metodo',m);set('metodo_why',w);set('metodo_orden',o);
+  s6set('metodo',m);s6set('metodo_why',w);s6set('metodo_orden',o);
   recalc();
 }
 
@@ -1738,68 +1727,82 @@ function recalcDanos(){
 function getCampos(){
   const ids=['nombre','ingreso','s_tc','s_ve','s_hi','s_pe','s_ur','t_tc','t_ve','t_hi','t_pe','t_ur','p_ve','c_tc','c_ve','c_hi','c_pe','c_ur','g_ve','g_hi','m_tc','m_ve','m_hi','m_pe','m_ur','d_tc','d_ve','d_hi','d_pe','d_ur','d1','d2','d3','d4','d5','nt_tc','nt_ve','nt_hi','nt_pe','nt_ur','np_tc','np_ve','np_hi','np_pe','np_ur','nm_tc','nm_ve','nm_hi','nm_pe','nm_ur'];
   const out={};
-  ids.forEach(id=>{const el=$(id);if(el)out[id]=el.value;});
+  ids.forEach(id=>{const el=s6el(id);if(el)out[id]=el.value;});
   return out;
 }
 function setCampos(c){
-  Object.entries(c).forEach(([id,v])=>{const el=$(id);if(el&&!el.readOnly)el.value=v;});
+  Object.entries(c).forEach(([id,v])=>{const el=s6el(id);if(el&&!el.readOnly)el.value=v;});
   recalc();recalcDanos();
 }
 
-// S6 dbReq removed - using dbReq6 above
 
-
-
-
-
-function showTabS6(i){
-  document.querySelectorAll('#s6-tabs .tab').forEach((t,j)=>t.classList.toggle('active',i===j));
-  document.querySelectorAll('.s6page').forEach((p,j)=>p.classList.toggle('active',i===j));
-}
-
-// ═══════════════════════════════════════
-// S6 SAVE
-// ═══════════════════════════════════════
-async function guardarS6(){
-  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
-  const b=document.getElementById('s6-save-btn');
+async function s6guardar(){
+  if(!CID){alert('Sin clienta. Abrí esta sesión desde el panel consultora.');return;}
+  const b=document.querySelector('.btn-save');
   b.textContent='Guardando...';
   try{
     const datos={s6:{campos:getCampos(),ts:new Date().toISOString()}};
-    const ex=await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    const ex=await s6dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}&limit=1`);
     if(ex&&ex.length>0){
       const prev=ex[0].datos||{};
-      await dbReq6(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{...prev,...datos},updated_at:new Date().toISOString()});
+      await s6dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}`,'PATCH',{datos:{...prev,...datos}});
     }else{
-      await dbReq6(SUPA+'/rest/v1/'+TBL,'POST',{clienta_id:CID,datos});
+      await s6dbReq(`${SUPA}/rest/v1/sesiones_data_f3`,'POST',{clienta_id:CID,datos});
     }
     b.textContent='✅ Guardado';
     setTimeout(()=>{b.textContent='💾 Guardar sesión';},2000);
-  }catch(e){b.textContent='💾 Guardar sesión';alert('Error al guardar: '+e.message);}
+  }catch(e){
+    b.textContent='💾 Guardar sesión';
+    alert('Error al guardar: '+e.message+'\n\nRevisá la conexión e intentá de nuevo.');
+  }
 }
 
-// ═══════════════════════════════════════
-// CARGA INICIAL
-// ═══════════════════════════════════════
+async function s6cargar(){
+  if(!CID){s6el('overlay').style.display='none';return;}
+  try{
+    const rc=await s6dbReq(`${SUPA}/rest/v1/clientas?id=eq.${CID}&limit=1`);
+    if(rc&&rc[0])s6el('tinfo').textContent=rc[0].nombre+' — Sesión 6 · Estrategia de Deudas';
+    const rd=await s6dbReq(`${SUPA}/rest/v1/sesiones_data_f3?clienta_id=eq.${CID}&limit=1`);
+    if(rd&&rd[0]&&rd[0].datos&&rd[0].datos.s6)setCampos(rd[0].datos.s6.campos||{});
+  }catch(e){console.error(e);}
+  s6el('overlay').style.display='none';
+}
+// s6cargar called from unified cargar
+
+
+// ═══ UNIFIED SAVE/LOAD ═══
+async function guardar(){
+  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
+  if(currentSes===0){
+    await s5guardar();
+  } else {
+    await s6guardar();
+  }
+}
+
 async function cargar(){
   document.getElementById('overlay').style.display='flex';
   if(!CID){document.getElementById('overlay').style.display='none';return;}
   try{
-    const rc=await dbReq('clientas?id=eq.'+CID);
+    const rc=await s5dbReq('clientas?id=eq.'+CID);
     if(rc&&rc[0])document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 3 · Deudas';
-    const rd=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    const rd=await s5dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
     if(rd&&rd[0]&&rd[0].datos){
       const d=rd[0].datos;
-      // Cargar S5
-      const c5=d.s5?.campos||(d.campos)||null;
-      if(c5){
-        Object.entries(c5).forEach(([id,v])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;});
-        calcDiag();recalcAll();
+      // Load S5
+      const s5campos=d.s5?.campos||d.campos||null;
+      if(s5campos){
+        Object.entries(s5campos).forEach(([id,v])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;});
+        if(typeof calcDiag==='function')calcDiag();
+        if(typeof recalcAll==='function')recalcAll();
       }
-      // Cargar S6
-      if(d.s6?.campos)setCampos(d.s6.campos);
+      // Load S6
+      if(d.s6?.campos){
+        if(typeof setCampos==='function')setCampos(d.s6.campos);
+      }
     }
   }catch(e){console.error(e);}
+  _updateS6Btn();
   document.getElementById('overlay').style.display='none';
 }
 
