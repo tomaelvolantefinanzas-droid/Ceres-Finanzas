@@ -87,7 +87,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
         <button class="btn" style="background:#f0faf5;color:#0F6E56;border-color:#9fe1cb;" onclick="accionAbrir()">Abrir Sesión F1</button>
         <button class="btn" style="background:#EEEDFE;color:#534AB7;border-color:#AFA9EC;" onclick="accionAbrirF2()">Abrir Sesión F2</button>
         <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirS5()">Abrir Sesión 5</button>
-<button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirS6()">Abrir Sesión 6</button>
+        <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirS6()">Abrir Sesión 6</button>
         <button class="btn" style="color:#185FA5;" onclick="accionModificar()">Modificar</button>
         <button class="btn" style="color:#A32D2D;" onclick="accionEliminar()">Eliminar</button>
         <button class="btn btn-primary" onclick="document.getElementById('modal-nueva').classList.add('open')">+ Nueva clienta</button>
@@ -366,6 +366,7 @@ function accionAbrirF2() {
   const checks = getChecked(); if (!checks) return;
   checks.forEach(c => window.open('sesion-f2.html?c=' + c.value, '_blank'));
 }
+
 function accionAbrirS5() {
   const checks = getChecked(); if (!checks) return;
   checks.forEach(c => window.open('sesion5.html?c=' + c.value, '_blank'));
@@ -374,10 +375,6 @@ function accionAbrirS5() {
 function accionAbrirS6() {
   const checks = getChecked(); if (!checks) return;
   checks.forEach(c => window.open('sesion6.html?c=' + c.value, '_blank'));
-}
-function accionAbrirF3() {
-  const checks = getChecked(); if (!checks) return;
-  checks.forEach(c => window.open('sesion-f3-combined.html?c=' + c.value, '_blank'));
 }
 
 function accionModificar() {

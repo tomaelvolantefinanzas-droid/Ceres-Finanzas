@@ -100,6 +100,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .inp{background:#EBF5FB !important;}
 .inp input,.inp select{background:transparent;border:none;outline:none;width:100%;font-size:12px;color:#0000FF;font-weight:600;font-family:inherit;}
 .inp input::placeholder{color:#9abcd1;font-weight:400;}
+.inp input[type="number"][max="3"]{border:1px solid #2E6DA4;border-radius:4px;padding:4px 6px;width:60px;text-align:center;background:#fff;}
 .calc{background:#fff;}
 .cr{color:#C0392B;font-weight:700;}
 .cg{color:#1E8449;font-weight:700;}
@@ -286,7 +287,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="shdr">🔍 Diagnóstico por Tipo de Deuda</div>
   <div style="overflow-x:auto;">
   <table class="ti">
-    <thead><tr><th style="min-width:130px;">Deuda</th><th>Saldo (₡)</th><th>TEA</th><th>Cuota (₡)</th><th>Mora (días)</th><th>Peso en total</th><th class="gold">Prioridad</th></tr></thead>
+    <thead><tr><th style="min-width:80px;">Deuda</th><th>Saldo (₡)</th><th>TEA</th><th>Cuota (₡)</th><th>Mora (días)</th><th>Peso en total</th><th class="gold">Prioridad</th></tr></thead>
     <tbody>
       <tr><td class="lbl">💳 Tarjeta</td><td class="calc" id="a_s_tc">—</td><td class="calc" id="a_t_tc">—</td><td class="calc" id="a_c_tc">—</td><td class="calc" id="a_d_tc">—</td><td class="calc" id="a_w_tc">—</td><td class="calc cy" id="a_pri_tc">—</td></tr>
       <tr><td class="lbl">🚗 Vehículo</td><td class="calc" id="a_s_ve">—</td><td class="calc" id="a_t_ve">—</td><td class="calc" id="a_c_ve">—</td><td class="calc" id="a_d_ve">—</td><td class="calc" id="a_w_ve">—</td><td class="calc cy" id="a_pri_ve">—</td></tr>
@@ -299,7 +300,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="shdr" style="margin-top:20px;">🏆 Estrategia Recomendada por Deuda</div>
   <div style="overflow-x:auto;">
   <table class="ti">
-    <thead><tr><th style="min-width:130px;">Deuda</th><th class="gold" style="min-width:200px;">Estrategia</th><th>¿Por qué?</th><th style="min-width:120px;">Impacto cuota</th><th style="min-width:140px;">Impacto costo total</th><th class="gold" style="min-width:180px;">Acción inmediata</th></tr></thead>
+    <thead><tr><th style="min-width:80px;">Deuda</th><th class="gold" style="min-width:140px;">Estrategia</th><th>¿Por qué?</th><th style="min-width:100px;">Impacto cuota</th><th style="min-width:110px;">Impacto costo total</th><th class="gold" style="min-width:140px;">Acción inmediata</th></tr></thead>
     <tbody>
       <tr><td class="lbl">💳 Tarjeta</td><td class="calc cy" id="e_tc">—</td><td class="calc" id="e_why_tc" style="font-size:11px;line-height:1.5;">—</td><td class="calc" id="e_imp_tc">—</td><td class="calc" id="e_cos_tc">—</td><td class="calc cb" id="e_acc_tc">—</td></tr>
       <tr><td class="lbl">🚗 Vehículo</td><td class="calc cy" id="e_ve">—</td><td class="calc" id="e_why_ve" style="font-size:11px;line-height:1.5;">—</td><td class="calc" id="e_imp_ve">—</td><td class="calc" id="e_cos_ve">—</td><td class="calc cb" id="e_acc_ve">—</td></tr>
@@ -330,7 +331,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="shdr">📋 Parte 1 — Condiciones Actuales <small style="font-weight:400;font-size:10px;">Todo calculado · NO ingresar nada</small></div>
   <div style="overflow-x:auto;">
   <table class="ti">
-    <thead><tr><th style="min-width:200px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
+    <thead><tr><th style="min-width:120px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
     <tbody>
       <tr><td class="lbl">Saldo actual (₡)</td><td class="calc cg" id="n1_s_tc">—</td><td class="calc cg" id="n1_s_ve">—</td><td class="calc cg" id="n1_s_hi">—</td><td class="calc cg" id="n1_s_pe">—</td><td class="calc cg" id="n1_s_ur">—</td><td class="calc cg" id="n1_tot_s">—</td></tr>
       <tr><td class="lbl">TEA actual</td><td class="calc cg" id="n1_t_tc">—</td><td class="calc cg" id="n1_t_ve">—</td><td class="calc cg" id="n1_t_hi">—</td><td class="calc cg" id="n1_t_pe">—</td><td class="calc cg" id="n1_t_ur">—</td><td class="calc cg" id="n1_tot_t">—</td></tr>
@@ -345,7 +346,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="shdr" style="margin-top:20px;">✏️ Parte 2 — Propuesta del Banco <small style="font-weight:400;font-size:10px;">Ingresás vos tras negociar</small></div>
   <div style="overflow-x:auto;">
   <table class="ti">
-    <thead><tr><th style="min-width:200px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
+    <thead><tr><th style="min-width:120px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
     <tbody>
       <tr>
         <td class="lbl">Nueva TEA propuesta (%)</td>
@@ -405,15 +406,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
   <div class="shdr dark" style="margin-top:20px;">✅ Veredicto por Deuda</div>
   <table class="ti">
-    <thead><tr><th>Veredicto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th></tr></thead>
+    <thead><tr><th style="min-width:120px;">Veredicto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th></tr></thead>
     <tbody><tr><td class="lbl">¿La propuesta mejora?</td><td class="calc" id="v_tc">—</td><td class="calc" id="v_ve">—</td><td class="calc" id="v_hi">—</td><td class="calc" id="v_pe">—</td><td class="calc" id="v_ur">—</td></tr></tbody>
   </table>
 
   <div class="shdr green" style="margin-top:20px;">💰 Parte 3 — Proyección con Estrategia Estimada <small style="font-weight:400;font-size:10px;">Todo calculado · NO ingresar nada</small></div>
   <div style="overflow-x:auto;">
   <table class="ti">
-    <thead><tr><th style="min-width:200px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
+    <thead><tr><th style="min-width:120px;">Concepto</th><th>💳 Tarjeta</th><th>🚗 Vehículo</th><th>🏠 Hipoteca</th><th>👤 Personal</th><th>⚡ Urgente</th><th class="gold">TOTAL</th></tr></thead>
     <tbody>
+      <tr><td class="lbl">Estrategia simulada</td><td class="calc cy" id="p3_st_tc">—</td><td class="calc cy" id="p3_st_ve">—</td><td class="calc cy" id="p3_st_hi">—</td><td class="calc cy" id="p3_st_pe">—</td><td class="calc cy" id="p3_st_ur">—</td><td class="calc">—</td></tr>
       <tr><td class="lbl">Costo total actual (₡)</td><td class="calc" id="p3_ca_tc">—</td><td class="calc" id="p3_ca_ve">—</td><td class="calc" id="p3_ca_hi">—</td><td class="calc" id="p3_ca_pe">—</td><td class="calc" id="p3_ca_ur">—</td><td class="calc" id="p3_tot_ca">—</td></tr>
       <tr><td class="lbl">Costo estimado aplicando estrategia (₡)</td><td class="calc co" id="p3_ce_tc">—</td><td class="calc co" id="p3_ce_ve">—</td><td class="calc co" id="p3_ce_hi">—</td><td class="calc co" id="p3_ce_pe">—</td><td class="calc co" id="p3_ce_ur">—</td><td class="calc co" id="p3_tot_ce">—</td></tr>
       <tr><td class="lbl">→ Ahorro estimado:</td><td class="calc cg" id="p3_ah_tc">—</td><td class="calc cg" id="p3_ah_ve">—</td><td class="calc cg" id="p3_ah_hi">—</td><td class="calc cg" id="p3_ah_pe">—</td><td class="calc cg" id="p3_ah_ur">—</td><td class="calc cg" id="p3_tot_ah">—</td></tr>
@@ -440,39 +442,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
-const KEY_S5='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const KEY_S6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
 const TBL='sesiones_data_f3';
 let CID=new URLSearchParams(location.search).get('c')||'';
-let currentSes=0;
-let s6Unlocked=false;
-
-function showSes(i){
-  if(i===1&&!s6Unlocked){alert('Sesión 6 bloqueada. Completá la Sesión 5 primero.');return;}
-  currentSes=i;
-  document.querySelectorAll('.ses-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
-  document.querySelectorAll('.ses-content').forEach((c,j)=>c.classList.toggle('active',j===i));
-}
-function unlockS6(){
-  s6Unlocked=true;
-  const b=document.getElementById('sbtn1');
-  b.classList.remove('locked');
-  document.getElementById('s6lock').textContent='🔓';
-  if(CID)localStorage.setItem('s6u_'+CID,'1');
-}
-if(CID&&localStorage.getItem('s6u_'+CID)==='1')s6Unlocked=true;
-function _updateS6Btn(){
-  if(s6Unlocked){document.getElementById('sbtn1').classList.remove('locked');document.getElementById('s6lock').textContent='🔓';}
-}
-
-async function s5dbReq(path,method='GET',body=null){
-  const H={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
-  const o={method,headers:H};
-  if(body)o.body=JSON.stringify(body);
-  const r=await fetch(SUPA+'/rest/v1/'+path,o);
-  if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
-  return method==='GET'?r.json():r;
-}
 async function s6dbReq(url,method='GET',body=null){
   const H={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
   const opts={method,headers:H};
@@ -686,6 +658,9 @@ function getCostoEstimado(nom,s,tDec,c,p,mon){
   if(nom.includes('Refinanciamiento')||nom.includes('Conversión')){
     return pmtCalc(tRefin,p,s)*p;
   }
+  if(nom.includes('Salida Urgente')||nom.includes('Préstamo Personal')){
+    return pmtCalc(tRefin,p||36,s)*(p||36);
+  }
   if(nom.includes('Reestructuración')||nom.includes('Extensión')){
     return pmtCalc(tDec,p+12,s)*(p+12);
   }
@@ -823,44 +798,53 @@ function recalc(){
 
   // Parte 3
   let totEst=0, hayEst=false;
+  // Para totales en colones: convertir USD a CRC
+  const toCRC=(v,mon)=>mon==='usd'?v*TC_USD:v;
+  const totCT_crc=S6_KEYS.reduce((a,k)=>a+toCRC(COSTOS_TOT[k]||0,MON[k]),0);
+  const totC_crc=S6_KEYS.reduce((a,k)=>a+toCRC(C[k],MON[k]),0);
+  s6s6set('p3_tot_ca',s6fmt(totCT_crc));
+
   S6_KEYS.forEach(k=>{
     const st=STRATS[k];
     const s=S[k], tDec=T[k]/100, c=C[k], p=PLAZOS[k], ct=COSTOS_TOT[k], mon=MON[k];
+    // Estrategia simulada
+    s6s6set('p3_st_'+k, st?st.nom:'—');
     if(!s||!ct){s6s6set('p3_ce_'+k,'—');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');return;}
     const nom=st?st.nom:'';
-    // Estrategias sin cálculo posible
     if(!nom||nom.includes('USURA')||nom.includes('Ver recomendación')||nom.includes('Venta')||nom.includes('Mantener')){
       s6s6set('p3_ce_'+k,'📌 Ver recomendación');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');return;
     }
     const est=getCostoEstimado(nom,s,tDec,c,p||0,mon);
     if(est&&est>0){
-      s6s6set('p3_ce_'+k,s6fmt(est));
+      s6s6set('p3_ce_'+k,s6fmtMon(est,mon));
       const ah=ct-est;
-      s6s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmt(ah)+' en total':'⚠️ Costo sube con esta estrategia');
+      const ahCRC=toCRC(ah,mon);
+      s6s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmtMon(ah,mon)+' en total':'⚠️ Costo sube con esta estrategia');
       s6s6set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
-      totEst+=est;hayEst=true;
+      totEst+=toCRC(est,mon);hayEst=true;
     } else {
       s6s6set('p3_ce_'+k,'📌 Ver recomendación');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');
     }
   });
   s6s6set('p3_tot_ce',hayEst?s6fmt(totEst):'—');
-  const ahEst=hayEst?totCT-totEst:0;
+  const ahEst=hayEst?totCT_crc-totEst:0;
   s6s6set('p3_tot_ah',ahEst>0?'✅ Ahorro total estimado: '+s6fmt(ahEst):'—');
-  s6s6set('p3_tot_m',ahEst>0&&totC?Math.round(ahEst/totC)+' meses en total':'—');
+  s6s6set('p3_tot_m',ahEst>0&&totC_crc?Math.round(ahEst/totC_crc)+' meses en total':'—');
 
   // Resumen total
-  s6s6set('rs_sin',s6fmt(totCT));
+  s6s6set('rs_sin',s6fmt(totCT_crc));
   s6s6set('rs_est',hayEst?s6fmt(totEst):'—');
   s6s6set('rs_ahe',ahEst>0?'✅ Ahorrás '+s6fmt(ahEst)+' en total':'Sin datos suficientes');
-  s6s6set('rs_mes',ahEst>0&&totC?Math.round(ahEst/totC)+' meses de cuota libre estimados':'—');
+  s6s6set('rs_mes',ahEst>0&&totC_crc?Math.round(ahEst/totC_crc)+' meses de cuota libre estimados':'—');
 
   recalcNeg();
 }
 
 // ─── RECALC NEGOCIACIÓN ───────────────────────────────────
 function recalcNeg(){
-  const totCT=S6_KEYS.reduce((a,k)=>a+(COSTOS_TOT[k]||0),0);
-  const totC=S6_KEYS.reduce((a,k)=>a+s6num('c_'+k),0);
+  const toCRC=(v,mon)=>mon==='usd'?v*TC_USD:v;
+  const totCT=S6_KEYS.reduce((a,k)=>a+toCRC(COSTOS_TOT[k]||0,MON[k]),0);
+  const totC=S6_KEYS.reduce((a,k)=>a+toCRC(s6num('c_'+k),MON[k]),0);
 
   let totNC=0,totNCT=0;
   S6_KEYS.forEach(k=>{
@@ -993,43 +977,7 @@ async function s6cargar(){
 // s6cargar called from unified cargar
 
 
-// ═══ UNIFIED SAVE/LOAD ═══
-async function guardar(){
-  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
-  if(currentSes===0){
-    await s5guardar();
-  } else {
-    await s6guardar();
-  }
-}
 
-async function cargar(){
-  document.getElementById('overlay').style.display='flex';
-  if(!CID){document.getElementById('overlay').style.display='none';return;}
-  // Safety timeout — always hide after 5 seconds
-  setTimeout(()=>{document.getElementById('overlay').style.display='none';},5000);
-  try{
-    const rc=await s5dbReq('clientas?id=eq.'+CID);
-    if(rc&&rc[0])document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 3 · Deudas';
-    const rd=await s5dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
-    if(rd&&rd[0]&&rd[0].datos){
-      const d=rd[0].datos;
-      // Load S5
-      const s5campos=d.s5?.campos||d.campos||null;
-      if(s5campos){
-        Object.entries(s5campos).forEach(([id,v])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;});
-        if(typeof calcDiag==='function')calcDiag();
-        if(typeof recalcAll==='function')recalcAll();
-      }
-      // Load S6
-      if(d.s6?.campos){
-        if(typeof setCampos==='function')setCampos(d.s6.campos);
-      }
-    }
-  }catch(e){console.error(e);}
-  _updateS6Btn();
-  document.getElementById('overlay').style.display='none';
-}
 
 
 // s6s6set alias (same as s6set)
