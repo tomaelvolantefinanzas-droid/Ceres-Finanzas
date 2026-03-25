@@ -866,11 +866,12 @@ async function s5guardar(){
     const ex=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
     const prev=(ex&&ex[0]&&ex[0].datos)||{};
     const datos={...prev, s5:{campos, ts:new Date().toISOString()}};
-    const r=await fetch(SUPA+'/rest/v1/'+TBL,{
-      method:'POST',
+    const existe=ex&&ex[0];
+    const r=await fetch(SUPA+'/rest/v1/'+TBL+(existe?'?clienta_id=eq.'+CID:''),{
+      method:existe?'PATCH':'POST',
       headers:{'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5,
-               'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({clienta_id:CID, datos})
+               'Prefer':'return=minimal'},
+      body:JSON.stringify(existe?{datos}:{clienta_id:CID, datos})
     });
     if(!r.ok){const e=await r.text();throw new Error(e);}
     status(ssId,'✅ Guardado');

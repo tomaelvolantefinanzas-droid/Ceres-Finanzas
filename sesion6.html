@@ -814,19 +814,11 @@ function recalc(){
     if(!nom||nom.includes('USURA')||nom.includes('Ver recomendación')||nom.includes('Venta')||nom.includes('Mantener')){
       s6s6set('p3_ce_'+k,'📌 Ver recomendación');s6s6set('p3_ah_'+k,'—');s6s6set('p3_m_'+k,'—');return;
     }
-    // Si hay datos reales de Parte 2, usar esos en lugar del estimado
-    const nt2=s6num('nt_'+k), np2=s6num('np_'+k), nm2=s6num('nm_'+k);
-    let est;
-    if(nt2&&np2&&nm2){
-      // Usar costo real negociado de Parte 2
-      const nc2=pmtCalc(nt2/100,np2,nm2);
-      est=nc2&&np2?nc2*np2:null;
-    } else {
-      est=getCostoEstimado(nom,s,tDec,c,p||0,mon);
-    }
+    const est=getCostoEstimado(nom,s,tDec,c,p||0,mon);
     if(est&&est>0){
       s6s6set('p3_ce_'+k,s6fmtMon(est,mon));
       const ah=ct-est;
+      const ahCRC=toCRC(ah,mon);
       s6s6set('p3_ah_'+k, ah>0?'✅ Ahorrás '+s6fmtMon(ah,mon)+' en total':'⚠️ Costo sube con esta estrategia');
       s6s6set('p3_m_'+k, ah>0&&c?Math.round(ah/c)+' meses':'—');
       totEst+=toCRC(est,mon);hayEst=true;
@@ -956,15 +948,15 @@ async function s6guardar(){
   const b=document.querySelector('.btn-save');
   b.textContent='Guardando...';
   try{
-    // Primero obtener datos existentes para no pisar S5
     const ex=await s6dbReq(SUPA+'/rest/v1/'+TBL+'?clienta_id=eq.'+CID+'&limit=1');
     const prev=(ex&&ex[0]&&ex[0].datos)||{};
     const datos={...prev, s6:{campos:getCampos(), ts:new Date().toISOString()}};
-    const r=await fetch(SUPA+'/rest/v1/'+TBL,{
-      method:'POST',
+    const existe=ex&&ex[0];
+    const r=await fetch(SUPA+'/rest/v1/'+TBL+(existe?'?clienta_id=eq.'+CID:''),{
+      method:existe?'PATCH':'POST',
       headers:{'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,
-               'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({clienta_id:CID, datos})
+               'Prefer':'return=minimal'},
+      body:JSON.stringify(existe?{datos}:{clienta_id:CID, datos})
     });
     if(!r.ok){const e=await r.text();throw new Error(e);}
     b.textContent='✅ Guardado';
