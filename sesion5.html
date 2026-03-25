@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Fase 3 · Deudas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
+.topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
+#tinfo{font-size:12px;color:#888;}
+.ses-bar{background:#fff;border-bottom:2px solid #e8e6e0;padding:0 24px;display:flex;position:sticky;top:49px;z-index:45;}
+.ses-btn{padding:12px 20px;font-size:13px;font-weight:600;cursor:pointer;color:#888;border-bottom:3px solid transparent;display:flex;align-items:center;gap:6px;transition:all .15s;user-select:none;}
+.ses-btn.active{color:#B74A34;border-bottom-color:#B74A34;}
+.ses-btn.locked{color:#ccc;cursor:default;}
+.ses-content{display:none;}
+.ses-content.active{display:block;}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
+.topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
+.tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:500;}
+.page{display:none;padding:20px;max-width:960px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:18px;margin-bottom:14px;}
+.card-title{font-size:14px;font-weight:600;margin-bottom:4px;}
+.card-sub{font-size:11px;color:#888;margin-bottom:14px;line-height:1.5;}
+.section{font-size:11px;font-weight:700;color:#666;text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid #f0ede6;}
+.section:first-child{margin-top:0;}
+.ti{width:100%;border-collapse:collapse;}
+.ti th{font-size:11px;font-weight:600;color:#888;text-align:left;padding:7px 10px;border-bottom:1px solid #e8e6e0;background:#fafaf8;}
+.ti td{padding:3px 4px;vertical-align:middle;border-bottom:1px solid #f9f8f6;}
+.ti td.lbl{font-size:12px;color:#333;padding:6px 10px;width:52%;}
+.ti td input[type=number]{border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;background:#fff;font-family:inherit;text-align:right;}
+.ti td input[type=number]:focus{border-color:#1D9E75;outline:none;}
+.ti td input[type=text]{border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;background:#fff;font-family:inherit;}
+.ti td input[type=text]:focus{border-color:#1D9E75;outline:none;}
+.ti td input.ro{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
+.ti td input.ro-n{background:#f5f4f0;color:#555;border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
+.ti td input.ro-w{background:#FAEEDA;color:#854F0B;font-weight:600;border:1px solid #fad89a;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;white-space:normal;height:auto;min-height:32px;}
+.ti td input.ro-r{background:#FCEBEB;color:#A32D2D;font-weight:600;border:1px solid #f7c1c1;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;min-height:32px;}
+.ti td div.ro-txt{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;line-height:1.4;}
+.ti td div.ro-w-txt{background:#FAEEDA;color:#854F0B;font-weight:500;border:1px solid #fad89a;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;line-height:1.4;}
+.ti td div.ro-r-txt{background:#FCEBEB;color:#A32D2D;font-weight:500;border:1px solid #f7c1c1;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;line-height:1.4;}
+.ti tr.tot td{border-top:2px solid #1D9E75;}
+.ti tr.tot td.lbl{font-weight:700;color:#1D9E75;}
+.ti tr.tot td input.ro{font-weight:700;border-color:#9fe1cb;}
+.ind-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.ind-card{border-radius:8px;padding:12px 14px;background:#f5f4f0;border:1px solid #e8e6e0;}
+.ind-lbl{font-size:11px;color:#888;margin-bottom:3px;}
+.ind-val{font-size:20px;font-weight:700;color:#1a1a1a;}
+.ind-note{font-size:11px;color:#666;margin-top:4px;line-height:1.5;}
+.sem-box{border-radius:8px;padding:12px 16px;margin-top:10px;background:#f5f4f0;border:1px solid #e8e6e0;}
+.sem-box.g{background:#f0faf5;border-color:#9fe1cb;}
+.sem-box.y{background:#FAEEDA;border-color:#fad89a;}
+.sem-box.r{background:#FCEBEB;border-color:#f7c1c1;}
+.sem-lbl{font-size:11px;font-weight:600;color:#888;margin-bottom:4px;}
+.sem-val{font-size:15px;font-weight:700;}
+.ref-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px;}
+.ref-table th{background:#f5f4f0;padding:6px 10px;text-align:left;font-size:11px;font-weight:600;color:#888;}
+.ref-table td{padding:6px 10px;border-bottom:1px solid #f0ede6;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;z-index:50;}
+.ss{font-size:12px;}.ss.ok{color:#0F6E56;}.ss.err{color:#A32D2D;}
+.btn-p{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:none;background:#1D9E75;color:#fff;}
+.btn-p:hover{background:#0F6E56;}
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px;}
+.spin{width:32px;height:32px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ro-neg{background:#FCEBEB;color:#A32D2D;font-weight:600;border:1px solid #f7c1c1;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
+.ro-pos{background:#f0faf5;color:#0F6E56;font-weight:600;border:1px solid #e0f5ec;border-radius:6px;padding:5px 8px;font-size:12px;width:100%;}
+
+
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
+.topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
+#tinfo{font-size:12px;color:#888;}
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
+.tab{padding:11px 14px;font-size:12px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:600;}
+.page{display:none;padding:20px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:20px;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:700;color:#1A3A5C;margin-bottom:4px;}
+.card-sub{font-size:11px;color:#888;margin-bottom:16px;}
+.shdr{background:#2E6DA4;color:#fff;font-size:12px;font-weight:700;padding:7px 12px;border-radius:6px;margin:16px 0 10px;}
+.shdr:first-child{margin-top:0;}
+.shdr.dark{background:#1A3A5C;}
+.shdr.green{background:#1E8449;}
+.ti{width:100%;border-collapse:collapse;font-size:12px;}
+.ti th{background:#1A3A5C;color:#fff;font-size:11px;font-weight:600;padding:8px 10px;text-align:left;border:1px solid #ccc;}
+.ti th.gold{background:#E8A838;}
+.ti td{padding:7px 10px;border:1px solid #e8e6e0;vertical-align:middle;}
+.ti tr:nth-child(even) td{background:#fafafa;}
+.lbl{background:#D6E4F0 !important;color:#1A3A5C;font-weight:600;}
+.inp{background:#EBF5FB !important;}
+.inp input,.inp select{background:transparent;border:none;outline:none;width:100%;font-size:12px;color:#0000FF;font-weight:600;font-family:inherit;}
+.inp input::placeholder{color:#9abcd1;font-weight:400;}
+.calc{background:#fff;}
+.cr{color:#C0392B;font-weight:700;}
+.cg{color:#1E8449;font-weight:700;}
+.co{color:#E67E22;font-weight:700;}
+.cb{color:#1A3A5C;font-weight:700;}
+.cy{color:#7F6000;font-weight:700;}
+#overlay{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
+.spin{width:28px;height:28px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+#overlay p{font-size:13px;color:#888;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:flex-end;z-index:40;}
+.btn-save{background:#1D9E75;color:#fff;border:none;padding:9px 22px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;}
+.nota{background:#FFFFF2CC;border:1px solid #FFD966;border-radius:6px;padding:8px 12px;font-size:11px;color:#7F6000;margin-top:10px;line-height:1.5;}
+.nota-azul{background:#EBF5FB;border:1px solid #2E6DA4;border-radius:6px;padding:8px 12px;font-size:11px;color:#1A3A5C;margin-top:10px;}
+
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.92);z-index:999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;}
+</style>
+</head>
+<body>
+<div id="overlay" class="ov"><div class="spin"></div><p id="ov-msg">Cargando...</p></div>
+<div class="topbar">
+  <div class="logo">Tomá el <span>Volante</span></div>
+  <div style="font-size:12px;color:#888;" id="tinfo">Sesión 5 · Diagnóstico de Deudas</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="goTab(0)">🧮 Diagnóstico y Margen</div>
+  <div class="tab" onclick="goTab(1)">💼 Préstamo Personal</div>
+  <div class="tab" onclick="goTab(2)">🚨 Préstamo Urgente</div>
+  <div class="tab" onclick="goTab(3)">🚗 Crédito Vehicular</div>
+  <div class="tab" onclick="goTab(4)">🏠 Hipoteca</div>
+  <div class="tab" onclick="goTab(5)">💳 Tarjeta</div>
+  <div class="tab" onclick="goTab(6)">🔍 Simulador Tarjeta</div>
+</div>
+
+<!-- HOJA 1: DIAGNÓSTICO Y MARGEN -->
+<div class="page active" id="page0">
+<div class="card">
+  <div class="card-title">🧮 Diagnóstico Total de Deudas</div>
+  <div class="card-sub">Ingresá el ingreso, gastos básicos y cada cuota mensual. El diagnóstico se calcula automáticamente.</div>
+  <div class="section">Datos base</div>
+  <table class="ti">
+    <tr><td class="lbl">Ingreso mensual neto / IRC (₡)</td><td><input type="number" id="d-ingreso" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">Gastos básicos mensuales (₡) — sin incluir cuotas</td><td><input type="number" id="d-gastos" oninput="calcDiag()"></td></tr>
+  </table>
+  <div class="section">Cuotas mensuales de deudas</div>
+  <table class="ti">
+    <tr><td class="lbl">💳 Cuota tarjeta(s) de crédito (₡/mes)</td><td><input type="number" id="d-tarjeta" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">🚗 Cuota préstamo vehículo (₡/mes)</td><td><input type="number" id="d-vehiculo" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">🏠 Cuota hipoteca (₡/mes)</td><td><input type="number" id="d-hipoteca" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">💼 Cuota préstamo personal (₡/mes)</td><td><input type="number" id="d-personal" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">🚨 Cuota préstamo informal / urgente (₡/mes)</td><td><input type="number" id="d-urgente" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">📱 Cuota app / micropréstamo (₡/mes)</td><td><input type="number" id="d-app" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">🤝 Pago mensual deuda familiar (₡/mes)</td><td><input type="number" id="d-familiar" oninput="calcDiag()"></td></tr>
+    <tr><td class="lbl">📋 Otra deuda (₡/mes)</td><td><input type="number" id="d-otra" oninput="calcDiag()"></td></tr>
+    <tr class="tot"><td class="lbl">TOTAL DEUDAS MENSUALES (₡)</td><td><input class="ro" readonly id="d-total"></td></tr>
+  </table>
+</div>
+<div class="card">
+  <div class="card-title">📊 Diagnóstico automático</div>
+  <div class="ind-grid">
+    <div class="ind-card"><div class="ind-lbl">Total deudas mensuales</div><div class="ind-val" id="r-total-deudas">—</div></div>
+    <div class="ind-card"><div class="ind-lbl">Ratio de Endeudamiento (% ingreso en deudas)</div><div class="ind-val" id="r-end">—</div></div>
+    <div class="ind-card"><div class="ind-lbl">Dinero disponible después de TODAS las deudas</div><div class="ind-val" id="r-disponible">—</div></div>
+    <div class="ind-card"><div class="ind-lbl">Ratio de Margen (disponible / ingreso)</div><div class="ind-val" id="r-margen">—</div></div>
+  </div>
+  <div class="sem-box" id="sem-diag" style="margin-top:12px;">
+    <div class="sem-lbl">DIAGNÓSTICO GENERAL</div>
+    <div class="sem-val" id="r-diagnostico">—</div>
+  </div>
+  <div class="sem-box" id="sem-margen" style="margin-top:8px;">
+    <div class="sem-lbl">SEMÁFORO DE MARGEN</div>
+    <div class="sem-val" id="r-sem">—</div>
+    <div style="font-size:12px;margin-top:4px;" id="r-interp">—</div>
+  </div>
+  <div class="sem-box" style="margin-top:8px;background:#f5f4f0;border-color:#e8e6e0;">
+    <div class="sem-lbl">INTERPRETACIÓN</div>
+    <div style="font-size:12px;line-height:1.6;" id="r-interpretacion">—</div>
+  </div>
+</div>
+<div class="save-bar"><span class="ss" id="ss0"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 2: PRÉSTAMO PERSONAL -->
+<div class="page" id="page1">
+<div class="card">
+  <div class="card-title">💼 Diagnóstico de Préstamo Personal</div>
+  <div class="section">Datos del préstamo</div>
+  <table class="ti">
+    <tr><td class="lbl">Nombre del banco / entidad</td><td><input type="text" id="pp-banco"></td></tr>
+    <tr><td class="lbl">Monto original del préstamo (₡)</td><td><input type="number" id="pp-monto" oninput="calcPP()"></td></tr>
+    <tr><td class="lbl">Tasa de interés anual (TEA) (%)</td><td><input type="number" id="pp-tea" oninput="calcPP()" placeholder="ej: 20 para 20%"></td></tr>
+    <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="pp-plazo" oninput="calcPP()"></td></tr>
+    <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="pp-pagados" oninput="calcPP()"></td></tr>
+    <tr><td class="lbl">Cuota mensual actual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="pp-cuota" oninput="calcPP()"></td></tr>
+    <tr><td class="lbl">Comisiones pagadas al inicio (₡)</td><td><input type="number" id="pp-comision" oninput="calcPP()"></td></tr>
+  </table>
+  <div class="section">Indicadores automáticos</div>
+  <table class="ti">
+    <tr><td class="lbl">Saldo pendiente actual (₡)</td><td><input class="ro" readonly id="pp-saldo"></td></tr>
+    <tr><td class="lbl">Meses restantes para terminar</td><td><input class="ro" readonly id="pp-meses-rest"></td></tr>
+    <tr><td class="lbl">Costo total real del préstamo (₡)</td><td><input class="ro" readonly id="pp-costo-total"></td></tr>
+    <tr><td class="lbl">Total pagado en intereses (₡)</td><td><input class="ro" readonly id="pp-intereses"></td></tr>
+    <tr><td class="lbl">Ratio Costo/Monto (₡ por cada ₡1 recibido)</td><td><input class="ro" readonly id="pp-ratio-costo"></td></tr>
+    <tr><td class="lbl">% capital amortizado a la fecha</td><td><input class="ro" readonly id="pp-amortizado"></td></tr>
+    <tr><td class="lbl">¿La tasa es razonable para CR?</td><td><div class="ro-w-txt" id="pp-tasa-razon">—</div></td></tr>
+    <tr><td class="lbl">¿Conviene refinanciar?</td><td><div class="ro-w-txt" id="pp-refinanciar">—</div></td></tr>
+  </table>
+  <div class="section">Simulador — abonos adicionales a capital</div>
+  <div class="card-sub">⚠️ Verificá con tu banco si permite abonos a capital sin penalidad.</div>
+  <table class="ti">
+    <tr><td class="lbl">Monto ADICIONAL a capital por mes (₡)</td><td><input type="number" id="pp-abono" oninput="calcPP()"></td></tr>
+    <tr><td class="lbl">Meses restantes con cuota actual</td><td><input class="ro-n" readonly id="pp-sim-actual"></td></tr>
+    <tr><td class="lbl">Meses restantes con abono adicional</td><td><input class="ro" readonly id="pp-sim-extra"></td></tr>
+    <tr><td class="lbl">📅 Meses que ahorrarías</td><td><input class="ro" readonly id="pp-sim-meses-ah"></td></tr>
+    <tr><td class="lbl">Intereses restantes sin abono (₡)</td><td><input class="ro-n" readonly id="pp-sim-int-sin"></td></tr>
+    <tr><td class="lbl">Intereses con abono adicional (₡)</td><td><input class="ro" readonly id="pp-sim-int-con"></td></tr>
+    <tr><td class="lbl">💰 Ahorro real en intereses (₡)</td><td><input class="ro" readonly id="pp-sim-ahorro"></td></tr>
+  </table>
+  <div class="section">Indicadores de capacidad</div>
+  <table class="ti">
+    <tr><td class="lbl">Ratio de Endeudamiento (cuota / ingreso)</td><td><input class="ro" readonly id="pp-r-end"></td></tr>
+    <tr><td class="lbl">Capacidad de Pago (₡ disponibles)</td><td><input class="ro" readonly id="pp-cap-pago"></td></tr>
+    <tr><td class="lbl">Límite Máximo de Endeudamiento (35% ingreso)</td><td><input class="ro-n" readonly id="pp-lim-max"></td></tr>
+    <tr><td class="lbl">Capacidad de Endeudamiento</td><td><input class="ro" readonly id="pp-cap-end"></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss1"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 3: PRÉSTAMO URGENTE -->
+<div class="page" id="page2">
+<div class="card">
+  <div class="card-title">🚨 Diagnóstico de Préstamo Urgente / Informal</div>
+  <div class="card-sub">⚠️ Revela el costo real de préstamos informales cuyas tasas suelen presentarse de forma engañosa.</div>
+  <div class="section">Datos del préstamo urgente</div>
+  <table class="ti">
+    <tr><td class="lbl">Nombre del prestamista / entidad</td><td><input type="text" id="pu-nombre"></td></tr>
+    <tr><td class="lbl">Monto recibido (₡)</td><td><input type="number" id="pu-monto" oninput="calcPU()"></td></tr>
+    <tr><td class="lbl">Monto total a devolver (₡)</td><td><input type="number" id="pu-devolver" oninput="calcPU()"></td></tr>
+    <tr><td class="lbl">Plazo en días</td><td><input type="number" id="pu-dias" oninput="calcPU()"></td></tr>
+    <tr><td class="lbl">Cuota que pagás (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="pu-cuota" oninput="calcPU()"></td></tr>
+    <tr><td class="lbl">Frecuencia de pago</td><td>
+      <select id="pu-freq" onchange="calcPU()" style="border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;">
+        <option value="7">Semanal</option><option value="15">Quincenal</option><option value="30" selected>Mensual</option>
+      </select>
+    </td></tr>
+    <tr><td class="lbl">Tasa mensual informada por el prestamista (%)</td><td><input type="number" id="pu-tasa-mens" oninput="calcPU()" placeholder="ej: 4 para 4%"></td></tr>
+    <tr><td class="lbl">TEA equivalente — método SUGEF: (1+tasa mensual)^12−1</td><td><div class="ro-w-txt" id="pu-tea-mens">—</div></td></tr>
+    <tr><td class="lbl">Pagos ya realizados (cantidad de cuotas)</td><td><input type="number" id="pu-pagos" oninput="calcPU()"></td></tr>
+    <tr><td class="lbl">Saldo pendiente actual (₡)</td><td><input class="ro" readonly id="pu-saldo"></td></tr>
+  </table>
+  <div class="section">Revelación — El costo real de esta deuda</div>
+  <table class="ti">
+    <tr><td class="lbl">Costo absoluto del préstamo (₡)</td><td><div class="ro-r-txt" id="pu-costo">—</div></td></tr>
+    <tr><td class="lbl">Tasa de interés del período (%)</td><td><div class="ro-r-txt" id="pu-tasa-periodo">—</div></td></tr>
+    <tr><td class="lbl">Tasa Anual Efectiva real (TEA %)</td><td><div class="ro-r-txt" id="pu-tea">—</div></td></tr>
+    <tr><td class="lbl">¿Cuántas veces más caro que una tarjeta? (vs 36% anual)</td><td><div class="ro-r-txt" id="pu-vs-tarjeta">—</div></td></tr>
+    <tr><td class="lbl">¿Cuántas veces más caro que un préstamo personal? (vs 25% anual)</td><td><div class="ro-r-txt" id="pu-vs-personal">—</div></td></tr>
+    <tr><td class="lbl">🚨 Nivel de riesgo</td><td><div class="ro-r-txt" id="pu-riesgo">—</div></td></tr>
+  </table>
+  <div class="section">Indicadores de impacto</div>
+  <table class="ti">
+    <tr><td class="lbl">Ratio de Endeudamiento (cuota / ingreso)</td><td><input class="ro" readonly id="pu-r-end"></td></tr>
+    <tr><td class="lbl">Capacidad de Pago (₡ disponibles)</td><td><input class="ro" readonly id="pu-cap-pago"></td></tr>
+    <tr><td class="lbl">Capacidad de Endeudamiento (¿espacio para préstamo rescate?)</td><td><input class="ro" readonly id="pu-cap-end"></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss2"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 4: CRÉDITO VEHICULAR -->
+<div class="page" id="page3">
+<div class="card">
+  <div class="card-title">🚗 Diagnóstico de Crédito Vehicular</div>
+  <div class="section">Datos del crédito y el vehículo</div>
+  <table class="ti">
+    <tr><td class="lbl">Banco / entidad financiera</td><td><input type="text" id="cv-banco"></td></tr>
+    <tr><td class="lbl">Valor original del vehículo (₡)</td><td><input type="number" id="cv-valor" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Prima pagada (₡)</td><td><input type="number" id="cv-prima" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Monto financiado (₡)</td><td><input type="number" id="cv-monto" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Tasa de interés anual (TEA) (%)</td><td><input type="number" id="cv-tea" oninput="calcCV()" placeholder="ej: 9 para 9%"></td></tr>
+    <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="cv-plazo" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="cv-pagados" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Cuota mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="cv-cuota" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Seguro del vehículo mensual (₡)</td><td><input type="number" id="cv-seguro" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Marchamo mensual promedio (₡)</td><td><input type="number" id="cv-marchamo" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Mantenimiento mensual promedio (₡)</td><td><input type="number" id="cv-mant" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Gasolina mensual (₡)</td><td><input type="number" id="cv-gasolina" oninput="calcCV()"></td></tr>
+  </table>
+  <div class="section">Indicadores automáticos</div>
+  <table class="ti">
+    <tr><td class="lbl">Costo mensual TOTAL de tener el carro (₡)</td><td><input class="ro" readonly id="cv-costo-mensual"></td></tr>
+    <tr><td class="lbl">% del ingreso destinado al carro</td><td><input class="ro" readonly id="cv-pct-ingreso"></td></tr>
+    <tr><td class="lbl">Meses restantes para terminar</td><td><input class="ro" readonly id="cv-meses-rest"></td></tr>
+    <tr><td class="lbl">Valor estimado actual del vehículo (₡)</td><td><input class="ro" readonly id="cv-valor-actual"></td></tr>
+    <tr><td class="lbl">Saldo pendiente estimado actual del préstamo (₡)</td><td><input class="ro" readonly id="cv-saldo"></td></tr>
+    <tr><td class="lbl">Equity del vehículo — valor minus deuda (₡)</td><td><input id="cv-equity" readonly></td></tr>
+    <tr><td class="lbl">Costo total del préstamo — Interés + Prima (₡)</td><td><input class="ro" readonly id="cv-costo-total"></td></tr>
+    <tr><td class="lbl">Ratio de Sobrecosto</td><td><input class="ro" readonly id="cv-sobrecosto"></td></tr>
+    <tr><td class="lbl">Ratio de Endeudamiento vehicular (cuota / ingreso)</td><td><input class="ro" readonly id="cv-r-end"></td></tr>
+    <tr><td class="lbl">Capacidad de Pago</td><td><input class="ro" readonly id="cv-cap-pago"></td></tr>
+  </table>
+  <div class="section">Simulador — monto TOTAL a pagar por mes</div>
+  <div class="card-sub">Ingresá el monto TOTAL mensual que pagarías (no el extra, sino el total). Ej: si tu cuota es ₡225,000 y querés pagar ₡275,000, ingresá ₡275,000.</div>
+  <table class="ti">
+    <tr><td class="lbl">Cuota TOTAL nueva mensual (₡)</td><td><input type="number" id="cv-cuota-extra" oninput="calcCV()"></td></tr>
+    <tr><td class="lbl">Meses restantes con cuota actual</td><td><input class="ro-n" readonly id="cv-sim-actual"></td></tr>
+    <tr><td class="lbl">Meses restantes pagando la cuota extra</td><td><input class="ro" readonly id="cv-sim-extra"></td></tr>
+    <tr><td class="lbl">📅 Meses que ahorrarías</td><td><input class="ro" readonly id="cv-sim-meses"></td></tr>
+    <tr><td class="lbl">Intereses que pagarías sin cuota extra (₡)</td><td><input class="ro-n" readonly id="cv-sim-int-sin"></td></tr>
+    <tr><td class="lbl">Intereses pagando la cuota extra (₡)</td><td><input class="ro" readonly id="cv-sim-int-con"></td></tr>
+    <tr><td class="lbl">💰 Ahorro real en intereses (₡)</td><td><input class="ro" readonly id="cv-sim-ahorro"></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss3"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 5: HIPOTECA -->
+<div class="page" id="page4">
+<div class="card">
+  <div class="card-title">🏠 Diagnóstico de Crédito Hipotecario</div>
+  <div class="section">Datos de la hipoteca</div>
+  <table class="ti">
+    <tr><td class="lbl">Banco / entidad</td><td><input type="text" id="hi-banco"></td></tr>
+    <tr><td class="lbl">Valor de la propiedad (₡)</td><td><input type="number" id="hi-valor" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Monto hipotecado original (₡)</td><td><input type="number" id="hi-monto" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Tasa de interés anual TEA (%)</td><td><input type="number" id="hi-tea" oninput="calcHI()" placeholder="ej: 12 para 12%"></td></tr>
+    <tr><td class="lbl">Plazo original (meses)</td><td><input type="number" id="hi-plazo" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Meses ya pagados</td><td><input type="number" id="hi-pagados" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Cuota mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="hi-cuota" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Monto TOTAL que podrías pagar por mes (₡) — para el simulador</td><td><input type="number" id="hi-cuota-extra" oninput="calcHI()"></td></tr>
+    <tr><td class="lbl">Gastos mensuales asociados — mantenimiento, servicios (₡)</td><td><input type="number" id="hi-gastos-asoc" oninput="calcHI()"></td></tr>
+  </table>
+  <div class="section">Indicadores automáticos</div>
+  <table class="ti">
+    <tr><td class="lbl">Meses restantes (plazo actual)</td><td><input class="ro" readonly id="hi-meses-rest"></td></tr>
+    <tr><td class="lbl">Costo mensual total de la vivienda (₡)</td><td><input class="ro" readonly id="hi-costo-mensual"></td></tr>
+    <tr><td class="lbl">% del ingreso destinado a la vivienda</td><td><input class="ro" readonly id="hi-pct-ingreso"></td></tr>
+    <tr><td class="lbl">Saldo pendiente (Actual) estimado (₡)</td><td><input class="ro" readonly id="hi-saldo"></td></tr>
+    <tr><td class="lbl">Equity de la propiedad (valor − deuda) (₡)</td><td><input id="hi-equity" readonly></td></tr>
+    <tr><td class="lbl">Costo total en intereses si seguís igual (₡)</td><td><input class="ro" readonly id="hi-costo-intereses"></td></tr>
+    <tr><td class="lbl">Meses que ahorrarías pagando la cuota extra</td><td><input class="ro" readonly id="hi-meses-ahorro"></td></tr>
+    <tr><td class="lbl">Ahorro en intereses con la cuota extra (₡)</td><td><input class="ro" readonly id="hi-ahorro-int"></td></tr>
+    <tr><td class="lbl">Costo Real de Vivienda (% ingreso — todo incluido)</td><td><input class="ro" readonly id="hi-costo-real"></td></tr>
+    <tr><td class="lbl">Ratio de Sobrecosto hipotecario</td><td><input class="ro" readonly id="hi-sobrecosto"></td></tr>
+    <tr><td class="lbl">Ratio de Endeudamiento hipotecario (cuota / ingreso)</td><td><input class="ro" readonly id="hi-r-end"></td></tr>
+    <tr><td class="lbl">Capacidad de Pago</td><td><input class="ro" readonly id="hi-cap-pago"></td></tr>
+    <tr><td class="lbl">Capacidad de Endeudamiento</td><td><input class="ro" readonly id="hi-cap-end"></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss4"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 6: TARJETA -->
+<div class="page" id="page5">
+<div class="card">
+  <div class="card-title">💳 Diagnóstico de Tarjeta de Crédito</div>
+  <div class="section">Datos de la tarjeta</div>
+  <table class="ti">
+    <tr><td class="lbl">Nombre del banco / entidad</td><td><input type="text" id="tc-banco"></td></tr>
+    <tr><td class="lbl">Saldo actual adeudado (₡)</td><td><input type="number" id="tc-saldo" oninput="calcTC()"></td></tr>
+    <tr><td class="lbl">Límite de crédito total (₡)</td><td><input type="number" id="tc-limite" oninput="calcTC()"></td></tr>
+    <tr><td class="lbl">Tasa de interés anual TEA (%)</td><td><input type="number" id="tc-tea" oninput="calcTC()" placeholder="ej: 50 para 50%"></td></tr>
+    <tr><td class="lbl">Pago mínimo mensual (₡) <span style="font-size:10px;color:#1D9E75;">← se llena desde Diagnóstico y Margen, podés editar</span></td><td><input type="number" id="tc-minimo" oninput="calcTC()"></td></tr>
+    <tr><td class="lbl">Monto TOTAL que podés pagar por mes (₡)</td><td><input type="number" id="tc-pago-total" oninput="calcTC()"></td></tr>
+  </table>
+  <div class="section">Indicadores automáticos</div>
+  <table class="ti">
+    <tr><td class="lbl">% de utilización del límite</td><td><input class="ro" readonly id="tc-utilizacion"></td></tr>
+    <tr><td class="lbl">Interés mensual que generás (₡)</td><td><div class="ro-r-txt" id="tc-int-mensual">—</div></td></tr>
+    <tr><td class="lbl">¿Tu pago mínimo cubre los intereses?</td><td><div class="ro-r-txt" id="tc-cubre">—</div></td></tr>
+    <tr><td class="lbl">Meses para saldar pagando solo el mínimo</td><td><div class="ro-r-txt" id="tc-meses-min">—</div></td></tr>
+    <tr><td class="lbl">Costo total si solo pagás el mínimo (₡)</td><td><div class="ro-r-txt" id="tc-costo-min">—</div></td></tr>
+    <tr><td class="lbl">Meses para saldar pagando el monto total</td><td><input class="ro" readonly id="tc-meses-extra"></td></tr>
+    <tr><td class="lbl">Intereses totales pagando el monto total (₡)</td><td><input class="ro" readonly id="tc-int-extra"></td></tr>
+    <tr><td class="lbl">💰 Ahorro real vs pago mínimo (₡)</td><td><input class="ro" readonly id="tc-ahorro"></td></tr>
+    <tr><td class="lbl">Ratio de Endeudamiento (cuota / ingreso)</td><td><input class="ro" readonly id="tc-r-end"></td></tr>
+    <tr><td class="lbl">Capacidad de Pago</td><td><input class="ro" readonly id="tc-cap-pago"></td></tr>
+    <tr><td class="lbl">Límite Máximo de Endeudamiento (35% ingreso)</td><td><input class="ro-n" readonly id="tc-lim-max"></td></tr>
+    <tr><td class="lbl">Capacidad de Endeudamiento</td><td><input class="ro" readonly id="tc-cap-end"></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss5"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<!-- HOJA 7: SIMULADOR TARJETA -->
+<div class="page" id="page6">
+<div class="card">
+  <div class="card-title">🔍 Simulador de Tarjeta Existente — 3 Escenarios</div>
+  <div class="section">Datos de la tarjeta actual</div>
+  <table class="ti">
+    <tr><td class="lbl">Nombre del banco / tarjeta</td><td><input type="text" id="si-banco"></td></tr>
+    <tr><td class="lbl">Saldo actual adeudado (₡)</td><td><input type="number" id="si-saldo" oninput="calcSI()"></td></tr>
+    <tr><td class="lbl">Límite de crédito total (₡)</td><td><input type="number" id="si-limite" oninput="calcSI()"></td></tr>
+    <tr><td class="lbl">Tasa de interés anual (%)</td><td><input type="number" id="si-tea" oninput="calcSI()" placeholder="ej: 50 para 50%"></td></tr>
+    <tr><td class="lbl">Pago mínimo mensual actual (₡)</td><td><input type="number" id="si-minimo" oninput="calcSI()"></td></tr>
+    <tr><td class="lbl">% de utilización del límite</td><td><input class="ro" readonly id="si-utilizacion"></td></tr>
+  </table>
+</div>
+<div class="card">
+  <div class="card-title" style="color:#A32D2D;">🔴 Escenario A — Si solo pagás el mínimo</div>
+  <table class="ti">
+    <tr><td class="lbl">Meses estimados para saldar la deuda</td><td><div class="ro-r-txt" id="si-a-meses">—</div></td></tr>
+    <tr><td class="lbl">Intereses totales que pagarías (₡)</td><td><div class="ro-r-txt" id="si-a-intereses">—</div></td></tr>
+    <tr><td class="lbl">Costo real total — saldo + intereses (₡)</td><td><div class="ro-r-txt" id="si-a-total">—</div></td></tr>
+  </table>
+</div>
+<div class="card">
+  <div class="card-title" style="color:#0F6E56;">✅ Escenario B — Si pagás más del mínimo</div>
+  <table class="ti">
+    <tr><td class="lbl">Monto TOTAL que SÍ podés pagar por mes (₡)</td><td><input type="number" id="si-b-pago" oninput="calcSI()"></td></tr>
+    <tr><td class="lbl">Meses para saldar la deuda</td><td><input class="ro" readonly id="si-b-meses"></td></tr>
+    <tr><td class="lbl">Intereses totales que pagarías (₡)</td><td><input class="ro" readonly id="si-b-intereses"></td></tr>
+    <tr><td class="lbl">💰 Ahorro en intereses vs pago mínimo (₡)</td><td><input class="ro" readonly id="si-b-ahorro"></td></tr>
+  </table>
+</div>
+<div class="card">
+  <div class="card-title" style="color:#534AB7;">🔄 Escenario C — Consolidar con préstamo personal</div>
+  <table class="ti">
+    <tr><td class="lbl">Tasa del préstamo personal ofrecido (%) TEA</td><td><input type="number" id="si-c-tea" oninput="calcSI()" placeholder="ej: 20 para 20%"></td></tr>
+    <tr><td class="lbl">Plazo del préstamo personal (meses)</td><td><input type="number" id="si-c-plazo" oninput="calcSI()"></td></tr>
+    <tr><td class="lbl">Cuota mensual del préstamo personal (₡)</td><td><input class="ro" readonly id="si-c-cuota"></td></tr>
+    <tr><td class="lbl">Costo total del préstamo personal (₡)</td><td><input class="ro" readonly id="si-c-costo"></td></tr>
+    <tr><td class="lbl">🎯 ¿Conviene consolidar?</td><td><div class="ro-w-txt" id="si-c-conviene">—</div></td></tr>
+  </table>
+</div>
+<div class="save-bar"><span class="ss" id="ss6"></span><button class="btn-p" onclick="guardar()">Guardar</button></div>
+</div>
+
+<script>
+const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
+const KEY_S5='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
+const KEY_S6='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI2Nzg1MTUsImV4cCI6MjA1ODI1NDUxNX0.7RxCdmwBiAVAusBJLrEsBQ9IfBCCdoMNxgPX_kJXatM';
+const TBL='sesiones_data_f3';
+let CID=new URLSearchParams(location.search).get('c')||'';
+let currentSes=0;
+let s6Unlocked=false;
+
+function showSes(i){
+  if(i===1&&!s6Unlocked){alert('Sesión 6 bloqueada. Completá la Sesión 5 primero.');return;}
+  currentSes=i;
+  document.querySelectorAll('.ses-btn').forEach((b,j)=>b.classList.toggle('active',j===i));
+  document.querySelectorAll('.ses-content').forEach((c,j)=>c.classList.toggle('active',j===i));
+}
+function unlockS6(){
+  s6Unlocked=true;
+  const b=document.getElementById('sbtn1');
+  b.classList.remove('locked');
+  document.getElementById('s6lock').textContent='🔓';
+  if(CID)localStorage.setItem('s6u_'+CID,'1');
+}
+if(CID&&localStorage.getItem('s6u_'+CID)==='1')s6Unlocked=true;
+function _updateS6Btn(){
+  if(s6Unlocked){document.getElementById('sbtn1').classList.remove('locked');document.getElementById('s6lock').textContent='🔓';}
+}
+
+async function s5dbReq(path,method='GET',body=null){
+  const H={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
+  const o={method,headers:H};
+  if(body)o.body=JSON.stringify(body);
+  const r=await fetch(SUPA+'/rest/v1/'+path,o);
+  if(!r.ok&&method==='GET'){const e=await r.text();throw new Error(e);}
+  return method==='GET'?r.json():r;
+}
+async function s6dbReq(url,method='GET',body=null){
+  const H={'Content-Type':'application/json','apikey':KEY_S6,'Authorization':'Bearer '+KEY_S6,'Prefer':'return=representation'};
+  const opts={method,headers:H};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(url,opts);
+  if(r.status===204)return null;
+  return r.json();
+}
+
+// ═══ S5 CODE ═══
+
+// SUPA shared
+// KEY shared
+const H={'Content-Type':'application/json','apikey':KEY_S5,'Authorization':'Bearer '+KEY_S5};
+// TBL shared
+// CID shared
+// P shared
+// CID set in shared
+
+const s5fmt=n=>isNaN(n)||!isFinite(n)?'—':'₡'+Math.round(n).toLocaleString('es-CR');
+const s5fmtP=n=>isNaN(n)||!isFinite(n)?'—':(n*100).toFixed(1)+'%';
+const fmtX=n=>isNaN(n)||!isFinite(n)?'—':n.toFixed(2)+'x';
+const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
+function set(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function setTxt(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function sv(id,v){const e=document.getElementById(id);if(e&&!e.readOnly)e.value=v;}
+function status(id,msg,ok=true){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='ss '+(ok?'ok':'err');if(ok)setTimeout(()=>{e.textContent='';e.className='ss';},3000);}
+
+function goTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  syncCuotasDesdeHoja1();
+  recalcAll();
+}
+
+// ── Jalar cuotas desde Hoja 1 a todas las hojas ──
+function syncCuotasDesdeHoja1(){
+  // Solo llenar si el campo está vacío o en 0 — no sobreescribir si ya fue editado
+  const fillIfEmpty=(id,val)=>{
+    const e=document.getElementById(id);
+    if(e&&(!e.value||e.value==='0'))e.value=val||'';
+  };
+  fillIfEmpty('pp-cuota', nv('d-personal'));
+  fillIfEmpty('pu-cuota', nv('d-urgente'));
+  fillIfEmpty('cv-cuota', nv('d-vehiculo'));
+  fillIfEmpty('hi-cuota', nv('d-hipoteca'));
+  fillIfEmpty('tc-minimo', nv('d-tarjeta'));
+}
+
+function getBase(){
+  return{
+    ingreso:nv('d-ingreso'),
+    gastos:nv('d-gastos'),
+    totalDeudas:[nv('d-tarjeta'),nv('d-vehiculo'),nv('d-hipoteca'),nv('d-personal'),nv('d-urgente'),nv('d-app'),nv('d-familiar'),nv('d-otra')].reduce((a,v)=>a+v,0)
+  };
+}
+
+function calcCapacidades(cuotaEstaDeuda){
+  const b=getBase();
+  const limMax=b.ingreso*0.35;
+  const capPago=b.ingreso-b.gastos-b.totalDeudas;
+  const capEnd=limMax-b.totalDeudas;
+  const rEnd=b.ingreso>0?cuotaEstaDeuda/b.ingreso:0;
+  return{limMax,capPago,capEnd,rEnd};
+}
+
+function calcSaldoPV(cuotaReal,teaAnual,mesesRestantes){
+  // Usa la cuota real del banco (no la teórica) para calcular el saldo pendiente
+  // Formula: PV = cuota * (1-(1+r)^-n) / r
+  if(!cuotaReal||!teaAnual||!mesesRestantes||mesesRestantes<=0)return 0;
+  const r=teaAnual/12;
+  return cuotaReal*(1-Math.pow(1+r,-mesesRestantes))/r;
+}
+
+function calcMesesPago(saldo,r,cuota){
+  if(cuota<=saldo*r)return Infinity;
+  return Math.log(cuota/(cuota-saldo*r))/Math.log(1+r);
+}
+
+// ── HOJA 1: DIAGNÓSTICO ──
+function calcDiag(){
+  const ing=nv('d-ingreso');
+  const total=[nv('d-tarjeta'),nv('d-vehiculo'),nv('d-hipoteca'),nv('d-personal'),nv('d-urgente'),nv('d-app'),nv('d-familiar'),nv('d-otra')].reduce((a,v)=>a+v,0);
+  set('d-total',s5fmt(total));
+  if(!ing)return;
+
+  const rEnd=total/ing;
+  const disponible=ing-total;
+  const rMargen=disponible/ing;
+
+  setTxt('r-total-deudas',s5fmt(total));
+  setTxt('r-end',s5fmtP(rEnd));
+  setTxt('r-disponible',s5fmt(disponible));
+  setTxt('r-margen',s5fmtP(rMargen));
+
+  // Diagnóstico — rangos exactos del Excel
+  let diag,dc;
+  if(rEnd<0.35){diag='✅ SALUDABLE — Tenés margen cómodo';dc='g';}
+  else if(rEnd<0.50){diag='⚠️ MODERADO — Manejable pero requiere atención';dc='y';}
+  else{diag='🚨 CRÍTICO — Compromiso excesivo de ingresos';dc='r';}
+  setTxt('r-diagnostico',diag);
+  document.getElementById('sem-diag').className='sem-box '+dc;
+
+  // Semáforo de margen
+  let sem,sc,interp,interpretacion;
+  if(rMargen>0.5){sem='✅ EXCELENTE';sc='g';interp='Amplio margen para vivir, ahorrar e invertir';interpretacion='Tenés más del 50% del ingreso libre después de pagar deudas. Excelente posición para ahorrar, invertir y construir patrimonio.';}
+  else if(rMargen>0.35){sem='✅ SALUDABLE';sc='g';interp='Podés cubrir gastos variables y ahorrar con disciplina';interpretacion='Entre 35% y 50% de margen disponible. Situación saludable — asegurate de estar ahorrando al menos un 10%.';}
+  else if(rMargen>0.25){sem='⚠️ AJUSTADO';sc='y';interp='Alcanza, pero un imprevisto puede llevarte a endeudarte más';interpretacion='Entre 25% y 35% de margen. Alcanza para vivir, pero cualquier imprevisto puede empujar a usar más deuda. Priorizar fondo de emergencia.';}
+  else if(rMargen>0.15){sem='🔴 PELIGROSO';sc='r';interp='Muy poco margen — cualquier emergencia va a tarjeta';interpretacion='Entre 15% y 25% de margen. Situación de alerta. Una emergencia pequeña puede desestabilizar todo el presupuesto. Reducir deuda más costosa con urgencia.';}
+  else if(rMargen>0){sem='🚨 CRÍTICO';sc='r';interp='Prácticamente sin aire financiero mensual';interpretacion='Menos del 15% de margen disponible. Situación crítica — plan de reducción de deuda inmediato es necesario.';}
+  else{sem='⛔ DÉFICIT';sc='r';interp='Gastás más de lo que ganás — situación insostenible';interpretacion='Las deudas superan el ingreso. Situación insostenible que requiere reestructuración urgente.';}
+
+  setTxt('r-sem',sem);setTxt('r-interp',interp);setTxt('r-interpretacion',interpretacion);
+  document.getElementById('sem-margen').className='sem-box '+sc;
+
+  syncCuotasDesdeHoja1();
+  recalcAll();
+}
+
+// ── HOJA 2: PRÉSTAMO PERSONAL ──
+function calcPP(){
+  const monto=nv('pp-monto'),tea=nv('pp-tea')/100,plazo=nv('pp-plazo'),pagados=nv('pp-pagados'),comision=nv('pp-comision'),abono=nv('pp-abono');
+  const cuota=nv('pp-cuota'); // viene de Hoja 1
+  const r=tea/12,mesesRest=plazo-pagados;
+  if(!monto||!tea||!plazo)return;
+
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
+  set('pp-saldo',s5fmt(saldo));
+  set('pp-meses-rest',mesesRest>0?mesesRest:0);
+
+  const costoTotal=cuota*plazo+comision;
+  const intereses=costoTotal-monto;
+  set('pp-costo-total',s5fmt(costoTotal));
+  set('pp-intereses',s5fmt(intereses>0?intereses:0));
+
+  const ratioCosto=monto>0?costoTotal/monto:0;
+  set('pp-ratio-costo',fmtX(ratioCosto));
+
+  const amortizado=monto>0?(monto-saldo)/monto:0;
+  set('pp-amortizado',s5fmtP(amortizado));
+
+  // Tasa razonable CR 2026
+  let tasaText;
+  if(tea<=0.135)tasaText='✅ Muy buena — por debajo del rango de bancos estatales';
+  else if(tea<=0.20)tasaText='✅ Buena — dentro del rango bancos estatales (13.5%–20%)';
+  else if(tea<=0.25)tasaText='✅ Aceptable — rango cooperativas (Coopenae ~18%, hasta 25%)';
+  else if(tea<=0.30)tasaText='⚠️ Moderada — banca privada (BAC, Scotiabank 22%–30%). Evaluá refinanciar en cooperativa';
+  else if(tea<=0.36)tasaText='🔴 Alta — por encima del 30%. Cotizá urgente en banco estatal o cooperativa';
+  else tasaText='🚨 USURA — TEA > 36% es ilegal en CR. Prioridad máxima salir de esta deuda';
+  setTxt('pp-tasa-razon',tasaText);
+
+  let refText;
+  if(tea<=0.20)refText='✅ No urgente — tasa dentro del rango razonable de mercado CR';
+  else if(tea<=0.25)refText='⚠️ Podría mejorar — cotizá en banco estatal. Ahorrás si bajás a 13.5%–20%';
+  else if(tea<=0.36)refText='🔴 Conveniente refinanciar — tasa elevada. Cotizá banco estatal o cooperativa';
+  else refText='🚨 Urgente refinanciar — tasa ilegal en CR (>36%). Buscá préstamo rescate';
+  setTxt('pp-refinanciar',refText);
+
+  // Simulador — siempre calcular
+  if(saldo>0&&cuota>0&&r>0){
+    set('pp-sim-actual',mesesRest>0?mesesRest:0);
+    const intSin=cuota*mesesRest-saldo;
+    set('pp-sim-int-sin',s5fmt(intSin>0?intSin:0));
+    if(abono>0){
+      const cuotaConAbono=cuota+abono;
+      const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaConAbono));
+      const intCon=cuotaConAbono*mesesCon-saldo;
+      set('pp-sim-extra',isFinite(mesesCon)?mesesCon:'—');
+      set('pp-sim-meses-ah',isFinite(mesesCon)?Math.max(0,mesesRest-mesesCon):'—');
+      set('pp-sim-int-con',isFinite(mesesCon)?s5fmt(intCon>0?intCon:0):'—');
+      set('pp-sim-ahorro',isFinite(mesesCon)?s5fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
+    } else {
+      set('pp-sim-extra','—');set('pp-sim-meses-ah','—');
+      set('pp-sim-int-con','—');set('pp-sim-ahorro','—');
+    }
+  }
+
+  const cap=calcCapacidades(cuota);
+  set('pp-r-end',s5fmtP(cap.rEnd));setFmtColor('pp-cap-pago',cap.capPago);set('pp-lim-max',s5fmt(cap.limMax));setFmtColor('pp-cap-end',cap.capEnd);
+}
+
+// ── HOJA 3: PRÉSTAMO URGENTE ──
+function calcPU(){
+  const monto=nv('pu-monto'),devolver=nv('pu-devolver'),dias=nv('pu-dias'),cuota=nv('pu-cuota'),tasaMens=nv('pu-tasa-mens')/100,pagos=nv('pu-pagos');
+
+  if(tasaMens>0){
+    const teaCalc=Math.pow(1+tasaMens,12)-1;
+    setTxt('pu-tea-mens',(teaCalc*100).toFixed(2)+'% TEA anual (fórmula SUGEF: (1+tasa_mensual)^12−1)');
+  }
+  if(!monto||!devolver)return;
+
+  const saldo=devolver-(cuota*pagos);
+  set('pu-saldo',s5fmt(saldo>0?saldo:0));
+
+  const costo=devolver-monto;
+  setTxt('pu-costo',s5fmt(costo));
+
+  const tasaPeriodo=monto>0?costo/monto:0;
+  setTxt('pu-tasa-periodo',(tasaPeriodo*100).toFixed(2)+'%');
+
+  let tea=0;
+  if(dias>0) tea=Math.pow(1+tasaPeriodo,365/dias)-1;
+  else if(tasaMens>0) tea=Math.pow(1+tasaMens,12)-1;
+  setTxt('pu-tea',(tea*100).toFixed(2)+'% TEA anual');
+
+  const vsTarjeta=tea>0?tea/0.36:0;
+  const vsPersonal=tea>0?tea/0.25:0; // Excel usa 25% como referencia
+  setTxt('pu-vs-tarjeta',vsTarjeta>0?fmtX(vsTarjeta)+' veces más caro que una tarjeta (ref: 36% anual)':'—');
+  setTxt('pu-vs-personal',vsPersonal>0?fmtX(vsPersonal)+' veces más caro que un préstamo personal (ref: 25% anual)':'—');
+
+  let riesgo;
+  if(tea*100<=36)riesgo='✅ Dentro del límite legal — aunque el costo es elevado';
+  else if(tea*100<=100)riesgo='🔴 ALTO — Tasa predatoria. Buscá préstamo rescate en entidad formal';
+  else if(tea*100<=200)riesgo='🚨 MUY ALTO — Tasa predatoria extrema. Salir de esta deuda es prioridad #1';
+  else riesgo='🚨 CRÍTICO — Tasa predatoria extrema (>200% anual). Situación de emergencia financiera';
+  setTxt('pu-riesgo',riesgo);
+
+  const cap=calcCapacidades(cuota);
+  set('pu-r-end',s5fmtP(cap.rEnd));setFmtColor('pu-cap-pago',cap.capPago);setFmtColor('pu-cap-end',cap.capEnd);
+}
+
+// ── HOJA 4: CRÉDITO VEHICULAR ──
+function calcCV(){
+  const valor=nv('cv-valor'),prima=nv('cv-prima'),monto=nv('cv-monto'),tea=nv('cv-tea')/100,plazo=nv('cv-plazo'),pagados=nv('cv-pagados'),cuota=nv('cv-cuota'),seguro=nv('cv-seguro'),marchamo=nv('cv-marchamo'),mant=nv('cv-mant'),gasolina=nv('cv-gasolina'),cuotaExtra=nv('cv-cuota-extra');
+  const b=getBase();
+  const r=tea/12,mesesRest=plazo-pagados;
+  if(!monto&&!valor)return;
+
+  const costoMensual=cuota+seguro+marchamo+mant+gasolina;
+  set('cv-costo-mensual',s5fmt(costoMensual));
+  set('cv-pct-ingreso',b.ingreso>0?s5fmtP(costoMensual/b.ingreso):'—');
+  set('cv-meses-rest',mesesRest>0?mesesRest:0);
+
+  const aniosPag=pagados/12;
+  const valorActual=valor*Math.pow(0.85,aniosPag);
+  set('cv-valor-actual',s5fmt(valorActual));
+
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
+  set('cv-saldo',s5fmt(saldo));
+
+  const equity=valorActual-saldo;
+  const eqEl=document.getElementById('cv-equity');
+  if(eqEl){eqEl.value=s5fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
+
+  const costoTotal=cuota*plazo+prima;
+  set('cv-costo-total',s5fmt(costoTotal));
+
+  const sobrecosto=valor>0?(costoTotal-valor)/valor:0;
+  set('cv-sobrecosto',s5fmtP(sobrecosto));
+
+  const rEnd=b.ingreso>0?cuota/b.ingreso:0;
+  set('cv-r-end',s5fmtP(rEnd));
+
+  const cap=calcCapacidades(cuota);
+  setFmtColor('cv-cap-pago',cap.capPago);
+
+  // Simulador
+  set('cv-sim-actual',mesesRest>0?mesesRest:0);
+  if(cuota>0&&cuotaExtra>cuota&&saldo>0&&r>0){
+    const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
+    const intSin=cuota*mesesRest-saldo;
+    const intCon=cuotaExtra*mesesCon-saldo;
+    set('cv-sim-extra',isFinite(mesesCon)?mesesCon:'—');
+    set('cv-sim-meses',isFinite(mesesCon)?Math.max(0,mesesRest-mesesCon):'—');
+    set('cv-sim-int-sin',s5fmt(intSin>0?intSin:0));
+    set('cv-sim-int-con',isFinite(mesesCon)?s5fmt(intCon>0?intCon:0):'—');
+    set('cv-sim-ahorro',isFinite(mesesCon)?s5fmt(Math.max(0,(intSin>0?intSin:0)-(intCon>0?intCon:0))):'—');
+  }
+}
+
+// ── HOJA 5: HIPOTECA ──
+function calcHI(){
+  const valor=nv('hi-valor'),monto=nv('hi-monto'),tea=nv('hi-tea')/100,plazo=nv('hi-plazo'),pagados=nv('hi-pagados'),cuota=nv('hi-cuota'),cuotaExtra=nv('hi-cuota-extra'),gastosAsoc=nv('hi-gastos-asoc');
+  const b=getBase();
+  const r=tea/12,mesesRest=plazo-pagados;
+  if(!monto||!tea||!plazo)return;
+
+  set('hi-meses-rest',mesesRest>0?mesesRest:0);
+
+  const costoMensual=cuota+gastosAsoc;
+  set('hi-costo-mensual',s5fmt(costoMensual));
+  set('hi-pct-ingreso',b.ingreso>0?s5fmtP(costoMensual/b.ingreso):'—');
+
+  const saldo=calcSaldoPV(cuota,tea,mesesRest);
+  set('hi-saldo',s5fmt(saldo));
+
+  const equity=valor-saldo;
+  const eqEl=document.getElementById('hi-equity');
+  if(eqEl){eqEl.value=s5fmt(equity);eqEl.className=equity<0?'ro-neg':'ro';}
+
+  if(r>0&&saldo>0){
+    if(cuota>0){
+      const intTotales=cuota*mesesRest-saldo;
+      set('hi-costo-intereses',s5fmt(intTotales>0?intTotales:0));
+      if(cuotaExtra>cuota){
+        const mesesCon=Math.ceil(calcMesesPago(saldo,r,cuotaExtra));
+        const mesesAhorro=Math.max(0,mesesRest-mesesCon);
+        set('hi-meses-ahorro',isFinite(mesesCon)?mesesAhorro:'—');
+        const intCon=cuotaExtra*mesesCon-saldo;
+        set('hi-ahorro-int',isFinite(mesesCon)?s5fmt(Math.max(0,(intTotales>0?intTotales:0)-(intCon>0?intCon:0))):'—');
+      }
+    }
+  }
+
+  const costoReal=b.ingreso>0?costoMensual/b.ingreso:0;
+  set('hi-costo-real',s5fmtP(costoReal));
+  set('hi-sobrecosto',monto>0?s5fmtP((cuota*plazo-monto)/monto):'—');
+
+  const rEnd=b.ingreso>0?cuota/b.ingreso:0;
+  set('hi-r-end',s5fmtP(rEnd));
+
+  const cap=calcCapacidades(cuota);
+  setFmtColor('hi-cap-pago',cap.capPago);setFmtColor('hi-cap-end',cap.capEnd);
+}
+
+// ── HOJA 6: TARJETA ──
+function calcTC(){
+  const saldo=nv('tc-saldo'),limite=nv('tc-limite'),tea=nv('tc-tea')/100,minimo=nv('tc-minimo'),pagoTotal=nv('tc-pago-total');
+  const r=tea/12;
+
+  set('tc-utilizacion',limite>0?s5fmtP(saldo/limite):'—');
+  const intMensual=saldo*r;
+  setTxt('tc-int-mensual',s5fmt(intMensual)+' por mes');
+  setTxt('tc-cubre',minimo>intMensual?'✅ SÍ cubre — la deuda baja mes a mes':'🔴 NO cubre — la deuda crece aunque estés pagando');
+
+  if(minimo<=intMensual){
+    setTxt('tc-meses-min','⛔ NUNCA — el pago mínimo no cubre los intereses de ₡'+Math.round(intMensual).toLocaleString('es-CR'));
+    setTxt('tc-costo-min','⚠️ Deuda CRECIENTE — necesitás pagar más de ₡'+Math.round(intMensual).toLocaleString('es-CR')+'/mes para que la deuda baje');
+  } else {
+    const mesesMin=Math.ceil(calcMesesPago(saldo,r,minimo));
+    setTxt('tc-meses-min',isFinite(mesesMin)?mesesMin+' meses':'—');
+    const costoMin=minimo*mesesMin;
+    setTxt('tc-costo-min',s5fmt(costoMin));
+  }
+
+  if(pagoTotal>intMensual){
+    const mesesExtra=Math.ceil(calcMesesPago(saldo,r,pagoTotal));
+    set('tc-meses-extra',isFinite(mesesExtra)?mesesExtra+' meses':'—');
+    const intExtra=pagoTotal*mesesExtra-saldo;
+    set('tc-int-extra',s5fmt(intExtra>0?intExtra:0));
+    if(minimo>intMensual){
+      const mesesMin2=Math.ceil(calcMesesPago(saldo,r,minimo));
+      const intMin=minimo*mesesMin2-saldo;
+      set('tc-ahorro',s5fmt(Math.max(0,(intMin>0?intMin:0)-(intExtra>0?intExtra:0))));
+    }
+  } else if(pagoTotal>0){
+    set('tc-meses-extra','⛔ Ese pago no cubre los intereses mensuales');
+  }
+
+  const cap=calcCapacidades(minimo);
+  set('tc-r-end',s5fmtP(cap.rEnd));setFmtColor('tc-cap-pago',cap.capPago);set('tc-lim-max',s5fmt(cap.limMax));setFmtColor('tc-cap-end',cap.capEnd);
+}
+
+// ── HOJA 7: SIMULADOR TARJETA ──
+function calcSI(){
+  const saldo=nv('si-saldo'),limite=nv('si-limite'),tea=nv('si-tea')/100,minimo=nv('si-minimo'),pagoB=nv('si-b-pago'),teaC=nv('si-c-tea')/100,plazoC=nv('si-c-plazo');
+  const r=tea/12,intMensual=saldo*r;
+
+  set('si-utilizacion',limite>0?s5fmtP(saldo/limite):'—');
+
+  // Escenario A
+  if(minimo<=intMensual){
+    setTxt('si-a-meses','⛔ NUNCA — el pago mínimo no cubre los intereses de ₡'+Math.round(intMensual).toLocaleString('es-CR')+'/mes');
+    setTxt('si-a-intereses','⚠️ Deuda CRECIENTE — necesitás más de ₡'+Math.round(intMensual).toLocaleString('es-CR')+'/mes');
+    setTxt('si-a-total','⚠️ Deuda creciente');
+  } else {
+    const mesesA=Math.ceil(calcMesesPago(saldo,r,minimo));
+    setTxt('si-a-meses',mesesA+' meses');
+    const intA=minimo*mesesA-saldo;
+    setTxt('si-a-intereses',s5fmt(intA>0?intA:0));
+    setTxt('si-a-total',s5fmt(saldo+(intA>0?intA:0)));
+  }
+
+  // Escenario B
+  if(pagoB>intMensual){
+    const mesesB=Math.ceil(calcMesesPago(saldo,r,pagoB));
+    set('si-b-meses',mesesB+' meses');
+    const intB=pagoB*mesesB-saldo;
+    set('si-b-intereses',s5fmt(intB>0?intB:0));
+    if(minimo>intMensual){
+      const mesesA2=Math.ceil(calcMesesPago(saldo,r,minimo));
+      const intA2=minimo*mesesA2-saldo;
+      set('si-b-ahorro',s5fmt(Math.max(0,(intA2>0?intA2:0)-(intB>0?intB:0))));
+    }
+  } else if(pagoB>0){
+    set('si-b-meses','⛔ Ese pago no cubre los intereses');
+    set('si-b-intereses','—');set('si-b-ahorro','—');
+  }
+
+  // Escenario C
+  if(teaC>0&&plazoC>0&&saldo>0){
+    if(teaC>=0.36){
+      set('si-c-cuota','—');set('si-c-costo','—');
+      setTxt('si-c-conviene','🚨 USURA — Tasa ≥36% es ilegal en CR. No consolidés con esta tasa.');
+    } else {
+      const rC=teaC/12;
+      const cuotaC=saldo*(rC*Math.pow(1+rC,plazoC))/(Math.pow(1+rC,plazoC)-1);
+      const costoC=cuotaC*plazoC;
+      set('si-c-cuota',s5fmt(cuotaC));set('si-c-costo',s5fmt(costoC));
+      if(minimo>intMensual){
+        const mesesA3=Math.ceil(calcMesesPago(saldo,r,minimo));
+        const costoA=minimo*mesesA3;
+        setTxt('si-c-conviene',costoC<costoA?'✅ SÍ conviene — ahorrás ₡'+Math.round(costoA-costoC).toLocaleString('es-CR')+' vs pagar solo el mínimo':'⚠️ No conviene — el préstamo personal costaría más que pagar la tarjeta directamente');
+      } else {
+        setTxt('si-c-conviene',teaC<tea?'✅ La tasa del préstamo personal es menor — puede convenir consolidar':'⚠️ La tasa del préstamo es igual o mayor a la tarjeta — no conviene');
+      }
+    }
+  }
+}
+
+function setFmtColor(id,v){
+  const e=document.getElementById(id);if(!e)return;
+  e.value=s5fmt(v);
+  e.className=v<0?'ro-neg':'ro';
+}
+
+function recalcAll(){
+  syncCuotasDesdeHoja1();
+  calcPP();calcPU();calcCV();calcHI();calcTC();calcSI();
+}
+
+// ── GUARDAR / CARGAR ──
+
+async function s5guardar(){
+  if(!CID){alert('Abrí esta sesión desde el panel consultora.');return;}
+  const idx=[...document.querySelectorAll('.tab')].findIndex(t=>t.classList.contains('active'));
+  const ssId='ss'+idx;status(ssId,'Guardando...');
+  const campos={};
+  document.querySelectorAll('input:not([readonly]),select').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  try{
+    const existe=await s5dbReq(TBL+'?clienta_id=eq.'+CID);
+    if(existe&&existe.length>0) await s5dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
+    else await s5dbReq(TBL,'POST',{clienta_id:CID,datos:{campos,ts:new Date().toISOString()},updated_at:new Date().toISOString()});
+    status(ssId,'✅ Guardado');
+  }catch(e){status(ssId,'❌ Error',false);console.error(e);}
+}
+
+async function s5cargar(){
+  document.getElementById('overlay').style.display='flex';
+  if(!CID){document.getElementById('overlay').style.display='none';return;}
+  // Safety timeout — always hide after 5 seconds
+  setTimeout(()=>{document.getElementById('overlay').style.display='none';},5000);
+  try{
+    const rc=await s5dbReq('clientas?id=eq.'+CID);
+    if(rc&&rc[0]) document.getElementById('tinfo').textContent=rc[0].nombre+' — Sesión 5 · Diagnóstico de Deudas';
+    const rd=await s5dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    if(rd&&rd[0]&&rd[0].datos?.campos){
+      const c=rd[0].datos.campos;
+      Object.entries(c).forEach(([id,val])=>{const e=document.getElementById(id);if(e&&!e.readOnly)e.value=val;});
+      calcDiag();recalcAll();
+    }
+  }catch(e){console.error(e);}
+  document.getElementById('overlay').style.display='none';
+}
+
+// s5cargar called from unified
+
+
+async function guardar(){ await s5guardar(); }
+
+async function cargar(){
+  document.getElementById('overlay').style.display='flex';
+  if(!CID){document.getElementById('overlay').style.display='none';return;}
+  setTimeout(()=>{document.getElementById('overlay').style.display='none';},5000);
+  await s5cargar();
+}
+cargar();
+</script>
+</body>
+</html>
