@@ -80,55 +80,6 @@ select.blue{color:#0000ff;font-weight:600}
 <!-- SESIÓN 7 -->
 <div class="sesion-panel active" id="panel7">
 
-  <!-- HOJA 1: CONFIGURACIÓN -->
-  <div class="card">
-    <div class="card-header">⚙️ Configuración · Lógica de Perfil de Riesgo</div>
-    <div class="card-body">
-      <p style="font-size:.8rem;color:#888;margin-bottom:14px">Los tramos y meses son los valores base del sistema. Solo modificar si se actualiza la metodología.</p>
-      <div class="section-title">Sección 1 · Tramos de Puntaje → Perfil y Meses</div>
-      <table class="scenarios-table">
-        <tr><th>Puntaje desde</th><th>Puntaje hasta</th><th>Perfil</th><th>Meses</th><th>Descripción</th></tr>
-        <tr><td>2</td><td>3</td><td>ALTO</td><td>12</td><td>Alta vulnerabilidad, máxima protección necesaria</td></tr>
-        <tr><td>1</td><td>1</td><td>MEDIO ALTO</td><td>9</td><td>Factores de riesgo presentes, requiere colchón mayor</td></tr>
-        <tr><td>0</td><td>0</td><td>MEDIO</td><td>6</td><td>Estabilidad básica con algún factor de atención</td></tr>
-        <tr><td>-3</td><td>-1</td><td>BAJO</td><td>3</td><td>Buena estabilidad, múltiples fuentes de ingreso</td></tr>
-      </table>
-      <div class="section-title" style="margin-top:20px">Sección 2 · Simulador en Vivo</div>
-      <p style="font-size:.8rem;color:#666;margin-bottom:10px">Probá cualquier combinación para ver cómo cambia el perfil.</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
-        <div>
-          <label style="font-size:.8rem;color:#444;display:block;margin-bottom:4px">¿Tu empleo es estable con contrato fijo?</label>
-          <select class="blue" id="sim-q1" onchange="calcSimulador()">
-            <option value="si">Sí</option><option value="no">No</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:.8rem;color:#444;display:block;margin-bottom:4px">¿Tenés otro ingreso además del principal?</label>
-          <select class="blue" id="sim-q2" onchange="calcSimulador()">
-            <option value="si">Sí</option><option value="no">No</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:.8rem;color:#444;display:block;margin-bottom:4px">¿Tenés dependientes (hijos, padres, etc.)?</label>
-          <select class="blue" id="sim-q3" onchange="calcSimulador()">
-            <option value="si">Sí</option><option value="no">No</option>
-          </select>
-        </div>
-        <div>
-          <label style="font-size:.8rem;color:#444;display:block;margin-bottom:4px">¿Sos trabajadora independiente / freelance?</label>
-          <select class="blue" id="sim-q4" onchange="calcSimulador()">
-            <option value="si">Sí</option><option value="no">No</option>
-          </select>
-        </div>
-      </div>
-      <div style="background:#f0f7ff;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-        <div><span style="font-size:.75rem;color:#666">Puntaje calculado:</span><br><strong id="sim-puntaje" style="color:#1a1a2e">—</strong></div>
-        <div><span style="font-size:.75rem;color:#666">Perfil resultante:</span><br><strong id="sim-perfil" style="color:#1a1a2e">—</strong></div>
-        <div><span style="font-size:.75rem;color:#666">Meses recomendados:</span><br><strong id="sim-meses" style="color:#1a1a2e">—</strong></div>
-      </div>
-    </div>
-  </div>
-
   <!-- HOJA 2: MIS DATOS -->
   <div class="card">
     <div class="card-header">📋 Mis Datos · Calculadora del Fondo de Emergencia</div>
@@ -186,87 +137,87 @@ select.blue{color:#0000ff;font-weight:600}
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🏠 VIVIENDA</div>
       <div class="field-row">
         <label>Alquiler o cuota hipotecaria</label>
-        <input type="number" class="blue" id="g-alquiler" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-alquiler" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Servicios (luz, agua, internet, teléfono)</label>
-        <input type="number" class="blue" id="g-servicios" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-servicios" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Condominio / mantenimiento</label>
-        <input type="number" class="blue" id="g-condo" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-condo" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🛒 ALIMENTACIÓN</div>
       <div class="field-row">
         <label>Supermercado y mercado</label>
-        <input type="number" class="blue" id="g-super" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-super" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Alimentación fuera del hogar (básico)</label>
-        <input type="number" class="blue" id="g-comida-fuera" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-comida-fuera" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🚗 TRANSPORTE</div>
       <div class="field-row">
         <label>Combustible / tarifa bus y tren</label>
-        <input type="number" class="blue" id="g-transporte" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-transporte" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Cuota préstamo de vehículo</label>
-        <input type="number" class="blue" id="g-cuota-vehiculo" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-cuota-vehiculo" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>RITEVE, marchamo y seguro vehículo (mensualizado)</label>
-        <input type="number" class="blue" id="g-riteve" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-riteve" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">💊 SALUD</div>
       <div class="field-row">
         <label>Medicamentos habituales</label>
-        <input type="number" class="blue" id="g-medicamentos" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-medicamentos" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Consultas médicas recurrentes</label>
-        <input type="number" class="blue" id="g-consultas" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-consultas" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Seguro complementario de salud</label>
-        <input type="number" class="blue" id="g-seguro-salud" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-seguro-salud" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">📚 EDUCACIÓN Y DEPENDIENTES</div>
       <div class="field-row">
         <label>Colegio, universidad o guardería</label>
-        <input type="number" class="blue" id="g-educacion" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-educacion" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Útiles y materiales básicos</label>
-        <input type="number" class="blue" id="g-utiles" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-utiles" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">💳 DEUDAS – PAGOS MÍNIMOS</div>
       <div class="field-row">
         <label>Pago mínimo tarjetas de crédito</label>
-        <input type="number" class="blue" id="g-min-tc" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-min-tc" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Cuota préstamo personal</label>
-        <input type="number" class="blue" id="g-cuota-personal" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-cuota-personal" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Otras deudas (mínimos)</label>
-        <input type="number" class="blue" id="g-otras-deudas" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-otras-deudas" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">📱 COMUNICACIÓN Y OTROS BÁSICOS</div>
       <div class="field-row">
         <label>Plan de teléfono celular</label>
-        <input type="number" class="blue" id="g-celular" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-celular" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
       <div class="field-row">
         <label>Otros gastos básicos recurrentes</label>
-        <input type="number" class="blue" id="g-otros" value="0" oninput="calcGastos()">
+        <input type="number" class="blue" id="g-otros" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
       </div>
 
       <div class="result-box" style="margin-top:16px;background:#fff3cd;border-color:#f0ad4e">
@@ -339,11 +290,11 @@ select.blue{color:#0000ff;font-weight:600}
       <div class="section-title">Datos para el Plan de Reconstrucción</div>
       <div class="field-row">
         <label>Monto que usaste del fondo (₡)</label>
-        <input type="number" class="blue" id="r-monto-usado" value="0" oninput="calcReconstruccion()">
+        <input type="number" class="blue" id="r-monto-usado" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcReconstruccion()">
       </div>
       <div class="field-row">
         <label>¿Cuánto podés destinar para reconstruir cada mes? (₡)</label>
-        <input type="number" class="blue" id="r-aporte-mensual" value="0" oninput="calcReconstruccion()">
+        <input type="number" class="blue" id="r-aporte-mensual" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcReconstruccion()">
       </div>
 
       <div class="section-title" style="margin-top:16px">Resultado</div>
@@ -398,7 +349,7 @@ select.blue{color:#0000ff;font-weight:600}
 
 <script>
 const SB='https://syxlgphermluvmpbnylb.supabase.co/rest/v1/';
-const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI1MTE2MTksImV4cCI6MjA1ODA4NzYxOX0.4GwSZlrfx8bMy0QmOMnfm0RZlFLJIqOMGPtYD0Cv67Y';
+const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjgxNDUsImV4cCI6MjA4OTYwNDE0NX0.w1BIRHnkWOGt2BZMUzGom5mbb4OlDMeT-wEViKnTSOA';
 const TBL='sesiones_data_f4';
 
 let CID=null;
@@ -445,17 +396,7 @@ function getPerfil(puntaje){
   return PERFILES.find(p=>puntaje>=p.min&&puntaje<=p.max)||PERFILES[2];
 }
 
-function calcSimulador(){
-  const q1=document.getElementById('sim-q1').value;
-  const q2=document.getElementById('sim-q2').value;
-  const q3=document.getElementById('sim-q3').value;
-  const q4=document.getElementById('sim-q4').value;
-  const p=calcPuntaje(q1,q2,q3,q4);
-  const perf=getPerfil(p);
-  document.getElementById('sim-puntaje').textContent=p;
-  document.getElementById('sim-perfil').textContent='Perfil '+perf.nombre;
-  document.getElementById('sim-meses').textContent=perf.meses+' meses';
-}
+function calcSimulador(){}
 
 function calcPerfil(){
   const q1=document.getElementById('q1').value;
