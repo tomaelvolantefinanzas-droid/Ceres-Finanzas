@@ -1,0 +1,1239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Sesión Fase 1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px;}
+.topbar{background:#fff;border-bottom:1px solid #e8e6e0;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{font-size:15px;font-weight:600;}.logo span{color:#1D9E75;}
+.tinfo{font-size:12px;color:#888;}
+.tabs{display:flex;border-bottom:1px solid #e8e6e0;background:#fff;padding:0 24px;position:sticky;top:49px;z-index:40;overflow-x:auto;}
+.tab{padding:12px 18px;font-size:13px;cursor:pointer;color:#888;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;}
+.tab.active{color:#1D9E75;border-bottom-color:#1D9E75;font-weight:500;}
+.page{display:none;padding:24px;max-width:960px;margin:0 auto;padding-bottom:80px;}
+.page.active{display:block;}
+.card{background:#fff;border-radius:12px;border:1px solid #e8e6e0;padding:20px;margin-bottom:16px;}
+.card-title{font-size:14px;font-weight:600;margin-bottom:16px;}
+.slbl{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 8px;}
+.slbl:first-child{margin-top:0;}
+.fg{display:grid;gap:12px;margin-bottom:10px;}
+.fg2{grid-template-columns:1fr 1fr;}
+.fg3{grid-template-columns:1fr 1fr 1fr;}
+.fg1{grid-template-columns:1fr;}
+.f{display:flex;flex-direction:column;gap:4px;}
+.f label{font-size:11px;color:#888;}
+.f input,.f select,.f textarea{padding:7px 10px;border-radius:8px;border:1px solid #ddd;font-size:13px;font-family:inherit;background:#fff;color:#1a1a1a;outline:none;width:100%;}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:#1D9E75;}
+.f textarea{resize:vertical;min-height:60px;}
+.ti{width:100%;border-collapse:collapse;}
+.ti th{font-size:11px;font-weight:600;color:#888;text-align:left;padding:6px 8px;border-bottom:1px solid #e8e6e0;background:#fafaf8;}
+.ti td{padding:3px 4px;vertical-align:middle;}
+.ti td.lbl{font-size:12px;color:#444;padding:5px 8px;white-space:nowrap;}
+.ti td.sub{font-size:12px;color:#555;padding:5px 8px 5px 20px;}
+.ti td input{border:1px solid #eee;border-radius:6px;padding:5px 8px;font-size:13px;width:100%;background:#fff;font-family:inherit;}
+.ti td input:focus{border-color:#1D9E75;outline:none;}
+.ti td input[readonly]{background:#f0faf5;color:#0F6E56;font-weight:500;border-color:#e0f5ec;}
+.ti tr.sh td{background:#f5f4f0;font-size:11px;font-weight:600;color:#666;padding:7px 8px;text-transform:uppercase;}
+.ti tr.sh2 td{background:#fafaf8;font-size:10px;font-weight:600;color:#999;padding:5px 8px 3px 20px;text-transform:uppercase;}
+.ti tr.stot td{border-top:1px solid #e8e6e0;}
+.ti tr.stot td.lbl{font-weight:600;}
+.ti tr.tot td{border-top:2px solid #1D9E75;}
+.ti tr.tot td.lbl{font-weight:700;color:#1D9E75;}
+.btn{padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid #ddd;background:#fff;color:#1a1a1a;}
+.btn:hover{background:#f5f4f0;}
+.btn-p{background:#1D9E75;color:#fff;border-color:#1D9E75;}
+.btn-p:hover{background:#0F6E56;}
+.rbox{border-radius:8px;padding:12px 16px;margin-top:12px;}
+.rb-g{background:#f0faf5;}.rb-r{background:#FCEBEB;}.rb-y{background:#FAEEDA;}
+.rb-l{font-size:11px;color:#888;margin-bottom:3px;}
+.rb-v{font-size:22px;font-weight:600;}
+.rb-n{font-size:12px;color:#666;margin-top:4px;}
+.tipo-sel{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:8px;}
+.tipo-opt{border:1px solid #ddd;border-radius:8px;padding:12px;cursor:pointer;text-align:center;transition:all .15s;}
+.tipo-opt:hover{border-color:#1D9E75;}
+.tipo-opt.sel{border-color:#1D9E75;background:#f0faf5;}
+.tn{font-size:13px;font-weight:500;}
+.td2{font-size:11px;color:#888;margin-top:2px;}
+.irc-box{background:#FAEEDA;border-radius:8px;padding:12px 16px;margin-top:12px;}
+.irc-lbl{font-size:11px;color:#854F0B;font-weight:600;margin-bottom:2px;}
+.irc-val{font-size:22px;font-weight:700;color:#854F0B;}
+.irc-note{font-size:11px;color:#854F0B;margin-top:4px;opacity:.8;}
+.mt{width:100%;border-collapse:collapse;}
+.mt th{font-size:11px;font-weight:600;color:#888;padding:6px 8px;border-bottom:1px solid #e8e6e0;background:#fafaf8;}
+.mt td{padding:4px 6px;border-bottom:1px solid #f5f4f0;}
+.mt td input{border:1px solid #eee;border-radius:5px;padding:4px 7px;font-size:12px;width:105px;font-family:inherit;}
+.mt td input:focus{border-color:#1D9E75;outline:none;}
+.mt td input[readonly]{background:#f5f4f0;font-weight:500;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.pi .pl{font-size:11px;color:#888;}
+.pi .pv{font-size:15px;font-weight:600;}
+.bc{display:flex;flex-direction:column;gap:5px;}
+.br{display:flex;align-items:center;gap:8px;}
+.bm{font-size:11px;color:#888;width:55px;flex-shrink:0;}
+.bo{flex:1;background:#f0ede6;border-radius:4px;height:18px;overflow:hidden;}
+.bi{height:100%;border-radius:4px;}
+.bv{font-size:11px;color:#666;width:90px;text-align:right;flex-shrink:0;}
+.eg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:12px;}
+.ec{border:1px solid #e8e6e0;border-radius:10px;padding:14px;}
+.ec.bajo{border-color:#f0c0c0;}.ec.medio{border-color:#fad89a;}.ec.alto{border-color:#9fe1cb;}
+.et{font-size:13px;font-weight:600;margin-bottom:4px;}
+.et.bajo{color:#A32D2D;}.et.medio{color:#854F0B;}.et.alto{color:#0F6E56;}
+.ed{font-size:11px;color:#888;margin-bottom:10px;line-height:1.5;}
+.er{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #f0ede6;}
+.er:last-child{border-bottom:none;font-weight:600;}
+.rr{display:grid;grid-template-columns:2.5fr 1fr 50px 2fr;gap:8px;align-items:start;padding:12px 0;border-bottom:1px solid #f0ede6;}
+.rr:last-child{border-bottom:none;}
+.rn{font-size:13px;font-weight:500;}
+.rg{font-size:11px;color:#888;margin-top:2px;}
+.rs{font-size:11px;color:#666;margin-top:4px;line-height:1.5;}
+.ri input{border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-size:14px;width:100%;text-align:right;font-weight:600;}
+.sm{font-size:22px;text-align:center;padding-top:4px;}
+.rip textarea{border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-size:12px;width:100%;min-height:60px;resize:vertical;font-family:inherit;}
+.rip textarea:focus{border-color:#1D9E75;outline:none;}
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e8e6e0;padding:12px 24px;display:flex;justify-content:space-between;align-items:center;z-index:50;}
+.ss{font-size:12px;}
+.ss.ok{color:#0F6E56;}.ss.err{color:#A32D2D;}
+.ov{position:fixed;inset:0;background:rgba(255,255,255,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px;}
+.ov p{font-size:14px;color:#888;}
+.spin{width:32px;height:32px;border:3px solid #e8e6e0;border-top-color:#1D9E75;border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sum-card{background:#f5f4f0;border-radius:8px;padding:10px 14px;}
+.sum-card .sl{font-size:11px;color:#888;margin-bottom:3px;}
+.sum-card .sv{font-size:16px;font-weight:600;color:#1a1a1a;}
+.cl-a{color:#0F6E56;font-weight:500;}
+.cl-m{color:#854F0B;font-weight:500;}
+.cl-b{color:#A32D2D;font-weight:500;}
+
+
+/* Formato unificado S1 */
+.card-header{background:#1a1a2e;color:#fff;padding:12px 18px;font-size:.9rem;font-weight:700;margin:-20px -20px 16px -20px;border-radius:10px 10px 0 0}
+.card-body{padding:0}
+.sec{font-size:.75rem;font-weight:700;color:#4a90d9;text-transform:uppercase;letter-spacing:.6px;margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid #e8f0fe}
+.sec:first-child{margin-top:0}
+.fg2b{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.fb{display:flex;flex-direction:column;gap:4px}
+.fb.full{grid-column:1/-1}
+.fb label{font-size:.82rem;color:#444;font-weight:500}
+.fb input,.fb select,.fb textarea{padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.85rem;font-family:inherit;color:#0000ff;font-weight:600;width:100%}
+.fb input:focus,.fb select:focus,.fb textarea:focus{outline:none;border-color:#4a90d9}
+.fb textarea{resize:vertical;min-height:60px}
+.hint-new{font-size:.78rem;color:#888;line-height:1.5}
+
+/* Daño toggles */
+.daño-item{border:1.5px solid #e0e0e0;border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:.2s}
+.daño-item.activo{border-color:#e74c3c;background:#fdecea}
+.daño-top{display:flex;align-items:center;gap:10px}
+.daño-label{font-size:.85rem;font-weight:600;flex:1}
+.daño-desc{font-size:.75rem;color:#888;margin-top:2px}
+.daño-select{width:90px;padding:5px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:.82rem;color:#0000ff;font-weight:600}
+.daño-nota{margin-top:10px;display:none}
+.daño-nota textarea{width:100%;border:1.5px solid #f0ad4e;border-radius:6px;padding:8px;font-size:.82rem;resize:vertical;min-height:60px;background:#fffbf0;color:#0000ff;font-weight:600}
+/* Vehículo */
+.vehiculo-row{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.vehiculo-row label{margin:0;min-width:180px;font-size:.82rem;color:#444}
+.vehiculo-row select{width:140px;padding:7px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.85rem;color:#0000ff;font-weight:600}
+/* Fases */
+.fases-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:4px}
+.fase-card{border-radius:8px;padding:14px;border:1.5px solid}
+.fase-card h4{font-size:.85rem;font-weight:700;margin-bottom:8px}
+.fase-card ul{padding-left:16px;font-size:.78rem;line-height:1.8}
+.fase-1{border-color:#27ae60;background:#e8f7ee;color:#1a5c35}
+.fase-2{border-color:#f0ad4e;background:#fff8e1;color:#7d5a00}
+.fase-3{border-color:#e74c3c;background:#fdecea;color:#7d1a1a}
+.fase-4{border-color:#4a90d9;background:#e8f0fe;color:#1a3a6e}
+/* IA box */
+.ia-box{background:#f8f0ff;border:1.5px solid #9b59b6;border-radius:8px;padding:16px;margin-top:12px}
+.ia-box label{color:#6c3483;font-weight:700;font-size:.85rem}
+.ia-box textarea{border-color:#c39bd3;background:#fff;min-height:100px;margin-top:8px;width:100%;padding:8px 10px;border:1.5px solid #c39bd3;border-radius:6px;font-size:.85rem;color:#0000ff;font-weight:600}
+.btn-ia{background:linear-gradient(135deg,#8e44ad,#6c3483);color:#fff;border:none;padding:9px 20px;border-radius:7px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;margin-top:10px}
+.btn-ia:hover{opacity:.9}
+
+/* Nuevos estilos Sesión 1 */
+.card-header{background:#1a1a2e;color:#fff;padding:12px 18px;font-size:.9rem;font-weight:700;margin:-20px -20px 16px -20px;}
+.card-body{padding:0}
+.sec{font-size:.75rem;font-weight:700;color:#4a90d9;text-transform:uppercase;letter-spacing:.6px;margin:16px 0 10px;padding-bottom:5px;border-bottom:2px solid #e8f0fe}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px}
+.field{margin-bottom:10px}
+.field label{font-size:.82rem;color:#444;display:block;margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.85rem;font-family:inherit}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#4a90d9}
+.blue{color:#0000ff;font-weight:600}
+.nota-area{resize:vertical;min-height:65px}
+.hint{font-size:.75rem;color:#999}
+.tipo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tipo-opt{border:2px solid #e0e0e0;border-radius:8px;padding:14px;text-align:center;cursor:pointer;transition:.2s}
+.tipo-opt:hover{border-color:#4a90d9;background:#f0f7ff}
+.tipo-opt.sel{border-color:#27ae60;background:#e8f7ee}
+.tipo-opt .tn{font-size:.9rem;font-weight:700}
+.tipo-opt .td{font-size:.75rem;color:#888;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div id="overlay" class="ov"><div class="spin"></div><p>Cargando...</p></div>
+
+<div class="topbar">
+  <div class="logo">Tomá el <span>Volante</span></div>
+  <div class="tinfo" id="tinfo">Sesión en vivo — Fase 1</div>
+</div>
+<div class="tabs">
+  <div class="tab active" onclick="goTab(0)" id="tab0">Sesión 1 · Diagnóstico</div>
+  <div class="tab" onclick="goTab(1)" id="tab1">Sesión 2 · Flujo + Ecuación</div>
+  <div class="tab" onclick="goTab(2)" id="tab2">Sesión 3 · Presupuesto + Ratios</div>
+</div>
+
+<!-- S1 -->
+<div class="page active" id="page0">
+
+  <!-- DATOS PERSONALES -->
+  <div class="card">
+    <div class="card-header">👤 Datos de la Clienta</div>
+    <div class="card-body">
+      <div class="sec">Información básica</div>
+      <div class="fg2b">
+        <div class="fb"><label>Nombre completo</label><input type="text" id="s1-nombre" oninput="updNombre()"></div>
+        <div class="fb"><label>Fecha de nacimiento</label><input type="date" id="s1-fnac"></div>
+        <div class="fb"><label>Teléfono</label><input type="text" id="s1-tel"></div>
+        <div class="fb"><label>Email</label><input type="email" id="s1-email"></div>
+        <div class="fb"><label>Fecha diagnóstico</label><input type="date" id="s1-fecha"></div>
+        <div class="fb"><label>¿Cómo nos conoció?</label>
+          <select id="s1-conocio"><option value="">Seleccionar...</option><option>Instagram</option><option>Facebook</option><option>Recomendación</option><option>LinkedIn</option><option>Otro</option></select>
+        </div>
+        <div class="fb"><label>Ocupación / trabajo actual</label><input type="text" id="s1-ocup"></div>
+        <div class="fb"><label>Estado civil</label>
+          <select id="s1-estado"><option value="">Seleccionar...</option><option>Soltera</option><option>Casada</option><option>Unión libre</option><option>Divorciada</option><option>Viuda</option></select>
+        </div>
+        <div class="fb"><label>Número de dependientes</label><input type="number" id="s1-dep" min="0"></div>
+        <div class="fb"><label>Tipo de vivienda</label>
+          <select id="s1-viv"><option value="">Seleccionar...</option><option>Alquiler</option><option>Propia pagada</option><option>Propia con hipoteca</option><option>Familiar</option></select>
+        </div>
+      </div>
+
+      <div class="sec">Vehículo</div>
+      <div class="vehiculo-row">
+        <label>¿Posee vehículo?</label>
+        <select id="s1-tiene-vehiculo" onchange="toggleVehiculo()">
+          <option value="No">No</option><option value="Sí">Sí</option>
+        </select>
+      </div>
+      <div id="bloque-vehiculo" style="display:none">
+        <div class="vehiculo-row">
+          <label>¿Es propio o con préstamo?</label>
+          <select id="s1-vehiculo-tipo">
+            <option value="">— Seleccioná —</option>
+            <option>Propio (pagado)</option><option>Con préstamo bancario</option><option>Leasing</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIMENSIÓN EMOCIONAL -->
+  <div class="card">
+    <div class="card-header">💬 Dimensión Emocional</div>
+    <div class="card-body">
+      <div class="fb full"><label>¿Cómo describe su relación actual con el dinero?</label><textarea id="s1-rel" rows="2" placeholder="Lo que la clienta expresa..."></textarea></div>
+      <div class="fb full"><label>¿Qué situación la trajo aquí hoy?</label><textarea id="s1-sit" rows="2" placeholder="Contexto de por qué llegó..."></textarea></div>
+      <div class="fb full"><label>¿Qué le genera más ansiedad financiera?</label><textarea id="s1-ans" rows="2" placeholder="Miedos, preocupaciones..."></textarea></div>
+      <div class="fb full"><label>¿Qué espera lograr con este proceso?</label><textarea id="s1-meta" rows="2" placeholder="Sus expectativas y metas..."></textarea></div>
+      <div class="fb full"><label>¿Tiene deudas activas? ¿Cuáles?</label><textarea id="s1-deudas" rows="2" placeholder="Tipo de deudas, montos aproximados..."></textarea></div>
+      <div class="fb full"><label>Observaciones generales / notas</label><textarea id="s1-notas" rows="2" placeholder="Todo lo que sea relevante..."></textarea></div>
+    </div>
+  </div>
+
+  <!-- TIPO DE INGRESO -->
+  <div class="card">
+    <div class="card-header">💼 Tipo de Ingreso — Define el flujo de Sesión 2</div>
+    <div class="card-body">
+      <p class="hint-new">Seleccioná al finalizar el diagnóstico. Esto determina qué herramienta se usa en la próxima sesión.</p>
+      <div class="tipo-sel" style="margin-top:12px">
+        <div class="tipo-opt" id="tipo-fijo" onclick="selTipo('fijo')"><div class="tn">💼 Fijo</div><div class="td2">El mismo monto todos los meses</div></div>
+        <div class="tipo-opt" id="tipo-variable" onclick="selTipo('variable')"><div class="tn">📊 Variable</div><div class="td2">Cambia cada mes</div></div>
+        <div class="tipo-opt" id="tipo-mixto" onclick="selTipo('mixto')"><div class="tn">🔀 Mixto</div><div class="td2">Fijo + Variable combinados</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIPOS DE DAÑO -->
+  <div class="card">
+    <div class="card-header">⚠️ Tipos de Daño Presente</div>
+    <div class="card-body">
+      <p class="hint-new" style="margin-bottom:14px">Si el daño está presente, seleccioná Sí y anotá el contexto específico.</p>
+      <div class="daño-item" id="daño-financiero">
+        <div class="daño-top"><div><div class="daño-label">💸 Daño Financiero</div><div class="daño-desc">Deudas, gastos mayores a ingresos, sin ahorro</div></div>
+        <select class="daño-select" id="daño-financiero-val" onchange="toggleDaño('financiero')"><option value="No">No</option><option value="Sí">Sí</option></select></div>
+        <div class="daño-nota" id="nota-financiero"><textarea id="txt-financiero" placeholder="Describí el daño financiero específico..."></textarea></div>
+      </div>
+      <div class="daño-item" id="daño-psicologico">
+        <div class="daño-top"><div><div class="daño-label">🧠 Daño Psicológico</div><div class="daño-desc">Ansiedad, estrés, vergüenza, evitación</div></div>
+        <select class="daño-select" id="daño-psicologico-val" onchange="toggleDaño('psicologico')"><option value="No">No</option><option value="Sí">Sí</option></select></div>
+        <div class="daño-nota" id="nota-psicologico"><textarea id="txt-psicologico" placeholder="Cómo se manifiesta en esta clienta..."></textarea></div>
+      </div>
+      <div class="daño-item" id="daño-relacional">
+        <div class="daño-top"><div><div class="daño-label">👥 Daño Relacional</div><div class="daño-desc">Conflictos de pareja, tensión familiar</div></div>
+        <select class="daño-select" id="daño-relacional-val" onchange="toggleDaño('relacional')"><option value="No">No</option><option value="Sí">Sí</option></select></div>
+        <div class="daño-nota" id="nota-relacional"><textarea id="txt-relacional" placeholder="Impacto relacional específico..."></textarea></div>
+      </div>
+      <div class="daño-item" id="daño-legal">
+        <div class="daño-top"><div><div class="daño-label">⚖️ Daño Legal</div><div class="daño-desc">Embargos, mora SUGEF, cobros judiciales</div></div>
+        <select class="daño-select" id="daño-legal-val" onchange="toggleDaño('legal')"><option value="No">No</option><option value="Sí">Sí</option></select></div>
+        <div class="daño-nota" id="nota-legal"><textarea id="txt-legal" placeholder="Situación legal..."></textarea></div>
+      </div>
+      <div class="daño-item" id="daño-patrimonial">
+        <div class="daño-top"><div><div class="daño-label">🏚️ Daño Patrimonial</div><div class="daño-desc">Sin activos, deudas mayores a activos</div></div>
+        <select class="daño-select" id="daño-patrimonial-val" onchange="toggleDaño('patrimonial')"><option value="No">No</option><option value="Sí">Sí</option></select></div>
+        <div class="daño-nota" id="nota-patrimonial"><textarea id="txt-patrimonial" placeholder="Impacto en su patrimonio..."></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN IA -->
+  <div class="card">
+    <div class="card-header">✨ Diagnóstico Emocional — Generado con IA</div>
+    <div class="card-body">
+      <p class="hint-new" style="margin-bottom:10px">1. Hacé click → se abre Claude con el prompt listo &nbsp;·&nbsp; 2. Copiá el texto &nbsp;·&nbsp; 3. Pegalo acá y guardá</p>
+      <div class="ia-box">
+        <button class="btn-ia" onclick="abrirClaude()">✨ Generar con IA — Abrir Claude</button>
+        <span id="ia-msg" style="font-size:.78rem;color:#9b59b6;display:block;margin-top:6px"></span>
+        <label style="margin-top:12px;display:block;font-weight:700;color:#6c3483;font-size:.85rem">Diagnóstico emocional personalizado</label>
+        <textarea id="s1-ia-diagnostico" rows="5" placeholder="Pegá acá el texto generado por Claude..." style="width:100%;border:1.5px solid #c39bd3;border-radius:6px;padding:8px 10px;font-size:.85rem;margin-top:6px;color:#0000ff;font-weight:600"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASES -->
+  <div class="card">
+    <div class="card-header">🚀 Tu Camino con Tomá el Volante</div>
+    <div class="card-body">
+      <p class="hint-new" style="margin-bottom:14px">Este diagnóstico es el primer paso. Aquí te mostramos todo lo que podés lograr si decidís continuar:</p>
+      <div class="fases-grid">
+        <div class="fase-card fase-1"><h4>Fase 1 · Orden — 2 sesiones · 3 herramientas</h4><ul>
+          <li>Sabés cuánto entra, cuánto sale y a dónde va tu dinero</li>
+          <li>Construimos tu flujo de efectivo real</li>
+          <li>Analizamos tus activos y pasivos</li>
+          <li>Calculamos tus indicadores financieros personales</li>
+          <li>Tenés el control de saber dónde está tu dinero</li>
+        </ul></div>
+        <div class="fase-card fase-2"><h4>Fase 2 · Claridad — 1 sesión · 1 herramienta</h4><ul>
+          <li>Encontramos el dinero que desaparece sin que lo veás</li>
+          <li>Identificamos gastos fijos que olvidaste</li>
+          <li>Descubrimos gastos que solo aparecen en ciertas épocas</li>
+          <li>Recuperás dinero sin necesidad de ganar más</li>
+          <li>Salís con un mapa claro de a dónde va lo que "no alcanza"</li>
+        </ul></div>
+        <div class="fase-card fase-3"><h4>Fase 3 · Estrategia — 2 sesiones · 2 herramientas prácticas + 1 teórica</h4><ul>
+          <li>Aquí inicia la acción — no solo el análisis</li>
+          <li>Analizamos cada deuda que tenés en detalle</li>
+          <li>Construimos un plan concreto para reducirlas</li>
+          <li>Exploramos condiciones que podés renegociar con el banco</li>
+          <li>Salís con un plan de acción real para pagar menos cada mes</li>
+        </ul></div>
+        <div class="fase-card fase-4"><h4>Fase 4 · Crecimiento — 1 sesión · 2 herramientas</h4><ul>
+          <li>Lo importante es protegerte y ayudarte a crecer</li>
+          <li>Calculamos tu fondo de emergencia ideal y cómo construirlo</li>
+          <li>Revisamos tu situación de pensión actual</li>
+          <li>Proyectamos lo que necesitás para una vejez plena</li>
+        </ul></div>
+      </div>
+      <div style="background:#1a1a2e;color:#fff;border-radius:8px;padding:16px;margin-top:14px;text-align:center">
+        <div style="font-size:.85rem;opacity:.8;margin-bottom:4px">Programa completo</div>
+        <div style="font-size:1.15rem;font-weight:700">7 sesiones pagas · 4 fases · 9 herramientas personalizadas</div>
+        <div style="font-size:.78rem;opacity:.7;margin-top:4px">Podés iniciar solo con Fase 1 o hacer el programa completo de las 4 fases</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="save-bar"><span class="ss" id="ss0"></span><button class="btn btn-p" onclick="guardarS1()">Guardar Sesión 1 y continuar →</button></div>
+</div>
+
+<!-- S2 -->
+<div class="page" id="page1"><div id="s2c"></div></div>
+
+<!-- S3 -->
+<div class="page" id="page2">
+  <div class="card">
+    <div class="card-title">Resumen — tomado automáticamente de Sesión 2</div>
+    <div class="slbl">Del Flujo de Efectivo</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;" id="res-flujo"></div>
+    <div class="slbl">De la Ecuación Contable</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="res-ec"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Indicadores Financieros</div>
+    <div style="display:grid;grid-template-columns:2.5fr 1fr 50px 2fr;gap:8px;padding:6px 0;border-bottom:1px solid #e8e6e0;">
+      <div style="font-size:11px;font-weight:600;color:#888;">INDICADOR</div>
+      <div style="font-size:11px;font-weight:600;color:#888;">RESULTADO</div>
+      <div style="font-size:11px;font-weight:600;color:#888;">ESTADO</div>
+      <div style="font-size:11px;font-weight:600;color:#888;">INTERPRETACIÓN</div>
+    </div>
+    <div id="rat-tabla"></div>
+  </div>
+  <div class="save-bar"><span class="ss" id="ss2"></span><button class="btn btn-p" onclick="guardarS3()">Guardar Sesión 3</button></div>
+</div>
+
+<script>
+const SUPA='https://syxlgphermluvmpbnylb.supabase.co';
+const KEY='sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const H={'Content-Type':'application/json','apikey':KEY,'Authorization':'Bearer '+KEY};
+const MESES=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Setiembre','Octubre','Noviembre','Diciembre'];
+
+let TIPO=null, CID=null, s2ok=false;
+const P=new URLSearchParams(location.search);
+if(P.get('c'))CID=P.get('c');
+
+// ── UTILS ──
+function fmt(n){return isNaN(n)||!isFinite(n)?'—':'₡'+Math.round(n).toLocaleString('es-CR');}
+function n(id){return parseFloat(document.getElementById(id)?.value)||0;}
+function sv(id,v){const e=document.getElementById(id);if(e)e.value=v;}
+function st(id,v){const e=document.getElementById(id);if(e)e.textContent=v;}
+function sfmt(id,v){const e=document.getElementById(id);if(e)e.value=fmt(v);}
+function updNombre(){const nm=document.getElementById('s1-nombre')?.value||'';document.getElementById('tinfo').textContent=nm?nm+' — Fase 1':'Sesión en vivo — Fase 1';}
+function selTipo(t){
+  if(TIPO&&TIPO!==t) s2ok=false; // Reset S2 if type changes
+  TIPO=t;
+  ['fijo','variable','mixto'].forEach(x=>document.getElementById('tipo-'+x)?.classList.toggle('sel',x===t));
+}
+function status(id,msg,ok=true){const e=document.getElementById(id);if(!e)return;e.textContent=msg;e.className='ss '+(ok?'ok':'err');if(ok)setTimeout(()=>{e.textContent='';e.className='ss';},3000);}
+
+// ── API ──
+async function db(path,method='GET',body=null){
+  const o={method,headers:H};
+  if(body)o.body=JSON.stringify(body);
+  const r=await fetch(SUPA+'/rest/v1/'+path,o);
+  if(!r.ok){const e=await r.text();throw new Error(e);}
+  return method==='GET'?r.json():r;
+}
+
+// ── TABS ──
+function goTab(i){
+  document.querySelectorAll('.tab').forEach((t,j)=>t.classList.toggle('active',i===j));
+  document.querySelectorAll('.page').forEach((p,j)=>p.classList.toggle('active',i===j));
+  if(i===1&&!s2ok){
+    // Asegurarse que el tipo esté cargado antes de construir S2
+    if(!TIPO){
+      alert('Primero completá y guardá el diagnóstico (Sesión 1) con el tipo de ingreso.');
+      goTab(0);return;
+    }
+    buildS2();s2ok=true;
+  }
+  if(i===2){buildResumen();buildRatios();calcRatios();}
+}
+
+// ════════════════════════════════════════════════
+// SESIÓN 2 — FLUJO FIJO
+// ════════════════════════════════════════════════
+function buildS2(){
+  const tipo=TIPO||'fijo';
+  document.getElementById('s2c').innerHTML=(tipo==='fijo'?htmlFF():htmlFM())+htmlEcuacion();
+  const sb=document.createElement('div');
+  sb.className='save-bar';
+  sb.innerHTML='<span class="ss" id="ss1"></span><button class="btn btn-p" onclick="guardarS2()">Guardar Sesión 2</button>';
+  document.getElementById('s2c').appendChild(sb);
+  if(tipo==='fijo')calcFF();else{calcMapa();calcMA();}
+  calcBal();
+}
+
+function htmlFF(){return `
+<div class="card"><div class="card-title">💵 Ingresos del mes</div><table class="ti">
+<tr><th style="width:52%">Descripción</th><th>Monto (₡)</th><th>Notas</th></tr>
+<tr class="sh"><td colspan="3">💰 Ingresos Fijos</td></tr>
+${rows_ff_ing()}
+<tr class="stot"><td class="lbl">Subtotal Ingresos Fijos</td><td><input readonly id="fi-sf"></td><td></td></tr>
+<tr class="sh"><td colspan="3">📊 Ingresos Variables</td></tr>
+${rows_ff_var()}
+<tr class="stot"><td class="lbl">Subtotal Ingresos Variables</td><td><input readonly id="fi-sv"></td><td></td></tr>
+<tr class="sh"><td colspan="3">🎁 Ingresos Esporádicos</td></tr>
+${rows_ff_esp()}
+<tr class="stot"><td class="lbl">Subtotal Esporádicos</td><td><input readonly id="fi-se"></td><td></td></tr>
+<tr class="tot"><td class="lbl">TOTAL INGRESOS</td><td><input readonly id="fi-tot"></td><td></td></tr>
+</table></div>
+<div class="card"><div class="card-title">💸 Gastos del mes</div><table class="ti">
+<tr><th style="width:52%">Descripción</th><th>Monto (₡)</th><th>Notas</th></tr>
+${rows_ff_gastos()}
+</table></div>
+<div class="card"><div class="card-title">💰 Ahorro y Protección</div><table class="ti">
+<tr><th style="width:52%">Descripción</th><th>Monto (₡)</th><th>Notas</th></tr>
+${rows_ff_ahorro()}
+<tr class="tot"><td class="lbl">TOTAL AHORRO</td><td><input readonly id="fa-tot"></td><td></td></tr>
+</table></div>
+<div class="card"><div class="card-title">🎯 Mi Flujo — Resumen</div><table class="ti">
+<tr><th style="width:60%">Concepto</th><th>Monto (₡)</th></tr>
+<tr><td class="lbl">💵 Total Ingresos</td><td><input readonly id="fr-ing"></td></tr>
+<tr><td class="lbl">💸 Total Gastos</td><td><input readonly id="fr-g"></td></tr>
+<tr><td class="lbl">💰 Total Ahorro</td><td><input readonly id="fr-ah"></td></tr>
+<tr class="stot"><td class="lbl">📤 Total Salidas</td><td><input readonly id="fr-sal"></td></tr>
+<tr class="tot"><td class="lbl">🎯 Flujo Final</td><td><input readonly id="fr-flujo"></td></tr>
+</table><div id="fr-box" style="display:none;" class="rbox"></div></div>`;}
+
+function rows_ff_ing(){
+  const items=[['fi-1','Salario / Empleo principal (neto)','Recibo de nómina'],['fi-2','Pensión / Jubilación',''],['fi-3','Alquiler de propiedad',''],['fi-4','Pensión alimenticia que recibo',''],['fi-5','Apoyo de familia (regular)',''],['fi-6','Transferencias regulares',''],['fi-7','Otro ingreso fijo 1',''],['fi-8','Otro ingreso fijo 2','']];
+  return items.map(([id,lbl,ph])=>`<tr><td class="sub">${lbl}</td><td><input type="number" id="${id}" oninput="calcFF()"></td><td><input type="text" placeholder="${ph}"></td></tr>`).join('');
+}
+function rows_ff_var(){
+  const items=[['fi-9','Freelance / Servicios independientes',''],['fi-10','Negocio propio',''],['fi-11','Comisiones / Bonos',''],['fi-12','Proyectos / Consultorías',''],['fi-13','Intereses / Inversiones',''],['fi-14','Otro ingreso variable','']];
+  return items.map(([id,lbl])=>`<tr><td class="sub">${lbl}</td><td><input type="number" id="${id}" oninput="calcFF()"></td><td><input type="text"></td></tr>`).join('');
+}
+function rows_ff_esp(){
+  return [['fi-15','Bono / Aguinaldo / Extra'],['fi-16','Dividendos / Rendimiento inversiones'],['fi-17','Venta de activos / bienes']]
+    .map(([id,lbl])=>`<tr><td class="sub">${lbl}</td><td><input type="number" id="${id}" oninput="calcFF()"></td><td><input type="text"></td></tr>`).join('');
+}
+function rows_ff_gastos(){
+  return `
+<tr class="sh"><td colspan="3">🔒 Gastos Fijos</td></tr>
+<tr class="sh2"><td colspan="3">🏠 Vivienda</td></tr>
+<tr><td class="sub">Renta o pago de hipoteca</td><td><input type="number" id="fg-1" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Cuota de condominio / mantenimiento</td><td><input type="number" id="fg-2" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Predial / bienes raíces (÷12)</td><td><input type="number" id="fg-3" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Vivienda</td><td><input readonly id="fg-sviv"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">⚡ Servicios Básicos</td></tr>
+<tr><td class="sub">Electricidad (CNFL / ICE / ESPH)</td><td><input type="number" id="fg-4" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Agua (AyA / municipal)</td><td><input type="number" id="fg-5" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Internet fijo</td><td><input type="number" id="fg-6" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Teléfono celular</td><td><input type="number" id="fg-7" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Cable / Streaming</td><td><input type="number" id="fg-8" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Gas</td><td><input type="number" id="fg-9" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Servicios Básicos</td><td><input readonly id="fg-sserv"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">🚗 Transporte Fijo</td></tr>
+<tr><td class="sub">Crédito del auto</td><td><input type="number" id="fg-10" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Seguro del auto (INS)</td><td><input type="number" id="fg-11" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Marchamo (COSEVI ÷12)</td><td><input type="number" id="fg-12" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Revisión técnica (÷12)</td><td><input type="number" id="fg-13" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Transporte Fijo</td><td><input readonly id="fg-stra"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">💳 Pagos de Deudas</td></tr>
+<tr><td class="sub">Tarjeta de crédito 1</td><td><input type="number" id="fg-14" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Tarjeta de crédito 2</td><td><input type="number" id="fg-15" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Tarjeta de crédito 3</td><td><input type="number" id="fg-16" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Préstamo personal</td><td><input type="number" id="fg-17" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Préstamo de vehículo</td><td><input type="number" id="fg-18" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Hipoteca</td><td><input type="number" id="fg-19" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Préstamo familiar / informal</td><td><input type="number" id="fg-20" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Compras a meses sin intereses</td><td><input type="number" id="fg-21" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Pagos de Deudas</td><td><input readonly id="fg-sdeu"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">👨‍👩‍👧 Familia</td></tr>
+<tr><td class="sub">Colegiatura / Guardería / Kínder</td><td><input type="number" id="fg-22" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Pensión alimenticia que pago</td><td><input type="number" id="fg-23" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Ayuda a padres / familiares</td><td><input type="number" id="fg-24" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Familia</td><td><input readonly id="fg-sfam"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">💊 Salud Fija</td></tr>
+<tr><td class="sub">Seguro de gastos médicos</td><td><input type="number" id="fg-25" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Terapia / Psicólogo</td><td><input type="number" id="fg-26" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Medicamentos crónicos</td><td><input type="number" id="fg-27" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Salud Fija</td><td><input readonly id="fg-ssal"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">📱 Otros Fijos</td></tr>
+<tr><td class="sub">Ayuda doméstica</td><td><input type="number" id="fg-28" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Apps / Suscripciones</td><td><input type="number" id="fg-29" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Envíos de dinero a familia</td><td><input type="number" id="fg-30" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Otros Fijos</td><td><input readonly id="fg-sotf"></td><td></td></tr>
+<tr class="stot"><td class="lbl" style="font-weight:700;">SUBTOTAL GASTOS FIJOS</td><td><input readonly id="fg-totf"></td><td></td></tr>
+<tr class="sh"><td colspan="3">📊 Gastos Variables</td></tr>
+<tr class="sh2"><td colspan="3">🚗 Transporte Variable</td></tr>
+<tr><td class="sub">Gasolina</td><td><input type="number" id="fv-1" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Transporte público / Uber</td><td><input type="number" id="fv-2" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Estacionamientos / casetas</td><td><input type="number" id="fv-3" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Mantenimiento del auto</td><td><input type="number" id="fv-4" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Transporte Variable</td><td><input readonly id="fv-stra"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">🛒 Alimentación y Hogar</td></tr>
+<tr><td class="sub">Supermercado / Despensa</td><td><input type="number" id="fv-5" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Productos de limpieza</td><td><input type="number" id="fv-6" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Artículos de higiene personal</td><td><input type="number" id="fv-7" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Gas (si es variable)</td><td><input type="number" id="fv-8" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Alimentación y Hogar</td><td><input readonly id="fv-sali"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">👨‍👩‍👧 Familia Variable</td></tr>
+<tr><td class="sub">Útiles / uniformes escolares</td><td><input type="number" id="fv-9" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Pañales / leche / bebé</td><td><input type="number" id="fv-10" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Familia Variable</td><td><input readonly id="fv-sfam"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">💊 Salud Variable</td></tr>
+<tr><td class="sub">Medicamentos (no crónicos)</td><td><input type="number" id="fv-11" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Consultas médicas</td><td><input type="number" id="fv-12" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Salud Variable</td><td><input readonly id="fv-ssal"></td><td></td></tr>
+<tr class="sh2"><td colspan="3">🐾 Mascotas</td></tr>
+<tr><td class="sub">Comida / veterinario</td><td><input type="number" id="fv-13" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">SUBTOTAL GASTOS VARIABLES</td><td><input readonly id="fv-tot"></td><td></td></tr>
+<tr class="sh"><td colspan="3">🎯 Gastos Discrecionales</td></tr>
+<tr class="sh2"><td colspan="3">🍽️ Comidas Fuera</td></tr>
+<tr><td class="sub">Restaurantes / delivery</td><td><input type="number" id="fd-1" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Cafés / snacks / antojos</td><td><input type="number" id="fd-2" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="sh2"><td colspan="3">💆 Cuidado Personal</td></tr>
+<tr><td class="sub">Estética / salón / manicure</td><td><input type="number" id="fd-3" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Ropa / calzado / accesorios</td><td><input type="number" id="fd-4" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="sh2"><td colspan="3">🎭 Entretenimiento</td></tr>
+<tr><td class="sub">Salidas / cine / conciertos</td><td><input type="number" id="fd-5" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Viajes / vacaciones (÷12)</td><td><input type="number" id="fd-6" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Otro discrecional</td><td><input type="number" id="fd-7" oninput="calcFF()"></td><td><input type="text"></td></tr>
+<tr class="stot"><td class="lbl">SUBTOTAL DISCRECIONALES</td><td><input readonly id="fd-tot"></td><td></td></tr>
+<tr class="tot"><td class="lbl">TOTAL GASTOS</td><td><input readonly id="f-totg"></td><td></td></tr>`;
+}
+function rows_ff_ahorro(){
+  return [['fa-1','Ahorro automático mensual'],['fa-2','Inversiones mensuales (SAFIs, CDPs)'],['fa-3','Ahorro para metas específicas'],['fa-4','Aportación voluntaria a pensión (OPC/ROP)'],['fa-5','Fondo de emergencias mensual'],['fa-6','Reserva reparaciones hogar / auto']]
+    .map(([id,lbl])=>`<tr><td class="sub">${lbl}</td><td><input type="number" id="${id}" oninput="calcFF()"></td><td><input type="text"></td></tr>`).join('');
+}
+
+function calcFF(){
+  const sum=(...ids)=>ids.reduce((a,id)=>a+n(id),0);
+  const ingF=sum('fi-1','fi-2','fi-3','fi-4','fi-5','fi-6','fi-7','fi-8');
+  const ingV=sum('fi-9','fi-10','fi-11','fi-12','fi-13','fi-14');
+  const ingE=sum('fi-15','fi-16','fi-17');
+  const tIng=ingF+ingV+ingE;
+  sfmt('fi-sf',ingF);sfmt('fi-sv',ingV);sfmt('fi-se',ingE);sfmt('fi-tot',tIng);
+  const viv=sum('fg-1','fg-2','fg-3');
+  const serv=sum('fg-4','fg-5','fg-6','fg-7','fg-8','fg-9');
+  const traf=sum('fg-10','fg-11','fg-12','fg-13');
+  const deu=sum('fg-14','fg-15','fg-16','fg-17','fg-18','fg-19','fg-20','fg-21');
+  const fam=sum('fg-22','fg-23','fg-24');
+  const sal=sum('fg-25','fg-26','fg-27');
+  const otf=sum('fg-28','fg-29','fg-30');
+  const tGF=viv+serv+traf+deu+fam+sal+otf;
+  sfmt('fg-sviv',viv);sfmt('fg-sserv',serv);sfmt('fg-stra',traf);sfmt('fg-sdeu',deu);
+  sfmt('fg-sfam',fam);sfmt('fg-ssal',sal);sfmt('fg-sotf',otf);sfmt('fg-totf',tGF);
+  const travar=sum('fv-1','fv-2','fv-3','fv-4');
+  const ali=sum('fv-5','fv-6','fv-7','fv-8');
+  const famv=sum('fv-9','fv-10');
+  const salv=sum('fv-11','fv-12');
+  const masc=n('fv-13');
+  const tGV=travar+ali+famv+salv+masc;
+  sfmt('fv-stra',travar);sfmt('fv-sali',ali);sfmt('fv-sfam',famv);sfmt('fv-ssal',salv);sfmt('fv-tot',tGV);
+  const tDisc=sum('fd-1','fd-2','fd-3','fd-4','fd-5','fd-6','fd-7');
+  sfmt('fd-tot',tDisc);
+  const tG=tGF+tGV+tDisc; sfmt('f-totg',tG);
+  const tAh=sum('fa-1','fa-2','fa-3','fa-4','fa-5','fa-6'); sfmt('fa-tot',tAh);
+  const sal2=tG+tAh; const flujo=tIng-sal2;
+  sfmt('fr-ing',tIng);sfmt('fr-g',tG);sfmt('fr-ah',tAh);sfmt('fr-sal',sal2);sfmt('fr-flujo',flujo);
+  const box=document.getElementById('fr-box');
+  if(box){box.style.display='block';
+    if(flujo>0){box.className='rbox rb-g';box.innerHTML=`<div class="rb-l">✅ Flujo positivo</div><div class="rb-v" style="color:#0F6E56">${fmt(flujo)}</div>`;}
+    else if(flujo<0){box.className='rbox rb-r';box.innerHTML=`<div class="rb-l">❌ Flujo negativo</div><div class="rb-v" style="color:#A32D2D">${fmt(flujo)}</div>`;}
+    else{box.className='rbox rb-y';box.innerHTML=`<div class="rb-l">⚖️ Equilibrio</div>`;}
+  }
+}
+
+// ════════════════════════════════════════════════
+// SESIÓN 2 — FLUJO MIXTO
+// ════════════════════════════════════════════════
+function htmlFM(){return `
+<div class="card"><div class="card-title">📅 Mapa de Estacionalidad</div>
+<table class="mt">
+<tr><th>Mes</th><th>Ingreso Fijo (₡)</th><th>Ingreso Variable (₡)</th><th>Discrecional (₡)</th><th>Total</th><th>Clasificación</th></tr>
+${MESES.map((m,i)=>`<tr>
+<td style="font-size:12px;font-weight:500;padding:5px 8px;">${m}</td>
+<td><input type="number" id="mp-f-${i}" oninput="calcMapa()"></td>
+<td><input type="number" id="mp-v-${i}" oninput="calcMapa()"></td>
+<td><input type="number" id="mp-d-${i}" oninput="calcMapa()"></td>
+<td><input readonly id="mp-t-${i}" style="width:110px;"></td>
+<td id="mp-cl-${i}" style="font-size:12px;font-weight:500;">—</td>
+</tr>`).join('')}
+</table>
+<div class="pg">
+<div class="pi"><div class="pl">💵 Total año</div><div class="pv" id="mp-anual">—</div></div>
+<div class="pi"><div class="pl">📈 Mejor mes</div><div class="pv" id="mp-mejor">—</div></div>
+<div class="pi"><div class="pl">📉 Mes más bajo</div><div class="pv" id="mp-bajo">—</div></div>
+<div class="pi"><div class="pl">➗ Promedio mensual</div><div class="pv" id="mp-prom">—</div></div>
+</div>
+<div class="irc-box"><div class="irc-lbl">⭐ IRC — Ingreso de Referencia Conservador</div>
+<div class="irc-val" id="mp-irc">₡0</div>
+<div class="irc-note">No es el promedio — es el ingreso que la mayoría de los meses normales supera. Base de toda la planificación.</div></div>
+<div style="margin-top:12px;"><div class="slbl">Promedios por tipo</div>
+<div class="pg">
+<div class="pi"><div class="pl">Promedio Fijos</div><div class="pv" id="mp-pf">—</div></div>
+<div class="pi"><div class="pl">Promedio Variables</div><div class="pv" id="mp-pv">—</div></div>
+<div class="pi"><div class="pl">Promedio Discrecionales</div><div class="pv" id="mp-pd">—</div></div>
+</div></div></div>
+<div class="card"><div class="card-title">📊 Gráfico del comportamiento del ingreso</div>
+<div id="grafico" class="bc" style="margin-top:8px;"></div></div>
+<div class="card"><div class="card-title">🗓️ Mes Actual — Real vs Presupuesto Base</div>
+<p style="font-size:11px;color:#888;margin-bottom:12px;">Presupuesto Base = gasto mínimo necesario en mes flojo (solo gastos)</p>
+<div class="fg fg2" style="margin-bottom:12px;">
+<div class="f"><label>Mes a analizar</label><select id="mx-mes" onchange="calcMA()">${MESES.map((m,i)=>`<option value="${i}">${m}</option>`).join('')}</select></div>
+</div>
+${htmlMATable()}
+<div id="mx-comp" style="display:none;" class="rbox"></div></div>
+<div class="card"><div class="card-title">📈 Mi Flujo — 3 Escenarios</div>
+<div class="eg" id="eg"></div>
+<div style="background:#f5f4f0;border-radius:8px;padding:12px;margin-top:12px;font-size:12px;color:#666;line-height:1.6;">
+⚠️ <strong>Regla de oro:</strong> «En los meses buenos no vivís mejor — te preparás para los meses malos.»
+</div></div>`;}
+
+function htmlMATable(){
+  const row=(lbl,r,b,cls='sub')=>`<tr><td class="${cls}">${lbl}</td><td><input type="number" id="${r}" oninput="calcMA()"></td><td>${b?`<input type="number" id="${b}" oninput="calcMA()">`:'<td style="background:#f5f4f0;">'}</td></tr>`;
+  const sub=(id,r,b)=>`<tr class="stot"><td class="lbl">${id}</td><td><input readonly id="${r}"></td><td><input readonly id="${b}"></td></tr>`;
+  return `<table class="ti">
+<tr><th style="width:50%">Descripción</th><th>Real este mes (₡)</th><th>Presupuesto Base (₡)</th></tr>
+<tr class="sh"><td colspan="3">💵 Ingresos (solo Real)</td></tr>
+${row('Ingresos Fijos','mx-if-r','')}
+${row('Ingresos Variables','mx-iv-r','')}
+${row('Ingresos Discrecionales / Esporádicos','mx-id-r','')}
+<tr class="stot"><td class="lbl">Total Ingresos</td><td><input readonly id="mx-ti-r"></td><td style="background:#f5f4f0;"></td></tr>
+<tr class="sh"><td colspan="3">🔒 Gastos Fijos</td></tr>
+<tr class="sh2"><td colspan="3">🏠 Vivienda</td></tr>
+${row('Renta o pago de hipoteca','mx-v1-r','mx-v1-b')}
+${row('Condominio / mantenimiento','mx-v2-r','mx-v2-b')}
+${sub('Subtotal Vivienda','mx-sv-r','mx-sv-b')}
+<tr class="sh2"><td colspan="3">⚡ Servicios Básicos</td></tr>
+${[['Electricidad (CNFL / ICE)','mx-s1'],['Agua (AyA)','mx-s2'],['Internet','mx-s3'],['Teléfono celular','mx-s4'],['Cable / Streaming','mx-s5'],['Gas','mx-s6']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Servicios','mx-ss-r','mx-ss-b')}
+<tr class="sh2"><td colspan="3">🚗 Transporte Fijo</td></tr>
+${[['Crédito del auto','mx-t1'],['Seguro del auto','mx-t2'],['Marchamo (÷12)','mx-t3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Transporte Fijo','mx-st-r','mx-st-b')}
+<tr class="sh2"><td colspan="3">💳 Pagos de Deudas</td></tr>
+${[['Tarjeta 1','mx-d1'],['Tarjeta 2','mx-d2'],['Tarjeta 3','mx-d3'],['Préstamo personal','mx-d4'],['Préstamo vehículo','mx-d5'],['Hipoteca','mx-d6'],['Préstamo familiar','mx-d7']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Deudas','mx-sd-r','mx-sd-b')}
+<tr class="sh2"><td colspan="3">👨‍👩‍👧 Familia</td></tr>
+${[['Colegiatura / Guardería','mx-f1'],['Pensión alimenticia que pago','mx-f2'],['Ayuda a padres / familiares','mx-f3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Familia','mx-sf-r','mx-sf-b')}
+<tr class="sh2"><td colspan="3">💊 Salud Fija</td></tr>
+${[['Seguro de gastos médicos','mx-sal1'],['Terapia / Psicólogo','mx-sal2'],['Medicamentos crónicos','mx-sal3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Salud Fija','mx-ssl-r','mx-ssl-b')}
+<tr class="sh2"><td colspan="3">📱 Otros Fijos</td></tr>
+${[['Ayuda doméstica','mx-o1'],['Apps / Suscripciones','mx-o2'],['Envíos de dinero','mx-o3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('Subtotal Otros Fijos','mx-sof-r','mx-sof-b')}
+<tr class="stot"><td class="lbl" style="font-weight:700;">SUBTOTAL GASTOS FIJOS</td><td><input readonly id="mx-sgf-r"></td><td><input readonly id="mx-sgf-b"></td></tr>
+<tr class="sh"><td colspan="3">📊 Gastos Variables</td></tr>
+<tr class="sh2"><td colspan="3">🚗 Transporte Variable</td></tr>
+${[['Gasolina','mx-gv1'],['Transporte público / Uber','mx-gv2'],['Mantenimiento auto','mx-gv3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+<tr class="sh2"><td colspan="3">🛒 Alimentación y Hogar</td></tr>
+${[['Supermercado / Despensa','mx-gv4'],['Productos limpieza / higiene','mx-gv5']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+<tr class="sh2"><td colspan="3">💊 Salud Variable</td></tr>
+${[['Medicamentos (no crónicos)','mx-gv6'],['Consultas médicas','mx-gv7']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+<tr class="sh2"><td colspan="3">🐾 Mascotas</td></tr>
+${row('Comida / veterinario','mx-gv8-r','mx-gv8-b')}
+${sub('SUBTOTAL GASTOS VARIABLES','mx-sgv-r','mx-sgv-b')}
+<tr class="sh"><td colspan="3">🎯 Gastos Discrecionales</td></tr>
+${[['Restaurantes / delivery / cafés','mx-disc1'],['Cuidado personal / estética','mx-disc2'],['Entretenimiento / ropa / salidas','mx-disc3']].map(([l,id])=>row(l,id+'-r',id+'-b')).join('')}
+${sub('SUBTOTAL DISCRECIONALES','mx-sgd-r','mx-sgd-b')}
+<tr class="sh"><td colspan="3">💰 Ahorro y Protección (solo Real)</td></tr>
+${[['Ahorro / Inversiones','mx-ah1-r'],['Fondo de Emergencias','mx-ah2-r'],['Fondo de Nivelación','mx-ah3-r']].map(([l,id])=>`<tr><td class="sub">${l}</td><td><input type="number" id="${id}" oninput="calcMA()"></td><td style="background:#f5f4f0;"></td></tr>`).join('')}
+<tr class="stot"><td class="lbl">Subtotal Ahorro</td><td><input readonly id="mx-sah-r"></td><td style="background:#f5f4f0;"></td></tr>
+<tr class="tot"><td class="lbl">Total Salidas</td><td><input readonly id="mx-tsal-r"></td><td><input readonly id="mx-tsal-b"></td></tr>
+<tr class="tot"><td class="lbl">🎯 Flujo Final</td><td><input readonly id="mx-flujo-r"></td><td><input readonly id="mx-flujo-b"></td></tr>
+</table>`;}
+
+function calcMapa(){
+  let tots=[],sf=0,sv=0,sd=0;
+  for(let i=0;i<12;i++){
+    const t=n('mp-f-'+i)+n('mp-v-'+i)+n('mp-d-'+i);
+    tots.push(t);sf+=n('mp-f-'+i);sv+=n('mp-v-'+i);sd+=n('mp-d-'+i);
+    const e=document.getElementById('mp-t-'+i);if(e)e.value=t>0?fmt(t):'';
+  }
+  const vals=tots.filter(t=>t>0);if(!vals.length)return;
+  const total=tots.reduce((a,t)=>a+t,0);
+  const prom=total/12;const mejor=Math.max(...tots);const bajov=Math.min(...vals);
+  const sorted=[...vals].sort((a,b)=>a-b);
+  const irc=sorted[Math.floor(sorted.length*0.25)]||sorted[0];
+  const tx=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  tx('mp-anual',fmt(total));tx('mp-mejor',fmt(mejor));tx('mp-bajo',fmt(bajov));
+  tx('mp-prom',fmt(prom));tx('mp-irc',fmt(irc));
+  tx('mp-pf',fmt(sf/12));tx('mp-pv',fmt(sv/12));tx('mp-pd',fmt(sd/12));
+  for(let i=0;i<12;i++){
+    const cl=document.getElementById('mp-cl-'+i);if(!cl)continue;
+    const t=tots[i];
+    if(t===0){cl.textContent='—';cl.className='';continue;}
+    if(t>=prom*1.15){cl.textContent='🟢 Mes Alto';cl.className='cl-a';}
+    else if(t>=prom*0.85){cl.textContent='🟡 Mes Medio';cl.className='cl-m';}
+    else{cl.textContent='🔴 Mes Bajo';cl.className='cl-b';}
+  }
+  renderGrafico(tots,prom);
+  renderEscenarios(tots,irc,prom,mejor);
+  calcMA();
+}
+
+function renderGrafico(tots,prom){
+  const gc=document.getElementById('grafico');if(!gc)return;
+  const max=Math.max(...tots,1);
+  gc.innerHTML=MESES.map((m,i)=>{
+    const t=tots[i];const pct=Math.round(t/max*100);
+    const color=t>=prom*1.15?'#1D9E75':t>=prom*0.85?'#EF9F27':'#E24B4A';
+    return `<div class="br"><div class="bm">${m.slice(0,3)}</div>
+    <div class="bo"><div class="bi" style="width:${pct}%;background:${color}"></div></div>
+    <div class="bv">${t>0?fmt(t):''}</div></div>`;
+  }).join('');
+}
+
+function renderEscenarios(tots,irc,prom,mejor){
+  const gc=document.getElementById('eg');if(!gc)return;
+  const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const gfB=()=>{
+    const ids=['mx-v1-b','mx-v2-b','mx-s1-b','mx-s2-b','mx-s3-b','mx-s4-b','mx-s5-b','mx-s6-b','mx-t1-b','mx-t2-b','mx-t3-b','mx-d1-b','mx-d2-b','mx-d3-b','mx-d4-b','mx-d5-b','mx-d6-b','mx-d7-b','mx-f1-b','mx-f2-b','mx-f3-b','mx-sal1-b','mx-sal2-b','mx-sal3-b','mx-o1-b','mx-o2-b','mx-o3-b'];
+    return ids.reduce((a,id)=>a+nv(id),0);
+  };
+  const gvB=()=>['mx-gv1-b','mx-gv2-b','mx-gv3-b','mx-gv4-b','mx-gv5-b','mx-gv6-b','mx-gv7-b','mx-gv8-b'].reduce((a,id)=>a+nv(id),0);
+  const gdB=()=>['mx-disc1-b','mx-disc2-b','mx-disc3-b'].reduce((a,id)=>a+nv(id),0);
+  const ahB=()=>nv('mx-ah1-r')+nv('mx-ah2-r')+nv('mx-ah3-r');
+  const bajov=Math.min(...tots.filter(t=>t>0));
+  const gf=gfB(),gv=gvB(),gd=gdB(),ah=ahB();
+  const escs=[
+    {cls:'bajo',title:'🔴 Mes Bajo',desc:'Ingreso ≤ IRC. Activá el Fondo de Nivelación. Solo cubrís lo esencial — los discrecionales desaparecen.',ing:bajov,gfix:gf,gvar:Math.round(gv*0.84),gdisc:0,ahor:0},
+    {cls:'medio',title:'🟡 Mes Medio',desc:'Ingreso cerca del IRC. Ejecutá el plan normal. Cubrís gastos, ahorrás lo básico.',ing:irc,gfix:gf,gvar:gv,gdisc:0,ahor:ah},
+    {cls:'alto',title:'🟢 Mes Alto',desc:'Ingreso ≥ 115% del promedio. No vivís mejor — el excedente va al Fondo de Nivelación.',ing:mejor,gfix:gf,gvar:gv,gdisc:gd,ahor:ah},
+  ];
+  gc.innerHTML=escs.map(e=>{
+    const sal=e.gfix+e.gvar+e.gdisc+e.ahor;const flujo=e.ing-sal;
+    return `<div class="ec ${e.cls}"><div class="et ${e.cls}">${e.title}</div><div class="ed">${e.desc}</div>
+    <div class="er"><span>Ingresos</span><span>${fmt(e.ing)}</span></div>
+    <div class="er"><span>Gastos Fijos</span><span>${fmt(e.gfix)}</span></div>
+    <div class="er"><span>Gastos Variables</span><span>${fmt(e.gvar)}</span></div>
+    <div class="er"><span>Discrecionales</span><span>${fmt(e.gdisc)}</span></div>
+    <div class="er"><span>Ahorro</span><span>${fmt(e.ahor)}</span></div>
+    <div class="er"><span>Flujo</span><span style="color:${flujo>=0?'#0F6E56':'#A32D2D'}">${fmt(flujo)}</span></div>
+    </div>`;
+  }).join('');
+}
+
+function calcMA(){
+  const nv=id=>parseFloat(document.getElementById(id)?.value)||0;
+  const sg=(ids_r,ids_b,ro,bo)=>{
+    const r=ids_r.reduce((a,id)=>a+nv(id),0);
+    const b=ids_b.reduce((a,id)=>a+nv(id),0);
+    sfmt(ro,r);sfmt(bo,b);return{r,b};
+  };
+  const tiR=nv('mx-if-r')+nv('mx-iv-r')+nv('mx-id-r');sfmt('mx-ti-r',tiR);
+  const {r:svR,b:svB}=sg(['mx-v1-r','mx-v2-r'],['mx-v1-b','mx-v2-b'],'mx-sv-r','mx-sv-b');
+  const ssR=['mx-s1-r','mx-s2-r','mx-s3-r','mx-s4-r','mx-s5-r','mx-s6-r'].reduce((a,id)=>a+nv(id),0);
+  const ssB=['mx-s1-b','mx-s2-b','mx-s3-b','mx-s4-b','mx-s5-b','mx-s6-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-ss-r',ssR);sfmt('mx-ss-b',ssB);
+  const stR=['mx-t1-r','mx-t2-r','mx-t3-r'].reduce((a,id)=>a+nv(id),0);
+  const stB=['mx-t1-b','mx-t2-b','mx-t3-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-st-r',stR);sfmt('mx-st-b',stB);
+  const sdR=['mx-d1-r','mx-d2-r','mx-d3-r','mx-d4-r','mx-d5-r','mx-d6-r','mx-d7-r'].reduce((a,id)=>a+nv(id),0);
+  const sdB=['mx-d1-b','mx-d2-b','mx-d3-b','mx-d4-b','mx-d5-b','mx-d6-b','mx-d7-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-sd-r',sdR);sfmt('mx-sd-b',sdB);
+  const sfR=['mx-f1-r','mx-f2-r','mx-f3-r'].reduce((a,id)=>a+nv(id),0);
+  const sfB=['mx-f1-b','mx-f2-b','mx-f3-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-sf-r',sfR);sfmt('mx-sf-b',sfB);
+  const sslR=['mx-sal1-r','mx-sal2-r','mx-sal3-r'].reduce((a,id)=>a+nv(id),0);
+  const sslB=['mx-sal1-b','mx-sal2-b','mx-sal3-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-ssl-r',sslR);sfmt('mx-ssl-b',sslB);
+  const sofR=['mx-o1-r','mx-o2-r','mx-o3-r'].reduce((a,id)=>a+nv(id),0);
+  const sofB=['mx-o1-b','mx-o2-b','mx-o3-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-sof-r',sofR);sfmt('mx-sof-b',sofB);
+  const sgfR=svR+ssR+stR+sdR+sfR+sslR+sofR,sgfB=svB+ssB+stB+sdB+sfB+sslB+sofB;
+  sfmt('mx-sgf-r',sgfR);sfmt('mx-sgf-b',sgfB);
+  const sgvR=['mx-gv1-r','mx-gv2-r','mx-gv3-r','mx-gv4-r','mx-gv5-r','mx-gv6-r','mx-gv7-r','mx-gv8-r'].reduce((a,id)=>a+nv(id),0);
+  const sgvB=['mx-gv1-b','mx-gv2-b','mx-gv3-b','mx-gv4-b','mx-gv5-b','mx-gv6-b','mx-gv7-b','mx-gv8-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-sgv-r',sgvR);sfmt('mx-sgv-b',sgvB);
+  const sgdR=['mx-disc1-r','mx-disc2-r','mx-disc3-r'].reduce((a,id)=>a+nv(id),0);
+  const sgdB=['mx-disc1-b','mx-disc2-b','mx-disc3-b'].reduce((a,id)=>a+nv(id),0);
+  sfmt('mx-sgd-r',sgdR);sfmt('mx-sgd-b',sgdB);
+  const sahR=nv('mx-ah1-r')+nv('mx-ah2-r')+nv('mx-ah3-r');sfmt('mx-sah-r',sahR);
+  const tsalR=sgfR+sgvR+sgdR+sahR,tsalB=sgfB+sgvB+sgdB;
+  sfmt('mx-tsal-r',tsalR);sfmt('mx-tsal-b',tsalB);
+  const flujoR=tiR-tsalR,flujoB=tiR-tsalB;
+  sfmt('mx-flujo-r',flujoR);sfmt('mx-flujo-b',flujoB);
+  const diff=(sgfR+sgvR+sgdR)-(sgfB+sgvB+sgdB);
+  const box=document.getElementById('mx-comp');
+  if(box){box.style.display='block';
+    if(diff>0){box.className='rbox rb-r';box.innerHTML=`<div class="rb-l">⚠️ Gasté más que el presupuesto base</div><div class="rb-v" style="color:#A32D2D">${fmt(diff)} de más</div>`;}
+    else if(diff<0){box.className='rbox rb-g';box.innerHTML=`<div class="rb-l">✅ Gasté menos que el presupuesto base</div><div class="rb-v">${fmt(Math.abs(diff))} de ahorro</div>`;}
+    else{box.className='rbox rb-y';box.innerHTML=`<div class="rb-l">⚖️ Exactamente en presupuesto</div>`;}
+  }
+  // Actualizar escenarios en tiempo real
+  const tots=[];
+  for(let i=0;i<12;i++) tots.push(n('mp-f-'+i)+n('mp-v-'+i)+n('mp-d-'+i));
+  const vals=tots.filter(t=>t>0);
+  if(vals.length){
+    const prom=tots.reduce((a,t)=>a+t,0)/12;
+    const mejor=Math.max(...tots);
+    const sorted=[...vals].sort((a,b)=>a-b);
+    const irc=sorted[Math.floor(sorted.length*0.25)]||sorted[0];
+    renderEscenarios(tots,irc,prom,mejor);
+  }
+}
+
+// ════════════════════════════════════════════════
+// ECUACIÓN CONTABLE
+// ════════════════════════════════════════════════
+function htmlEcuacion(){return `
+<div class="card"><div class="card-title">💎 Mis Activos — Lo que tengo</div><table class="ti">
+<tr><th style="width:52%">Activo</th><th>Valor actual (₡)</th><th>Fuente</th></tr>
+<tr class="sh"><td colspan="3">💧 Activos Corrientes / Líquidos</td></tr>
+<tr class="sh2"><td colspan="3">💵 Efectivo y Cuentas Bancarias</td></tr>
+<tr><td class="sub">Efectivo en casa</td><td><input type="number" id="ac-1" oninput="calcBal()"></td><td><input type="text" placeholder="Contarlo tú misma"></td></tr>
+<tr><td class="sub">Cuenta de ahorro — Banco 1</td><td><input type="number" id="ac-2" oninput="calcBal()"></td><td><input type="text" placeholder="App del banco"></td></tr>
+<tr><td class="sub">Cuenta de ahorro — Banco 2</td><td><input type="number" id="ac-3" oninput="calcBal()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Cuenta corriente 1</td><td><input type="number" id="ac-4" oninput="calcBal()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Cuenta corriente 2</td><td><input type="number" id="ac-5" oninput="calcBal()"></td><td><input type="text"></td></tr>
+<tr class="sh2"><td colspan="3">📈 Inversiones</td></tr>
+<tr><td class="sub">Certificados a Plazo (CDPs)</td><td><input type="number" id="ac-6" oninput="calcBal()"></td><td><input type="text" placeholder="SAFIs / BN / BCR / Popular"></td></tr>
+<tr><td class="sub">Fondos de inversión (SAFIs)</td><td><input type="number" id="ac-7" oninput="calcBal()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Acciones en bolsa / BNV</td><td><input type="number" id="ac-8" oninput="calcBal()"></td><td><input type="text" placeholder="Casa de bolsa / CEVAL"></td></tr>
+<tr><td class="sub">Criptomonedas</td><td><input type="number" id="ac-9" oninput="calcBal()"></td><td><input type="text" placeholder="Wallet o exchange"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Activos Corrientes</td><td><input readonly id="ac-sc"></td><td></td></tr>
+<tr class="sh"><td colspan="3">🏗️ Activos No Corrientes / Fijos</td></tr>
+<tr class="sh2"><td colspan="3">🏦 Ahorro para el Retiro</td></tr>
+<tr><td class="sub">OPC / Pensión Complementaria (ROP)</td><td><input type="number" id="ac-10" oninput="calcBal()"></td><td><input type="text" placeholder="App OPC o SUPEN.go.cr"></td></tr>
+<tr class="sh2"><td colspan="3">🏠 Bienes Inmuebles</td></tr>
+<tr><td class="sub">Casa / Departamento donde vivo</td><td><input type="number" id="ac-11" oninput="calcBal()"></td><td><input type="text" placeholder="Portales inmobiliarios"></td></tr>
+<tr><td class="sub">Segunda propiedad</td><td><input type="number" id="ac-12" oninput="calcBal()"></td><td><input type="text"></td></tr>
+<tr><td class="sub">Terreno</td><td><input type="number" id="ac-13" oninput="calcBal()"></td><td><input type="text" placeholder="Valuación catastral"></td></tr>
+<tr class="sh2"><td colspan="3">🚗 Vehículos</td></tr>
+<tr><td class="sub">Auto (si es tuyo)</td><td><input type="number" id="ac-14" oninput="calcBal()"></td><td><input type="text" placeholder="Kavak, Encuentra24, OLX, Crautos"></td></tr>
+<tr class="sh2"><td colspan="3">💎 Otros Activos Valiosos</td></tr>
+<tr><td class="sub">Joyería de valor (+$1,000)</td><td><input type="number" id="ac-15" oninput="calcBal()"></td><td><input type="text" placeholder="Avalúo"></td></tr>
+<tr><td class="sub">Equipo profesional</td><td><input type="number" id="ac-16" oninput="calcBal()"></td><td><input type="text" placeholder="Precio de reventa"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Activos No Corrientes</td><td><input readonly id="ac-snc"></td><td></td></tr>
+<tr class="tot"><td class="lbl">TOTAL ACTIVOS</td><td><input readonly id="ac-tot"></td><td></td></tr>
+</table></div>
+<div class="card"><div class="card-title">📋 Mis Pasivos — Lo que debo</div><table class="ti">
+<tr><th style="width:45%">Deuda</th><th>Saldo (₡)</th><th>Tasa %</th><th>Cuota/mes (₡)</th></tr>
+<tr class="sh"><td colspan="4">⚡ Pasivos Circulantes — menos de 1 año</td></tr>
+<tr class="sh2"><td colspan="4">💳 Tarjetas de Crédito</td></tr>
+${['pa-1','pa-2','pa-3','pa-4','pa-5'].map((id,i)=>`<tr><td class="sub">Tarjeta ${i<3?i+1:i===3?'departamental 1':'departamental 2'}</td><td><input type="number" id="${id}" oninput="calcBal()"></td><td><input type="number" id="${id}t"></td><td><input type="number" id="${id}c"></td></tr>`).join('')}
+<tr class="sh2"><td colspan="4">📱 Préstamos Rápidos</td></tr>
+<tr><td class="sub">Préstamo rápido 1 (JD Soluciones, Presta Fácil, Hola Cash)</td><td><input type="number" id="pa-6" oninput="calcBal()"></td><td><input type="number" id="pa-6t"></td><td><input type="number" id="pa-6c"></td></tr>
+<tr><td class="sub">Préstamo rápido 2</td><td><input type="number" id="pa-7" oninput="calcBal()"></td><td><input type="number" id="pa-7t"></td><td><input type="number" id="pa-7c"></td></tr>
+<tr><td class="sub">Adelanto de nómina</td><td><input type="number" id="pa-8" oninput="calcBal()"></td><td><input type="number" id="pa-8t"></td><td><input type="number" id="pa-8c"></td></tr>
+<tr class="sh2"><td colspan="4">👥 Deudas Personales</td></tr>
+${['pa-9','pa-10','pa-11'].map((id,i)=>`<tr><td class="sub">${i===0?'Préstamo de familiar 1':i===1?'Préstamo de familiar 2':'Dinero prestado a amigo'}</td><td><input type="number" id="${id}" oninput="calcBal()"></td><td><input type="number" id="${id}t"></td><td><input type="number" id="${id}c"></td></tr>`).join('')}
+<tr class="sh2"><td colspan="4">🛍️ Compras a Meses</td></tr>
+<tr><td class="sub">Compra 1 a meses sin intereses</td><td><input type="number" id="pa-12" oninput="calcBal()"></td><td><input type="number" id="pa-12t"></td><td><input type="number" id="pa-12c"></td></tr>
+<tr><td class="sub">Compra 2 a meses sin intereses</td><td><input type="number" id="pa-13" oninput="calcBal()"></td><td><input type="number" id="pa-13t"></td><td><input type="number" id="pa-13c"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Pasivos Circulantes</td><td><input readonly id="pa-sc"></td><td></td><td></td></tr>
+<tr class="sh"><td colspan="4">🏦 Pasivos Largo Plazo — más de 1 año</td></tr>
+<tr><td class="sub">Hipoteca</td><td><input type="number" id="pa-14" oninput="calcBal()"></td><td><input type="number" id="pa-14t"></td><td><input type="number" id="pa-14c"></td></tr>
+<tr><td class="sub">Crédito automotriz</td><td><input type="number" id="pa-15" oninput="calcBal()"></td><td><input type="number" id="pa-15t"></td><td><input type="number" id="pa-15c"></td></tr>
+<tr><td class="sub">Préstamo personal bancario</td><td><input type="number" id="pa-16" oninput="calcBal()"></td><td><input type="number" id="pa-16t"></td><td><input type="number" id="pa-16c"></td></tr>
+<tr><td class="sub">Crédito educativo</td><td><input type="number" id="pa-17" oninput="calcBal()"></td><td><input type="number" id="pa-17t"></td><td><input type="number" id="pa-17c"></td></tr>
+<tr><td class="sub">Otra deuda largo plazo</td><td><input type="number" id="pa-18" oninput="calcBal()"></td><td><input type="number" id="pa-18t"></td><td><input type="number" id="pa-18c"></td></tr>
+<tr class="stot"><td class="lbl">Subtotal Pasivos Fijo / LP</td><td><input readonly id="pa-slp"></td><td></td><td></td></tr>
+<tr class="tot"><td class="lbl">TOTAL PASIVOS</td><td><input readonly id="pa-tot"></td><td></td><td></td></tr>
+</table></div>
+<div class="card"><div class="card-title">📸 Mi Balance — Ecuación Contable</div><table class="ti">
+<tr><th style="width:60%">Concepto</th><th>Monto (₡)</th></tr>
+<tr><td class="lbl">💎 ACTIVOS (lo que tengo)</td><td><input readonly id="bal-a"></td></tr>
+<tr><td class="lbl">📋 PASIVOS (lo que debo)</td><td><input readonly id="bal-p"></td></tr>
+<tr class="tot"><td class="lbl">🏆 PATRIMONIO NETO</td><td><input readonly id="bal-pat"></td></tr>
+</table>
+<div style="margin-top:12px;"><table class="ti">
+<tr><td class="lbl">Activo Corriente</td><td><input readonly id="bal-ac"></td></tr>
+<tr><td class="lbl">Activo Fijo</td><td><input readonly id="bal-anc"></td></tr>
+<tr><td class="lbl">Pasivo Circulante</td><td><input readonly id="bal-pc"></td></tr>
+<tr><td class="lbl">Pasivo Fijo / LP</td><td><input readonly id="bal-plp"></td></tr>
+</table></div>
+<div id="bal-box" style="display:none;" class="rbox"></div></div>`;}
+
+function calcBal(){
+  const sum=(...ids)=>ids.reduce((a,id)=>a+n(id),0);
+  const corr=sum('ac-1','ac-2','ac-3','ac-4','ac-5','ac-6','ac-7','ac-8','ac-9');
+  const noCorr=sum('ac-10','ac-11','ac-12','ac-13','ac-14','ac-15','ac-16');
+  const tAct=corr+noCorr;
+  sfmt('ac-sc',corr);sfmt('ac-snc',noCorr);sfmt('ac-tot',tAct);
+  const circ=sum('pa-1','pa-2','pa-3','pa-4','pa-5','pa-6','pa-7','pa-8','pa-9','pa-10','pa-11','pa-12','pa-13');
+  const lp=sum('pa-14','pa-15','pa-16','pa-17','pa-18');
+  const tPas=circ+lp;
+  sfmt('pa-sc',circ);sfmt('pa-slp',lp);sfmt('pa-tot',tPas);
+  const pat=tAct-tPas;
+  sfmt('bal-a',tAct);sfmt('bal-p',tPas);sfmt('bal-pat',pat);
+  sfmt('bal-ac',corr);sfmt('bal-anc',noCorr);sfmt('bal-pc',circ);sfmt('bal-plp',lp);
+  const box=document.getElementById('bal-box');
+  if(box){box.style.display='block';
+    if(pat>0){box.className='rbox rb-g';box.innerHTML=`<div class="rb-l">✅ Patrimonio Positivo</div><div class="rb-v" style="color:#0F6E56">${fmt(pat)}</div><div class="rb-n">Tenés más de lo que debés.</div>`;}
+    else if(pat<0){box.className='rbox rb-r';box.innerHTML=`<div class="rb-l">⚠️ Patrimonio Negativo</div><div class="rb-v" style="color:#A32D2D">${fmt(pat)}</div><div class="rb-n">Debés más de lo que tenés. Con un plan esto cambia.</div>`;}
+    else{box.className='rbox rb-y';box.innerHTML=`<div class="rb-l">⚖️ Punto de Equilibrio</div>`;}
+  }
+}
+
+// ════════════════════════════════════════════════
+// SESIÓN 3 — RATIOS
+// ════════════════════════════════════════════════
+function buildResumen(){
+  const tipo=TIPO||'fijo';
+  let ing=0,ingF=0,ingV=0,totG=0,gF=0,ah=0,acC=0,acFij=0,acT=0,paC=0,paLP=0,paT=0;
+  if(tipo==='fijo'){
+    ing=n('fi-tot')||readFmt('fi-tot');
+    ingF=n('fi-sf')||readFmt('fi-sf');
+    ingV=n('fi-sv')||readFmt('fi-sv');
+    totG=n('f-totg')||readFmt('f-totg');
+    gF=n('fg-totf')||readFmt('fg-totf');
+    ah=n('fa-tot')||readFmt('fa-tot');
+  } else {
+    // Para mixto calcular desde campos del mapa
+    const tots=[];
+    for(let i=0;i<12;i++) tots.push(n('mp-f-'+i)+n('mp-v-'+i)+n('mp-d-'+i));
+    const vals=tots.filter(t=>t>0);
+    if(vals.length){
+      const sorted=[...vals].sort((a,b)=>a-b);
+      ing=sorted[Math.floor(sorted.length*0.25)]||sorted[0];
+    }
+    // Si S2 no está cargada, leer de los campos guardados
+    if(ing===0) ing=readFmt('mp-irc')||0;
+    ingF=Math.round([...Array(12)].reduce((a,_,i)=>a+n('mp-f-'+i),0)/12);
+    ingV=Math.round([...Array(12)].reduce((a,_,i)=>a+n('mp-v-'+i),0)/12);
+    const sgfR=n('mx-sgf-r')||readFmt('mx-sgf-r');
+    const sgvR=n('mx-sgv-r')||readFmt('mx-sgv-r');
+    const sgdR=n('mx-sgd-r')||readFmt('mx-sgd-r');
+    gF=sgfR; totG=sgfR+sgvR+sgdR;
+    ah=n('mx-sah-r')||readFmt('mx-sah-r');
+  }
+  acC=n('ac-sc')||readFmt('ac-sc');
+  acFij=n('ac-snc')||readFmt('ac-snc');
+  acT=n('ac-tot')||readFmt('ac-tot');
+  paC=n('pa-sc')||readFmt('pa-sc');
+  paLP=n('pa-slp')||readFmt('pa-slp');
+  paT=n('pa-tot')||readFmt('pa-tot');
+
+  // Guardar para ratios
+  window._rd={ing,ingF,ingV,totG,gF,ah,acC,acFij,acT,paC,paLP,paT};
+
+  const card=(lbl,val,color='#1a1a1a')=>`<div class="sum-card"><div class="sl">${lbl}</div><div class="sv" style="color:${color}">${val>0?fmt(val):'—'}</div></div>`;
+  document.getElementById('res-flujo').innerHTML=
+    card('Ingreso Base (IRC o fijo)',ing)+card('Ingresos Fijos',ingF)+card('Total Gastos',totG)+
+    card('Gastos Fijos',gF)+card('Ahorro mensual',ah)+card('Ingresos Variables',ingV);
+  document.getElementById('res-ec').innerHTML=
+    card('Activo Corriente',acC)+card('Activo Fijo',acFij)+card('Total Activos',acT,'#0F6E56')+
+    card('Pasivo Circulante',paC)+card('Pasivo Fijo / LP',paLP)+card('Total Pasivos',paT,'#A32D2D');
+}
+
+function readFmt(id){
+  const e=document.getElementById(id);if(!e)return 0;
+  return parseInt((e.value||e.textContent||'').replace(/[₡\s.]/g,'').replace(/,/g,''))||0;
+}
+
+const RATIOS=[
+  {id:'cob',n:'Cobertura de Gastos',r:'≤ 90%',s:'Qué % del ingreso se va en gastos. Ideal ≤ 90%. En rojo: gastás más de lo que ganás.',c:d=>d.totG/d.ing,pct:true,ok:v=>v<=0.9,w:v=>v<=1.0},
+  {id:'dist',n:'Distribución del Gasto',r:'≤ 50% en gastos fijos',s:'Qué tan atada está a compromisos fijos. >65% en fijos = estructura rígida, poco margen ante imprevistos.',c:d=>d.gF/d.totG,pct:true,ok:v=>v<=0.5,w:v=>v<=0.65},
+  {id:'est',n:'Ingreso Estable',r:'≥ 80%',s:'Qué tan predecible es el ingreso. ≥80% = alta estabilidad. <50% = incertidumbre constante.',c:d=>d.ingF/d.ing,pct:true,ok:v=>v>=0.8,w:v=>v>=0.5},
+  {id:'liq',n:'Liquidez',r:'≥ 1.5x',s:'Colones disponibles por cada colón que debe pagar este año. <1 = no alcanza para cubrir deudas a corto plazo.',c:d=>d.acC/d.paC,pct:false,ok:v=>v>=1.5,w:v=>v>=1.0},
+  {id:'end',n:'Endeudamiento',r:'≤ 50%',s:'Qué % de lo que posee está financiado con deuda. >50% = más de la mitad de sus bienes son del banco.',c:d=>d.paT/d.acT,pct:true,ok:v=>v<=0.5,w:v=>v<=0.7},
+  {id:'aho',n:'Tasa de Ahorro',r:'≥ 10%',s:'Termómetro de salud financiera. 10% = mínimo. 20% = objetivo de largo plazo.',c:d=>d.ah/d.ing,pct:true,ok:v=>v>=0.1,w:v=>v>=0.05},
+  {id:'dbd',n:'Deuda Buena vs Deuda Mala',r:'≤ 40% en corto plazo',s:'Distingue deuda que genera valor (LP) de deuda que consume (tarjetas, rápidos). >60% circulante = espiral de deuda.',c:d=>d.paC/d.paT,pct:true,ok:v=>v<=0.4,w:v=>v<=0.6},
+];
+
+function buildRatios(){
+  const t=document.getElementById('rat-tabla');if(!t||t.innerHTML)return;
+  t.innerHTML=RATIOS.map(r=>`<div class="rr">
+  <div><div class="rn">${r.n}</div><div class="rg">${r.r}</div><div class="rs">${r.s}</div></div>
+  <div class="ri"><input type="number" id="rr-${r.id}" placeholder="0" oninput="recalcSem('${r.id}')"></div>
+  <div class="sm" id="rs-${r.id}">—</div>
+  <div class="rip"><textarea id="ri-${r.id}" placeholder="Interpretación..."></textarea></div>
+  </div>`).join('');
+}
+
+function calcRatios(){
+  const d=window._rd||{};
+  if(!d.ing&&!d.acT)return;
+  RATIOS.forEach(r=>{
+    const inp=document.getElementById('rr-'+r.id);
+    const sem=document.getElementById('rs-'+r.id);
+    if(!inp||!sem)return;
+    const val=r.c(d);
+    if(!isFinite(val)||isNaN(val)){inp.value='';sem.textContent='—';return;}
+    inp.value=r.pct?(val*100).toFixed(1):val.toFixed(2);
+    sem.textContent=r.ok(val)?'🟢':r.w(val)?'🟡':'🔴';
+  });
+}
+
+function recalcSem(id){
+  const r=RATIOS.find(x=>x.id===id);if(!r)return;
+  const inp=document.getElementById('rr-'+id);const sem=document.getElementById('rs-'+id);if(!inp||!sem)return;
+  const raw=parseFloat(inp.value);if(isNaN(raw)){sem.textContent='—';return;}
+  const val=r.pct?raw/100:raw;
+  sem.textContent=r.ok(val)?'🟢':r.w(val)?'🟡':'🔴';
+}
+
+// ════════════════════════════════════════════════
+// GUARDAR / CARGAR — SUPABASE
+// ════════════════════════════════════════════════
+function getAllFields(){
+  const d={};
+  document.querySelectorAll('input:not([readonly]),select,textarea').forEach(e=>{if(e.id)d[e.id]=e.value;});
+  return d;
+}
+
+function setAllFields(d){
+  if(!d)return;
+  Object.entries(d).forEach(([id,val])=>{
+    const e=document.getElementById(id);
+    if(e&&!e.readOnly&&e.type!=='button')e.value=val;
+  });
+}
+
+function showStatus(id,msg,ok=true){
+  status(id,msg,ok);
+}
+
+async function guardarS1(){
+  const nombre=document.getElementById('s1-nombre')?.value.trim();
+  if(!nombre){alert('Ingresá el nombre de la clienta.');return;}
+  if(!TIPO){alert('Seleccioná el tipo de ingreso.');return;}
+  showStatus('ss0','Guardando...');
+  try{
+    const email=document.getElementById('s1-email')?.value.trim()||'nf-'+Date.now()+'@norte.cr';
+    const clientaData={nombre,email,telefono:document.getElementById('s1-tel')?.value.trim()||'',tipo_ingreso:TIPO,fase_actual:1,activa:true};
+    if(CID){
+      await db('clientas?id=eq.'+CID,'PATCH',clientaData);
+    }else{
+      await db('clientas','POST',clientaData);
+      const r=await db('clientas?nombre=eq.'+encodeURIComponent(nombre)+'&order=created_at.desc&limit=1');
+      if(r&&r[0]){CID=r[0].id;history.replaceState(null,'','?c='+CID);}
+    }
+    await guardarCampos();
+    showStatus('ss0','✅ Guardado');
+  }catch(e){showStatus('ss0','❌ Error: '+e.message,false);console.error(e);}
+}
+
+async function guardarS2(){
+  if(!CID){alert('Primero guardá la Sesión 1.');return;}
+  showStatus('ss1','Guardando...');
+  try{await guardarCampos();showStatus('ss1','✅ Guardado');}
+  catch(e){showStatus('ss1','❌ Error',false);console.error(e);}
+}
+
+async function guardarS3(){
+  if(!CID){alert('Primero guardá la Sesión 1.');return;}
+  showStatus('ss2','Guardando...');
+  try{await guardarCampos();showStatus('ss2','✅ Guardado');}
+  catch(e){showStatus('ss2','❌ Error',false);console.error(e);}
+}
+
+async function guardarCampos(){
+  const campos=getAllFields();
+  // Asegurarse de incluir campos de ecuación explícitamente
+  const ecIds=['ac-1','ac-2','ac-3','ac-4','ac-5','ac-6','ac-7','ac-8','ac-9','ac-10','ac-11','ac-12','ac-13','ac-14','ac-15','ac-16',
+    'pa-1','pa-2','pa-3','pa-4','pa-5','pa-6','pa-7','pa-8','pa-9','pa-10','pa-11','pa-12','pa-13','pa-14','pa-15','pa-16','pa-17','pa-18',
+    'pa-1t','pa-2t','pa-3t','pa-4t','pa-5t','pa-14t','pa-15t','pa-16t','pa-17t','pa-18t',
+    'pa-1c','pa-2c','pa-3c','pa-4c','pa-5c','pa-14c','pa-15c','pa-16c','pa-17c','pa-18c'];
+  ecIds.forEach(id=>{
+    const e=document.getElementById(id);
+    if(e&&e.value)campos[id]=e.value;
+  });
+  const payload={tipo:TIPO,campos,ts:new Date().toISOString()};
+  // Verificar si existe
+  const existe=await db('sesiones_data?clienta_id=eq.'+CID);
+  if(existe&&existe.length>0){
+    await db('sesiones_data?clienta_id=eq.'+CID,'PATCH',{datos:payload,updated_at:new Date().toISOString()});
+  }else{
+    await db('sesiones_data','POST',{clienta_id:CID,datos:payload,updated_at:new Date().toISOString()});
+  }
+}
+
+async function cargarDatos(){
+  document.getElementById('overlay').style.display='flex';
+  if(!CID){document.getElementById('overlay').style.display='none';return;}
+  try{
+    // Cargar datos de la clienta
+    const rc=await db('clientas?id=eq.'+CID);
+    if(rc&&rc[0]){
+      const c=rc[0];
+      sv('s1-nombre',c.nombre||'');sv('s1-email',c.email||'');sv('s1-tel',c.telefono||'');
+      if(c.tipo_ingreso){selTipo(c.tipo_ingreso);s2ok=false;}
+      updNombre();
+    }
+    // Cargar campos de sesiones_data
+    const rd=await db('sesiones_data?clienta_id=eq.'+CID+'&limit=1');
+    if(rd&&rd[0]&&rd[0].datos){
+      const d=rd[0].datos;
+      if(d.tipo)selTipo(d.tipo);
+      if(d.campos){
+        // Restaurar campos S1 inmediatamente
+        const s1=['s1-fnac','s1-fecha','s1-conocio','s1-ocup','s1-estado','s1-dep','s1-viv','s1-rel','s1-sit','s1-ans','s1-meta','s1-deudas','s1-notas',
+          's1-tiene-vehiculo','s1-vehiculo-tipo',
+          'daño-financiero-val','txt-financiero','daño-psicologico-val','txt-psicologico',
+          'daño-relacional-val','txt-relacional','daño-legal-val','txt-legal',
+          'daño-patrimonial-val','txt-patrimonial','s1-ia-diagnostico'];
+        s1.forEach(id=>{if(d.campos[id]!==undefined)sv(id,d.campos[id]);});
+        // Restaurar estados visuales
+        toggleVehiculo();
+        ['financiero','psicologico','relacional','legal','patrimonial'].forEach(t=>toggleDaño(t));
+        // Guardar para cuando se abra S2 y S3
+        window._savedFields=d.campos;
+      }
+    }
+  }catch(e){console.error('Error cargando:',e);}
+  document.getElementById('overlay').style.display='none';
+}
+
+// Override buildS2 para restaurar campos después de construir
+const _origBuild=buildS2;
+buildS2=function(){
+  _origBuild();
+  if(window._savedFields){
+    const campos=window._savedFields;
+    // Restaurar TODOS los campos
+    setAllFields(campos);
+    // Restaurar activos y pasivos explícitamente uno por uno
+    for(let i=1;i<=16;i++){
+      const e=document.getElementById('ac-'+i);
+      if(e&&campos['ac-'+i])e.value=campos['ac-'+i];
+    }
+    for(let i=1;i<=18;i++){
+      const e=document.getElementById('pa-'+i);
+      if(e&&campos['pa-'+i])e.value=campos['pa-'+i];
+      const et=document.getElementById('pa-'+i+'t');
+      if(et&&campos['pa-'+i+'t'])et.value=campos['pa-'+i+'t'];
+      const ec=document.getElementById('pa-'+i+'c');
+      if(ec&&campos['pa-'+i+'c'])ec.value=campos['pa-'+i+'c'];
+    }
+    const tipo=TIPO||'fijo';
+    if(tipo==='fijo')calcFF();
+    else{calcMapa();calcMA();}
+    calcBal();
+  }
+};
+
+// Override goTab para restaurar S3
+const _origGoTab=goTab;
+goTab=function(i){
+  _origGoTab(i);
+  if(i===2&&window._savedFields){
+    setTimeout(()=>{
+      setAllFields(window._savedFields);
+      buildResumen();
+      buildRatios();
+      calcRatios();
+      // Restaurar interpretaciones
+      RATIOS.forEach(r=>{
+        const id='ri-'+r.id;
+        if(window._savedFields[id])sv(id,window._savedFields[id]);
+      });
+    },150);
+  }
+};
+
+// Init
+document.getElementById('s1-fecha').valueAsDate=new Date();
+cargarDatos();
+
+function toggleVehiculo(){
+  const si=document.getElementById('s1-tiene-vehiculo').value==='Sí';
+  document.getElementById('bloque-vehiculo').style.display=si?'block':'none';
+}
+
+function toggleDaño(tipo){
+  const val=document.getElementById('daño-'+tipo+'-val').value;
+  const item=document.getElementById('daño-'+tipo);
+  const nota=document.getElementById('nota-'+tipo);
+  if(val==='Sí'){item.classList.add('activo');nota.style.display='block';}
+  else{item.classList.remove('activo');nota.style.display='none';}
+}
+
+function abrirClaude(){
+  const nombre=document.getElementById('s1-nombre')?.value||'la clienta';
+  const relacion=document.getElementById('s1-rel')?.value||'';
+  const situacion=document.getElementById('s1-sit')?.value||'';
+  const ansiedad=document.getElementById('s1-ans')?.value||'';
+  const meta=document.getElementById('s1-meta')?.value||'';
+  const daños=['financiero','psicologico','relacional','legal','patrimonial']
+    .filter(d=>document.getElementById('daño-'+d+'-val')?.value==='Sí')
+    .map(d=>{
+      const labels={'financiero':'Financiero','psicologico':'Psicológico','relacional':'Relacional','legal':'Legal','patrimonial':'Patrimonial'};
+      const nota=document.getElementById('txt-'+d)?.value.trim();
+      return labels[d]+(nota?' — '+nota:'');
+    });
+  const prompt=`Sos María, consultora financiera de "Tomá el Volante" en Costa Rica. Acabás de hacer una sesión de diagnóstico gratuita con ${nombre}.
+
+Datos de la sesión:
+- Cómo describe su relación con el dinero: ${relacion||'No especificado'}
+- Qué la trajo: ${situacion||'No especificado'}
+- Qué le genera ansiedad: ${ansiedad||'No especificado'}
+- Qué espera lograr: ${meta||'No especificado'}
+- Daños presentes: ${daños.length?daños.join(', '):'Ninguno identificado'}
+
+Escribí UN párrafo de 4-5 oraciones dirigido directamente a ${nombre}. Debe: reflejar lo que ella expresó con sus propias palabras, validar cómo se siente, nombrar los daños de forma humana y cálida, terminar con una frase de esperanza. Tono costarricense, segunda persona (vos). Solo el párrafo, sin títulos.`;
+  window.open('https://claude.ai/new?q='+encodeURIComponent(prompt),'_blank');
+  document.getElementById('ia-msg').textContent='Claude se abrió en una nueva pestaña — copiá el texto y pegalo arriba';
+}
+
+</script>
+</body>
+</html>
