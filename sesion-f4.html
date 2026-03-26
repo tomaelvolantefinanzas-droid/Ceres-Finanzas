@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fase 4 · Crecimiento</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f4f8;color:#1a1a2e}
+#overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:9999}
+.spin{width:48px;height:48px;border:5px solid #fff;border-top-color:#4a90d9;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px}
+header h1{font-size:1.15rem;font-weight:700}
+header p{font-size:.8rem;opacity:.75;margin-top:2px}
+.tab-bar{display:flex;background:#16213e;padding:0 24px;gap:4px}
+.tab{padding:10px 20px;color:#aaa;cursor:pointer;border-bottom:3px solid transparent;font-size:.85rem;transition:.2s;display:flex;align-items:center;gap:6px}
+.tab.active{color:#4fc3f7;border-bottom-color:#4fc3f7}
+.tab.locked{color:#555;cursor:default}
+.tab .lock-icon{font-size:.75rem}
+.sesion-panel{display:none;padding:24px;max-width:860px;margin:0 auto}
+.sesion-panel.active{display:block}
+.card{background:#fff;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);margin-bottom:20px;overflow:hidden}
+.card-header{background:#1a1a2e;color:#fff;padding:12px 18px;font-size:.9rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:18px}
+.section-title{font-size:.8rem;font-weight:700;color:#4a90d9;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 10px;padding-bottom:4px;border-bottom:2px solid #e8f0fe}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;align-items:center}
+.field-row.full{grid-template-columns:1fr}
+.field-row label{font-size:.82rem;color:#444}
+.field-row .hint{font-size:.73rem;color:#888;margin-top:2px}
+input[type=text],input[type=number],select{width:100%;padding:7px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:.85rem}
+input[type=text]:focus,input[type=number]:focus,select:focus{outline:none;border-color:#4a90d9}
+input.blue{color:#0000ff;font-weight:600}
+input.black,input[readonly]{color:#000;background:#f9f9f9;font-weight:400}
+select.blue{color:#0000ff;font-weight:600}
+.result-box{background:#f0f7ff;border:1.5px solid #4a90d9;border-radius:8px;padding:12px 16px;margin:10px 0;display:flex;align-items:center;gap:12px}
+.result-box .label{font-size:.82rem;color:#555;flex:1}
+.result-box .value{font-size:1.1rem;font-weight:700;color:#1a1a2e;white-space:nowrap}
+.scenarios-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+.scenarios-table th{background:#1a1a2e;color:#fff;padding:8px 12px;text-align:left;font-weight:600}
+.scenarios-table td{padding:8px 12px;border-bottom:1px solid #eee}
+.scenarios-table tr.recommended td{background:#e8f7ee;font-weight:700}
+.badge-rec{background:#27ae60;color:#fff;padding:2px 8px;border-radius:10px;font-size:.72rem}
+.plan-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+.plan-table th{background:#4a90d9;color:#fff;padding:8px 12px}
+.plan-table td{padding:8px 12px;border-bottom:1px solid #eee}
+.where-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+.where-table th{background:#16213e;color:#fff;padding:8px 12px;text-align:left}
+.where-table td{padding:8px 12px;border-bottom:1px solid #eee;vertical-align:top}
+.steps-table{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:8px}
+.steps-table th{background:#1a1a2e;color:#fff;padding:8px 12px;text-align:left}
+.steps-table td{padding:8px 12px;border-bottom:1px solid #eee;vertical-align:top}
+.green-msg{background:#e8f7ee;border-left:4px solid #27ae60;padding:12px 16px;border-radius:6px;font-size:.82rem;color:#1a5c35;margin-top:12px}
+.profile-result{background:#fff3cd;border:1.5px solid #f0ad4e;border-radius:8px;padding:12px 16px;margin:8px 0;font-size:.85rem}
+.btn-save{background:#27ae60;color:#fff;border:none;padding:10px 28px;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:8px}
+.btn-save:hover{background:#219a52}
+.save-msg{font-size:.8rem;color:#27ae60;margin-left:12px;font-weight:600}
+.locked-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 24px;text-align:center;gap:16px}
+.locked-screen .lock-big{font-size:3.5rem}
+.locked-screen h2{color:#1a1a2e;font-size:1.2rem}
+.locked-screen p{color:#666;font-size:.88rem;max-width:380px;line-height:1.6}
+.nota-textarea{width:100%;border:1.5px solid #ddd;border-radius:6px;padding:10px;font-size:.83rem;resize:vertical;min-height:80px}
+</style>
+</head>
+<body>
+<div id="overlay"><div class="spin"></div></div>
+
+<header>
+  <div>
+    <h1>Tomá el Volante · Fase 4 — Crecimiento</h1>
+    <p id="tinfo">Cargando clienta...</p>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab active" id="tab7" onclick="showTab(7)">Sesión 7 · Fondo de Emergencia</div>
+  <div class="tab" id="tab8" onclick="showTab(8)">Sesión 8 · Pensiones y Seguros</div>
+</div>
+
+<!-- SESIÓN 7 -->
+<div class="sesion-panel active" id="panel7">
+
+  <!-- HOJA 2: MIS DATOS -->
+  <div class="card">
+    <div class="card-header">📋 Mis Datos · Calculadora del Fondo de Emergencia</div>
+    <div class="card-body">
+      <p style="font-size:.8rem;color:#888;margin-bottom:14px">Ingresá únicamente los campos en azul. Todo lo demás se calcula automáticamente.</p>
+
+      <div class="section-title">Sección 1 · Perfil de Riesgo</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:8px">
+        <div style="font-size:.78rem;font-weight:700;color:#555">Pregunta</div>
+        <div style="font-size:.78rem;font-weight:700;color:#555">Tu respuesta</div>
+        <div style="font-size:.78rem;font-weight:700;color:#555">Referencia rápida</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px">
+        <label style="font-size:.82rem">¿Tu empleo es estable con contrato fijo?</label>
+        <select class="blue" id="q1" onchange="calcPerfil()">
+          <option value="">— Seleccioná —</option>
+          <option value="si">Sí</option><option value="no">No</option>
+        </select>
+        <span style="font-size:.78rem;color:#888">Sí = menor riesgo</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px">
+        <label style="font-size:.82rem">¿Tenés otro ingreso además del principal?</label>
+        <select class="blue" id="q2" onchange="calcPerfil()">
+          <option value="">— Seleccioná —</option>
+          <option value="si">Sí</option><option value="no">No</option>
+        </select>
+        <span style="font-size:.78rem;color:#888">Sí = menor riesgo</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:6px">
+        <label style="font-size:.82rem">¿Tenés dependientes (hijos, padres, etc.)?</label>
+        <select class="blue" id="q3" onchange="calcPerfil()">
+          <option value="">— Seleccioná —</option>
+          <option value="si">Sí</option><option value="no">No</option>
+        </select>
+        <span style="font-size:.78rem;color:#888">Sí = mayor riesgo</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;align-items:center;margin-bottom:12px">
+        <label style="font-size:.82rem">¿Sos trabajadora independiente / freelance?</label>
+        <select class="blue" id="q4" onchange="calcPerfil()">
+          <option value="">— Seleccioná —</option>
+          <option value="si">Sí</option><option value="no">No</option>
+        </select>
+        <span style="font-size:.78rem;color:#888">Sí = menor riesgo</span>
+      </div>
+      <div class="profile-result">
+        <strong>Descripción de tu perfil:</strong> <span id="perfil-desc">— completá las preguntas —</span>
+      </div>
+      <div class="result-box" style="margin-top:8px">
+        <span class="label">⚡ Meses recomendados para tu fondo:</span>
+        <span class="value" id="meses-rec">—</span>
+      </div>
+
+      <div class="section-title" style="margin-top:20px">Sección 2 · Gastos Esenciales Mensuales (solo los básicos para vivir)</div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🏠 VIVIENDA</div>
+      <div class="field-row">
+        <label>Alquiler o cuota hipotecaria</label>
+        <input type="number" class="blue" id="g-alquiler" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Servicios (luz, agua, internet, teléfono)</label>
+        <input type="number" class="blue" id="g-servicios" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Condominio / mantenimiento</label>
+        <input type="number" class="blue" id="g-condo" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🛒 ALIMENTACIÓN</div>
+      <div class="field-row">
+        <label>Supermercado y mercado</label>
+        <input type="number" class="blue" id="g-super" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Alimentación fuera del hogar (básico)</label>
+        <input type="number" class="blue" id="g-comida-fuera" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">🚗 TRANSPORTE</div>
+      <div class="field-row">
+        <label>Combustible / tarifa bus y tren</label>
+        <input type="number" class="blue" id="g-transporte" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Cuota préstamo de vehículo</label>
+        <input type="number" class="blue" id="g-cuota-vehiculo" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>RITEVE, marchamo y seguro vehículo (mensualizado)</label>
+        <input type="number" class="blue" id="g-riteve" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">💊 SALUD</div>
+      <div class="field-row">
+        <label>Medicamentos habituales</label>
+        <input type="number" class="blue" id="g-medicamentos" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Consultas médicas recurrentes</label>
+        <input type="number" class="blue" id="g-consultas" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Seguro complementario de salud</label>
+        <input type="number" class="blue" id="g-seguro-salud" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">📚 EDUCACIÓN Y DEPENDIENTES</div>
+      <div class="field-row">
+        <label>Colegio, universidad o guardería</label>
+        <input type="number" class="blue" id="g-educacion" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Útiles y materiales básicos</label>
+        <input type="number" class="blue" id="g-utiles" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">💳 DEUDAS – PAGOS MÍNIMOS</div>
+      <div class="field-row">
+        <label>Pago mínimo tarjetas de crédito</label>
+        <input type="number" class="blue" id="g-min-tc" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Cuota préstamo personal</label>
+        <input type="number" class="blue" id="g-cuota-personal" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Otras deudas (mínimos)</label>
+        <input type="number" class="blue" id="g-otras-deudas" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="section-title" style="font-size:.75rem;color:#888;margin-top:10px;border:none">📱 COMUNICACIÓN Y OTROS BÁSICOS</div>
+      <div class="field-row">
+        <label>Plan de teléfono celular</label>
+        <input type="number" class="blue" id="g-celular" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+      <div class="field-row">
+        <label>Otros gastos básicos recurrentes</label>
+        <input type="number" class="blue" id="g-otros" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcGastos()">
+      </div>
+
+      <div class="result-box" style="margin-top:16px;background:#fff3cd;border-color:#f0ad4e">
+        <span class="label" style="font-weight:700">TOTAL GASTOS ESENCIALES POR MES</span>
+        <span class="value" id="total-gastos">₡0</span>
+      </div>
+      <p style="font-size:.75rem;color:#888;margin-top:4px">← Base para el cálculo del fondo</p>
+    </div>
+  </div>
+
+  <!-- HOJA 3: RESULTADO -->
+  <div class="card">
+    <div class="card-header">📊 Resultado · Tu Fondo de Emergencia</div>
+    <div class="card-body">
+      <div class="section-title">Resumen de tu Situación</div>
+      <div class="result-box">
+        <span class="label">Gasto mensual esencial</span>
+        <span class="value" id="res-gasto">₡0</span>
+      </div>
+      <div class="result-box">
+        <span class="label">Meses recomendados (perfil)</span>
+        <span class="value" id="res-meses">—</span>
+      </div>
+      <div class="result-box">
+        <span class="label">Tu perfil de riesgo</span>
+        <span class="value" id="res-perfil" style="font-size:.88rem">—</span>
+      </div>
+
+      <div class="section-title" style="margin-top:20px">Los 3 Escenarios: ¿Cuánto Necesitás?</div>
+      <table class="scenarios-table">
+        <tr><th>Escenario</th><th>Meses</th><th>Monto objetivo (₡)</th><th>¿Es el recomendado?</th></tr>
+        <tr id="row-3m"><td>Mínimo (perfil bajo riesgo)</td><td>3</td><td id="sc-3">₡0</td><td id="sc-3-rec">—</td></tr>
+        <tr id="row-6m"><td>Estándar (perfil medio)</td><td>6</td><td id="sc-6">₡0</td><td id="sc-6-rec">—</td></tr>
+        <tr id="row-9m"><td>Medio Alto (factores de riesgo)</td><td>9</td><td id="sc-9">₡0</td><td id="sc-9-rec">—</td></tr>
+        <tr id="row-12m"><td>Alto (alta vulnerabilidad)</td><td>12</td><td id="sc-12">₡0</td><td id="sc-12-rec">—</td></tr>
+      </table>
+
+      <div class="section-title" style="margin-top:20px">Tu Meta Personalizada</div>
+      <div class="result-box" style="background:#e8f7ee;border-color:#27ae60">
+        <span class="label" style="font-weight:700">🎯 MONTO IDEAL DE TU FONDO DE EMERGENCIA</span>
+        <span class="value" id="meta-fondo" style="color:#27ae60;font-size:1.2rem">₡0</span>
+      </div>
+
+      <div class="section-title" style="margin-top:20px">Plan Progresivo: ¿Cómo Llegás Ahí?</div>
+      <table class="plan-table">
+        <tr><th>Etapa</th><th>Meta (₡)</th><th>¿Qué significa?</th><th>Sensación al lograrlo</th></tr>
+        <tr><td>🌱 Arranque</td><td>₡200,000</td><td>Tu primer colchón de seguridad</td><td>Primer respiro</td></tr>
+        <tr><td>🌿 Intermedio</td><td id="plan-intermedio">₡0</td><td>Un mes completo de gastos esenciales</td><td>Estabilidad inicial</td></tr>
+        <tr><td>🌳 Meta final</td><td id="plan-final">₡0</td><td>Tu fondo completo según perfil</td><td>Tranquilidad real</td></tr>
+      </table>
+
+      <div class="section-title" style="margin-top:20px">¿Dónde Guardar tu Fondo en Costa Rica?</div>
+      <table class="where-table">
+        <tr><th>Opción</th><th>Tipo</th><th>Riesgo / Liquidez</th><th>Mejor para</th></tr>
+        <tr><td>Cuenta de ahorro (BAC, BN, Popular)</td><td>Ahorro líquido</td><td>Riesgo 0 · Acceso inmediato</td><td>1 mes de reserva rápida</td></tr>
+        <tr><td>Fondo mercado monetario (BN Fondos, BCR, Popular Valores)</td><td>Fondo inversión</td><td>Riesgo muy bajo · 1-2 días hábiles</td><td>El resto del fondo</td></tr>
+        <tr><td>CDPs a plazo fijo</td><td>Depósito a plazo</td><td>Riesgo bajo · Penalización por retiro anticipado</td><td style="color:#c0392b;font-weight:700">NO recomendado para emergencias</td></tr>
+      </table>
+
+      <div class="green-msg" style="margin-top:16px">
+        💚 El fondo de emergencia no es lujo: es la diferencia entre un susto y una crisis. Construirlo de a poco está perfectamente bien. Lo importante es empezar.
+      </div>
+    </div>
+  </div>
+
+  <!-- HOJA 4: RECONSTRUCCIÓN -->
+  <div class="card">
+    <div class="card-header">🔄 Reconstrucción · Protocolo cuando usás el fondo</div>
+    <div class="card-body">
+      <div class="section-title">Datos para el Plan de Reconstrucción</div>
+      <div class="field-row">
+        <label>Monto que usaste del fondo (₡)</label>
+        <input type="number" class="blue" id="r-monto-usado" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcReconstruccion()">
+      </div>
+      <div class="field-row">
+        <label>¿Cuánto podés destinar para reconstruir cada mes? (₡)</label>
+        <input type="number" class="blue" id="r-aporte-mensual" value="0" onfocus="if(this.value=='0')this.value=''" oninput="calcReconstruccion()">
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Resultado</div>
+      <div class="result-box">
+        <span class="label">⏱️ Meses para reconstruir completamente</span>
+        <span class="value" id="r-meses">—</span>
+      </div>
+      <div class="result-box">
+        <span class="label">📅 Mes aproximado en que completás el fondo</span>
+        <span class="value" id="r-fecha">—</span>
+      </div>
+
+      <div class="section-title" style="margin-top:20px">Protocolo de 5 Pasos cuando Usás tu Fondo</div>
+      <table class="steps-table">
+        <tr><th>Paso</th><th>Acción</th><th>Descripción</th></tr>
+        <tr><td style="font-weight:700;text-align:center">1</td><td>Ese mismo mes:</td><td>Activá el plan de reconstrucción. No esperés al mes siguiente.</td></tr>
+        <tr><td style="font-weight:700;text-align:center">2</td><td>Calculá el déficit:</td><td>¿Cuánto usaste? ¿En cuántos meses realistas lo repones?</td></tr>
+        <tr><td style="font-weight:700;text-align:center">3</td><td>Asigná un monto fijo:</td><td>Aunque sea pequeño, algo fijo mensual funciona mejor que montos variables.</td></tr>
+        <tr><td style="font-weight:700;text-align:center">4</td><td>No abras deuda nueva:</td><td>Si podés evitarlo, no contraigás nuevas deudas mientras reconstruís.</td></tr>
+        <tr><td style="font-weight:700;text-align:center">5</td><td>Reflexionás:</td><td>¿Era prevenible? ¿Hay algo en el presupuesto que necesita ajustarse?</td></tr>
+      </table>
+
+      <div class="green-msg" style="margin-top:16px">
+        💚 Usar el fondo no es un fracaso. Para eso lo construiste. La clave es reconstruirlo de inmediato y sin culpa. Tu trabajo ya está hecho: ahora es solo mantener el sistema.
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTAS Y GUARDAR -->
+  <div class="card">
+    <div class="card-header">📝 Notas de Sesión</div>
+    <div class="card-body">
+      <textarea class="nota-textarea" id="notas-s7" placeholder="Observaciones, comentarios de la clienta, puntos a seguir..."></textarea>
+      <div style="display:flex;align-items:center;margin-top:12px">
+        <button class="btn-save" onclick="guardarS7()">💾 Guardar Sesión 7</button>
+        <span class="save-msg" id="ss7"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SESIÓN 8: PENSIONES -->
+<div class="sesion-panel" id="panel8">
+  <div style="padding:0;max-width:900px;margin:0 auto">
+    <div class="tab-bar" style="background:#0d1b2a;margin-bottom:0">
+      <div class="tab active" onclick="showTabS8(0)" id="s8tab0">📋 Datos Clienta</div>
+      <div class="tab" onclick="showTabS8(1)" id="s8tab1">📊 Referencia OPC</div>
+      <div class="tab" onclick="showTabS8(2)" id="s8tab2">🔢 Simulador</div>
+    </div>
+    <!-- TAB 0: DATOS CLIENTA -->
+<div class="tab-panel active" id="tp0">
+
+  <div class="card">
+    <div class="card-header">📋 Datos Clienta · Simulador de Pensión</div>
+    <div class="card-body">
+
+      <div class="section-title">Bloque 1 — Datos Personales</div>
+      <div class="grid2">
+        <div>
+          <label>Edad actual (años)</label>
+          <input type="number" class="blue" id="edad" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Años cumplidos</div>
+        </div>
+        <div>
+          <label>Edad deseada de retiro (años)</label>
+          <input type="number" class="blue" id="retiro" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Mínimo legal para mujeres: 60 años · Reforma IVM 2024</div>
+        </div>
+        <div>
+          <label>Expectativa de vida (años)</label>
+          <input type="number" class="blue" id="expectativa" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">INEC CR: promedio mujeres ~82 años · Usamos 85 como valor prudente</div>
+        </div>
+        <div>
+          <label>Ingreso mensual NETO deseado en retiro (₡)</label>
+          <input type="number" class="blue" id="ingreso-deseado" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">En colones de hoy · Sin ajuste de inflación</div>
+        </div>
+      </div>
+
+      <div class="section-title">Bloque 2 — Datos de SUPEN</div>
+      <div class="grid2">
+        <div>
+          <label>Cuotas IVM acumuladas a hoy</label>
+          <input type="number" class="blue" id="cuotas-ivm" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Portal SUPEN · reportes.supen.fi.cr/contenedor/31 · Requiere firma digital</div>
+        </div>
+        <div>
+          <label>Cuotas IVM restantes para las 300</label>
+          <input type="number" id="cuotas-restantes" readonly>
+          <div class="hint">Calculado automáticamente</div>
+        </div>
+        <div>
+          <label>Salario de referencia promedio estimado (₡)</label>
+          <input type="number" class="blue" id="salario-ref" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Promedio de los mejores salarios brutos de su vida laboral · Estimarlo con la clienta</div>
+        </div>
+        <div>
+          <label>Saldo ROP actual (₡)</label>
+          <input type="number" class="blue" id="saldo-rop" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Portal SUPEN · Si no tiene firma digital: consultar directamente en su OPC</div>
+        </div>
+        <div>
+          <label>OPC que administra su ROP</label>
+          <select class="blue" id="opc-rop" onchange="calcTodo()">
+            <option value="">— Seleccioná —</option>
+            <option>Popular Pensiones</option>
+            <option>BN Vital</option>
+            <option>BAC Pensiones</option>
+            <option>Vida Plena (INS)</option>
+            <option>Mutual Pensiones</option>
+            <option>CCSS OPC</option>
+            <option>BCR Pensiones</option>
+          </select>
+        </div>
+        <div>
+          <label>Rendimiento neto últimos 12 meses OPC (%)</label>
+          <input type="number" id="rend-12" readonly>
+          <div class="hint">Automático desde Referencia OPC</div>
+        </div>
+        <div>
+          <label>Rendimiento neto últimos 5 años OPC (%)</label>
+          <input type="number" id="rend-60" readonly>
+          <div class="hint">Automático desde Referencia OPC · Más representativo para largo plazo</div>
+        </div>
+        <div>
+          <label>¿Tiene pensión voluntaria activa?</label>
+          <select class="blue" id="tiene-voluntaria" onchange="toggleVoluntaria();calcTodo()">
+            <option value="No">No</option>
+            <option value="Sí">Sí</option>
+          </select>
+        </div>
+        <div id="bloque-voluntaria" style="display:none">
+          <label>Saldo pensión voluntaria actual (₡)</label>
+          <input type="number" class="blue" id="saldo-voluntaria" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+        </div>
+        <div id="bloque-opc-vol" style="display:none">
+          <label>OPC pensión voluntaria</label>
+          <select class="blue" id="opc-voluntaria" onchange="calcTodo()">
+            <option value="">— Seleccioná —</option>
+            <option>Popular Pensiones</option>
+            <option>BN Vital</option>
+            <option>BAC Pensiones</option>
+            <option>Vida Plena (INS)</option>
+            <option>Mutual Pensiones</option>
+            <option>CCSS OPC</option>
+            <option>BCR Pensiones</option>
+          </select>
+        </div>
+        <div id="bloque-aporte-vol" style="display:none">
+          <label>Aporte mensual a pensión voluntaria (₡)</label>
+          <input type="number" class="blue" id="aporte-voluntaria" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+        </div>
+      </div>
+
+      <div class="section-title">Bloque 3 — Situación Laboral Actual</div>
+      <div class="grid2">
+        <div>
+          <label>Perfil laboral actual</label>
+          <select class="blue" id="perfil-laboral" onchange="toggleLaboral();calcTodo()">
+            <option value="">— Seleccioná —</option>
+            <option>Asalariada</option>
+            <option>Freelance / independiente</option>
+            <option>Mixta (asalariada + freelance)</option>
+            <option>Pausa laboral (maternidad / cuidado / otra)</option>
+            <option>Regresó al mercado laboral</option>
+          </select>
+          <div class="hint">Elegir de la lista</div>
+        </div>
+        <div id="campo-salario-bruto">
+          <label>Salario bruto mensual asalariado (₡)</label>
+          <input type="number" class="blue" id="salario-bruto" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Asalariada o mixta · Ingresar salario bruto del contrato</div>
+        </div>
+        <div id="campo-freelance">
+          <label>Ingresos freelance mensuales estimados (₡)</label>
+          <input type="number" class="blue" id="ingreso-freelance" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Freelance o mixta · Promedio de los últimos 6 meses</div>
+        </div>
+        <div>
+          <label>¿Está cotizando al IVM actualmente?</label>
+          <select class="blue" id="cotiza-ivm" onchange="calcTodo()">
+            <option value="Sí">Sí</option>
+            <option value="No">No</option>
+          </select>
+          <div class="hint">Freelance / pausa / mixta: confirmar · Sí = cotiza voluntariamente</div>
+        </div>
+        <div id="campo-cot-voluntaria">
+          <label>Monto mensual cotización voluntaria IVM (₡)</label>
+          <input type="number" class="blue" id="monto-cot-ivm" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Solo si respondió Sí arriba</div>
+        </div>
+        <div>
+          <label>¿Tiene ahorro adicional fuera de pensiones?</label>
+          <select class="blue" id="tiene-ahorro" onchange="toggleAhorro();calcTodo()">
+            <option value="No">No</option>
+            <option value="Sí">Sí</option>
+          </select>
+        </div>
+        <div id="campo-ahorro-mensual" style="display:none">
+          <label>Monto de ese ahorro mensual (₡)</label>
+          <input type="number" class="blue" id="ahorro-mensual" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+        </div>
+        <div>
+          <label>Años de pausa laboral (si aplica)</label>
+          <input type="number" class="blue" id="años-pausa" value="" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Para perfil pausa o regresó al mercado</div>
+        </div>
+        <div>
+          <label>¿Planea cambiar situación laboral?</label>
+          <select class="blue" id="planea-cambio">
+            <option value="No">No</option>
+            <option value="Sí">Sí</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <label>Observaciones / notas de sesión</label>
+        <textarea class="nota-textarea blue" id="observaciones" rows="3"></textarea>
+      </div>
+
+      <div style="display:flex;align-items:center;margin-top:16px">
+        <button class="btn-save" onclick="guardar()">💾 Guardar Sesión 8</button>
+        <span class="save-msg" id="smsg"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 1: REFERENCIA OPC -->
+<div class="tab-panel" id="tp1">
+  <div class="card">
+    <div class="card-header">📊 Referencia OPC · Actualizar trimestralmente</div>
+    <div class="card-body">
+      <p class="hint" style="margin-bottom:12px">Fuente: <strong>www.supen.fi.cr</strong> · Actualizar cada trimestre. Los valores aquí se aplican automáticamente a todas las clientas nuevas.</p>
+      <div id="opc-update-msg" class="green-msg" style="display:none"></div>
+      <table class="opc-table">
+        <tr>
+          <th>OPC</th>
+          <th>Rend. neto 12 meses (%)</th>
+          <th>Rend. neto 5 años (%)</th>
+          <th>Rend. neto 10 años (%)</th>
+          <th>Notas</th>
+        </tr>
+        <tr><td>Popular Pensiones</td><td><input id="opc0-r12" type="number" step="0.0001"></td><td><input id="opc0-r60" type="number" step="0.0001"></td><td><input id="opc0-r120" type="number" step="0.0001"></td><td><span class="hint">Banco Popular — público · Afiliación automática si no se elige</span></td></tr>
+        <tr><td>BN Vital</td><td><input id="opc1-r12" type="number" step="0.0001"></td><td><input id="opc1-r60" type="number" step="0.0001"></td><td><input id="opc1-r120" type="number" step="0.0001"></td><td><span class="hint">Banco Nacional — público</span></td></tr>
+        <tr><td>BAC Pensiones</td><td><input id="opc2-r12" type="number" step="0.0001"></td><td><input id="opc2-r60" type="number" step="0.0001"></td><td><input id="opc2-r120" type="number" step="0.0001"></td><td><span class="hint">BAC Credomatic — privado</span></td></tr>
+        <tr><td>Vida Plena (INS)</td><td><input id="opc3-r12" type="number" step="0.0001"></td><td><input id="opc3-r60" type="number" step="0.0001"></td><td><input id="opc3-r120" type="number" step="0.0001"></td><td><span class="hint">Instituto Nacional de Seguros — público</span></td></tr>
+        <tr><td>Mutual Pensiones</td><td><input id="opc4-r12" type="number" step="0.0001"></td><td><input id="opc4-r60" type="number" step="0.0001"></td><td><input id="opc4-r120" type="number" step="0.0001"></td><td><span class="hint">Mutual Alajuela — cooperativo</span></td></tr>
+        <tr><td>CCSS OPC</td><td><input id="opc5-r12" type="number" step="0.0001"></td><td><input id="opc5-r60" type="number" step="0.0001"></td><td><input id="opc5-r120" type="number" step="0.0001"></td><td><span class="hint">Solo para funcionarios CCSS</span></td></tr>
+        <tr><td>BCR Pensiones</td><td><input id="opc6-r12" type="number" step="0.0001"></td><td><input id="opc6-r60" type="number" step="0.0001"></td><td><input id="opc6-r120" type="number" step="0.0001"></td><td><span class="hint">BCR</span></td></tr>
+      </table>
+      <div class="warn-box" style="margin-top:12px">
+        ⚠️ Actualizar rendimientos y comisiones cada trimestre desde www.supen.fi.cr · Comparar siempre el rendimiento NETO (después de comisiones) · Podés cambiar de OPC una vez al año sin costo
+      </div>
+      <div style="display:flex;align-items:center;margin-top:12px;gap:12px">
+        <button class="btn-opc" onclick="guardarOPC()">💾 Guardar valores OPC</button>
+        <span class="save-msg" id="opc-msg"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: SIMULADOR -->
+<div class="tab-panel" id="tp2">
+  <div class="card">
+    <div class="card-header">🔢 Simulador de Brecha Pensional</div>
+    <div class="card-body">
+      <p class="hint" style="margin-bottom:12px">Toda la hoja se calcula automáticamente desde los datos de la clienta.</p>
+
+      <div class="section-title">Supuestos Técnicos (ajustables)</div>
+      <div class="grid2">
+        <div>
+          <label>Rendimiento anual fondo pensión (%)</label>
+          <input type="number" class="blue" id="rend-fondo" value="7" step="0.1" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Conservador: 7% nominal anual · Ajustar si la OPC tiene historial diferente</div>
+        </div>
+        <div>
+          <label>Inflación anual estimada (%)</label>
+          <input type="number" class="blue" id="inflacion" value="4" step="0.1" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Promedio histórico Costa Rica (BCCR)</div>
+        </div>
+        <div>
+          <label>Rendimiento conservador en fase de retiro (%)</label>
+          <input type="number" class="blue" id="rend-retiro" value="4" step="0.1" onfocus="limpiar(this)" oninput="calcTodo()">
+          <div class="hint">Tasa más baja para fondos en retiro</div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Cálculo IVM — Fórmula oficial CCSS</div>
+      <div class="sim-row"><span class="sim-label">Años hasta el retiro</span><span class="sim-result" id="s-años-retiro">—</span><span class="sim-detail">Cantidad de años restantes</span></div>
+      <div class="sim-row"><span class="sim-label">Años en retiro</span><span class="sim-result" id="s-años-en-retiro">—</span><span class="sim-detail">Expectativa de vida después del retiro</span></div>
+      <div class="sim-row"><span class="sim-label">Cuotas IVM proyectadas al retiro</span><span class="sim-result" id="s-cuotas-proy">—</span><span class="sim-detail">Cuotas actuales + cuotas por cotizar · Tope 420</span></div>
+      <div class="sim-row"><span class="sim-label">Años cotizados proyectados</span><span class="sim-result" id="s-años-cotizados">—</span><span class="sim-detail">Cuotas proyectadas ÷ 12</span></div>
+      <div class="sim-row"><span class="sim-label">Tasa de reemplazo IVM (%)</span><span class="sim-result" id="s-tasa-reemplazo">—</span><span class="sim-detail">52.5% base con 300 cuotas · +2% por año adicional · Tope 72.5% · Fórmula IVM CCSS 2024</span></div>
+      <div class="result-box" style="margin-top:8px">
+        <span class="rlabel">Pensión mensual estimada IVM (₡)</span>
+        <span class="rvalue" id="s-pension-ivm">₡0</span>
+      </div>
+      <div class="warn-box" id="warn-cuotas" style="display:none">
+        ⚠️ Si la clienta NO llega a 300 cuotas al retiro, la pensión IVM será ₡0. Con 180–299 cuotas puede aplicar a pensión proporcional (requiere 65 años). Verificar con la CCSS.
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Cálculo ROP y Pensión Voluntaria</div>
+      <div class="sim-row"><span class="sim-label">Saldo ROP proyectado al retiro (₡)</span><span class="sim-result" id="s-rop-proy">—</span><span class="sim-detail">Saldo actual creciendo con interés compuesto</span></div>
+      <div class="sim-row"><span class="sim-label">Saldo pensión voluntaria proyectado (₡)</span><span class="sim-result" id="s-vol-proy">—</span><span class="sim-detail">Solo si tiene voluntaria activa</span></div>
+      <div class="result-box">
+        <span class="rlabel">Renta mensual sostenible del ROP (₡)</span>
+        <span class="rvalue" id="s-renta-rop">₡0</span>
+      </div>
+      <div class="result-box">
+        <span class="rlabel">Renta mensual sostenible pensión voluntaria (₡)</span>
+        <span class="rvalue" id="s-renta-vol">₡0</span>
+      </div>
+
+      <div class="section-title" style="margin-top:16px">Resultado — Brecha y Plan de Acción</div>
+      <div class="result-box">
+        <span class="rlabel">Ingreso mensual TOTAL proyectado en el retiro (₡)</span>
+        <span class="rvalue" id="s-total-proy">₡0</span>
+      </div>
+      <div class="result-box">
+        <span class="rlabel">Ingreso mensual deseado en el retiro (₡)</span>
+        <span class="rvalue" id="s-deseado">₡0</span>
+      </div>
+      <div id="brecha-display" class="brecha-big gap">— completá los datos —</div>
+      <div class="result-box result-amber">
+        <span class="rlabel">Capital adicional necesario al retiro (₡)</span>
+        <span class="rvalue" id="s-capital">₡0</span>
+      </div>
+      <div class="result-box result-green">
+        <span class="rlabel">💡 Ahorro mensual necesario DESDE HOY (₡)</span>
+        <span class="rvalue" id="s-ahorro-mensual">₡0</span>
+      </div>
+      <div class="result-box">
+        <span class="rlabel">🎁 Ahorro fiscal anual estimado si aporta a pensión voluntaria (₡)</span>
+        <span class="rvalue" id="s-ahorro-fiscal">₡0</span>
+      </div>
+      <div class="green-msg" style="margin-top:12px">
+        💡 Este simulador es una estimación orientativa. La pensión IVM se calcula con la fórmula oficial CCSS (tasa de reemplazo × SRP), con piso ₡142,517 y techo ₡1,666,062 (valores 2024). Los montos reales dependen del historial exacto de cuotas y salarios registrados en la CCSS. Revisión recomendada: anual o ante cualquier cambio laboral.
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
+<script>
+const SB='https://syxlgphermluvmpbnylb.supabase.co/rest/v1/';
+const AK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN5eGxncGhlcm1sdXZtcGJueWxiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMjgxNDUsImV4cCI6MjA4OTYwNDE0NX0.w1BIRHnkWOGt2BZMUzGom5mbb4OlDMeT-wEViKnTSOA';
+const TBL='sesiones_data_f4';
+const TBL_S8='sesiones_data_s8';
+const TBL_OPC='config_opc';
+let opcData={
+  'Popular Pensiones':{r12:0.108,r60:0.0892,r120:0.0821},
+  'BN Vital':{r12:0.0958,r60:0.0815,r120:0.0789},
+  'BAC Pensiones':{r12:0.1051,r60:0.0867,r120:0.0803},
+  'Vida Plena (INS)':{r12:0.088,r60:0.0743,r120:0.0698},
+  'Mutual Pensiones':{r12:0,r60:0,r120:0},
+  'CCSS OPC':{r12:0.0728,r60:0.0661,r120:0.0634},
+  'BCR Pensiones':{r12:0.0783,r60:0.0712,r120:0.0681}
+};
+const opcNames=['Popular Pensiones','BN Vital','BAC Pensiones','Vida Plena (INS)','Mutual Pensiones','CCSS OPC','BCR Pensiones'];
+
+let CID=null;
+let s8unlocked=true;
+
+function getParam(k){return new URLSearchParams(window.location.search).get(k);}
+
+async function dbReq(path,method='GET',body=null){
+  const opts={method,headers:{'apikey':AK,'Authorization':'Bearer '+AK,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(SB+path,opts);
+  if(!r.ok)throw new Error(await r.text());
+  const t=await r.text();
+  return t?JSON.parse(t):[];
+}
+
+function showTab(n){
+  if(n===8&&!s8unlocked)return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sesion-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab'+n).classList.add('active');
+  document.getElementById('panel'+n).classList.add('active');
+}
+
+// ===== LÓGICA DE PERFIL =====
+const PERFILES=[
+  {min:1,max:4,nombre:'ALTO',meses:12,desc:'Alta vulnerabilidad, máxima protección necesaria'},
+  {min:0,max:0,nombre:'MEDIO ALTO',meses:9,desc:'Factores de riesgo presentes, requiere colchón mayor'},
+  {min:-1,max:-1,nombre:'MEDIO',meses:6,desc:'Estabilidad básica con algún factor de atención'},
+  {min:-4,max:-2,nombre:'BAJO',meses:3,desc:'Buena estabilidad, múltiples fuentes de ingreso'}
+];
+
+function calcPuntaje(q1,q2,q3,q4){
+  let p=0;
+  if(q1==='si')p--;    // empleo fijo = -1 riesgo
+  if(q2==='si')p--;    // otro ingreso = -1 riesgo
+  if(q3==='si')p++;    // dependientes = +1 riesgo
+  if(q4==='si')p--;    // freelance/independiente = -1 riesgo
+  return p;
+}
+
+function getPerfil(puntaje){
+  return PERFILES.find(p=>puntaje>=p.min&&puntaje<=p.max)||PERFILES[2];
+}
+
+function calcSimulador(){}
+
+function calcPerfil(){
+  const q1=document.getElementById('q1').value;
+  const q2=document.getElementById('q2').value;
+  const q3=document.getElementById('q3').value;
+  const q4=document.getElementById('q4').value;
+  if(!q1||!q2||!q3||!q4){
+    document.getElementById('perfil-desc').textContent='— completá las preguntas —';
+    document.getElementById('meses-rec').textContent='—';
+    return;
+  }
+  const p=calcPuntaje(q1,q2,q3,q4);
+  const perf=getPerfil(p);
+  document.getElementById('perfil-desc').textContent='Perfil '+perf.nombre+': '+perf.desc;
+  document.getElementById('meses-rec').textContent=perf.meses;
+  calcGastos();
+}
+
+function fmt(n){return'₡'+Math.round(n).toLocaleString('es-CR');}
+
+function calcGastos(){
+  const ids=['g-alquiler','g-servicios','g-condo','g-super','g-comida-fuera','g-transporte','g-cuota-vehiculo','g-riteve','g-medicamentos','g-consultas','g-seguro-salud','g-educacion','g-utiles','g-min-tc','g-cuota-personal','g-otras-deudas','g-celular','g-otros'];
+  let total=0;
+  ids.forEach(id=>{total+=parseFloat(document.getElementById(id).value)||0;});
+  document.getElementById('total-gastos').textContent=fmt(total);
+  calcResultado(total);
+}
+
+function calcResultado(total){
+  const mesesEl=document.getElementById('meses-rec').textContent;
+  const meses=parseInt(mesesEl)||0;
+  const perfilDesc=document.getElementById('perfil-desc').textContent;
+
+  // Resumen
+  document.getElementById('res-gasto').textContent=fmt(total);
+  document.getElementById('res-meses').textContent=meses||'—';
+  document.getElementById('res-perfil').textContent=perfilDesc||'—';
+
+  // Escenarios
+  const esc={3:total*3,6:total*6,9:total*9,12:total*12};
+  [3,6,9,12].forEach(m=>{
+    document.getElementById('sc-'+m).textContent=fmt(esc[m]);
+    const recEl=document.getElementById('sc-'+m+'-rec');
+    if(meses===m){
+      recEl.innerHTML='<span class="badge-rec">✅ RECOMENDADO</span>';
+      document.getElementById('row-'+m+'m').classList.add('recommended');
+    }else{
+      recEl.textContent='—';
+      document.getElementById('row-'+m+'m').classList.remove('recommended');
+    }
+  });
+
+  // Meta
+  const meta=total*Math.max(meses,0);
+  document.getElementById('meta-fondo').textContent=fmt(meta);
+  document.getElementById('plan-intermedio').textContent=fmt(total);
+  document.getElementById('plan-final').textContent=fmt(meta);
+}
+
+function calcReconstruccion(){
+  const usado=parseFloat(document.getElementById('r-monto-usado').value)||0;
+  const aporte=parseFloat(document.getElementById('r-aporte-mensual').value)||0;
+  if(!aporte||!usado){
+    document.getElementById('r-meses').textContent='—';
+    document.getElementById('r-fecha').textContent='—';
+    return;
+  }
+  const meses=Math.ceil(usado/aporte);
+  document.getElementById('r-meses').textContent=meses;
+  const fecha=new Date();
+  fecha.setMonth(fecha.getMonth()+meses);
+  document.getElementById('r-fecha').textContent=fecha.toLocaleDateString('es-CR',{month:'long',year:'numeric'});
+}
+
+// ===== GUARDAR / CARGAR =====
+function recopilar(){
+  const campos={};
+  document.querySelectorAll('input,select,textarea').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  return campos;
+}
+
+async function guardarS7(){
+  if(!CID){alert('No hay clienta cargada.');return;}
+  const ss=document.getElementById('ss7');
+  ss.textContent='Guardando...';
+  const campos=recopilar();
+  try{
+    const existing=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+    if(existing&&existing[0]){
+      await dbReq(TBL+'?clienta_id=eq.'+CID,'PATCH',{datos:{campos},updated_at:new Date().toISOString()});
+    }else{
+      await dbReq(TBL,'POST',{clienta_id:CID,datos:{campos}});
+    }
+    ss.textContent='✓ Guardado';
+    setTimeout(()=>ss.textContent='',3000);
+  }catch(e){ss.textContent='Error al guardar';console.error(e);}
+}
+
+async function cargar(){
+  document.getElementById('overlay').style.display='flex';
+  CID=getParam('c');
+  try{
+    if(CID){
+      const rc=await dbReq('clientas?id=eq.'+CID);
+      if(rc&&rc[0])document.getElementById('tinfo').textContent=rc[0].nombre+' — Fase 4 · Crecimiento';
+
+      // Verificar si S8 está desbloqueada
+      const rs=await dbReq('sesiones?clienta_id=eq.'+CID+'&limit=1');
+      if(rs&&rs[0]&&rs[0].s8_unlocked){
+        s8unlocked=true;
+        const t8=document.getElementById('tab8');
+        t8.classList.remove('locked');
+        t8.onclick=()=>showTab(8);
+        t8.textContent='Sesión 8 · Pensiones y Seguros';
+      }
+
+      const rd=await dbReq(TBL+'?clienta_id=eq.'+CID+'&limit=1');
+      if(rd&&rd[0]&&rd[0].datos&&rd[0].datos.campos){
+        const c=rd[0].datos.campos;
+        Object.entries(c).forEach(([id,val])=>{
+          const e=document.getElementById(id);
+          if(e)e.value=val;
+        });
+        calcSimulador();
+        calcPerfil();
+        calcGastos();
+        calcReconstruccion();
+      }
+    }else{
+      document.getElementById('tinfo').textContent='Sin clienta — modo vista';
+    }
+  }catch(e){console.error('Error:',e);}
+  document.getElementById('overlay').style.display='none';
+}
+
+calcSimulador();
+cargar();
+
+// ===== SESIÓN 8 =====
+
+function getParam(k){return new URLSearchParams(window.location.search).get(k);}
+function limpiar(el){if(el.value==='0'||el.value==='')el.value='';}
+function fmt(n){return'₡'+Math.round(n).toLocaleString('es-CR');}
+function fmtPct(n){return(n*100).toFixed(2)+'%';}
+
+async function dbReq(path,method='GET',body=null){
+  const opts={method,headers:{'apikey':AK,'Authorization':'Bearer '+AK,'Content-Type':'application/json','Prefer':'return=representation'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch(SB+path,opts);
+  if(!r.ok)throw new Error(await r.text());
+  const t=await r.text();
+  return t?JSON.parse(t):[];
+}
+
+function showTab(n){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===n));
+  document.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+}
+
+function toggleVoluntaria(){
+  const si=document.getElementById('tiene-voluntaria').value==='Sí';
+  ['bloque-voluntaria','bloque-opc-vol','bloque-aporte-vol'].forEach(id=>document.getElementById(id).style.display=si?'block':'none');
+}
+
+function toggleAhorro(){
+  const si=document.getElementById('tiene-ahorro').value==='Sí';
+  document.getElementById('campo-ahorro-mensual').style.display=si?'block':'none';
+}
+
+function toggleLaboral(){
+  // todos los campos laborales siempre visibles — perfil es solo referencia contextual
+}
+
+// Llenar tabla OPC con datos actuales
+function llenarTablaOPC(){
+  opcNames.forEach((nombre,i)=>{
+    const d=opcData[nombre]||{r12:0,r60:0,r120:0};
+    document.getElementById('opc'+i+'-r12').value=d.r12||'';
+    document.getElementById('opc'+i+'-r60').value=d.r60||'';
+    document.getElementById('opc'+i+'-r120').value=d.r120||'';
+  });
+}
+
+// Cuando cambia OPC seleccionada, actualizar rendimientos automáticos
+function actualizarRendOPC(){
+  const opc=document.getElementById('opc-rop').value;
+  const d=opcData[opc]||{r12:0,r60:0};
+  document.getElementById('rend-12').value=d.r12?(d.r12*100).toFixed(4):'';
+  document.getElementById('rend-60').value=d.r60?(d.r60*100).toFixed(4):'';
+}
+
+// Guardar OPC en Supabase (tabla config_opc, registro único)
+async function guardarOPC(){
+  const datos={};
+  opcNames.forEach((nombre,i)=>{
+    datos[nombre]={
+      r12:parseFloat(document.getElementById('opc'+i+'-r12').value)||0,
+      r60:parseFloat(document.getElementById('opc'+i+'-r60').value)||0,
+      r120:parseFloat(document.getElementById('opc'+i+'-r120').value)||0
+    };
+  });
+  const msg=document.getElementById('opc-msg');
+  msg.textContent='Guardando...';
+  try{
+    const ex=await dbReq(TBL_OPC+'?limit=1');
+    if(ex&&ex[0]){
+      await dbReq(TBL_OPC+'?id=eq.'+ex[0].id,'PATCH',{datos,updated_at:new Date().toISOString()});
+    }else{
+      await dbReq(TBL_OPC,'POST',{datos});
+    }
+    opcData=datos;
+    msg.textContent='✓ Guardado — se aplica a todas las clientas nuevas';
+    setTimeout(()=>msg.textContent='',4000);
+    actualizarRendOPC();
+    calcTodo();
+  }catch(e){msg.textContent='Error al guardar';console.error(e);}
+}
+
+// ===== CÁLCULOS =====
+function calcTodo(){
+  actualizarRendOPC();
+
+  const edad=parseFloat(document.getElementById('edad').value)||0;
+  const retiro=parseFloat(document.getElementById('retiro').value)||0;
+  const expectativa=parseFloat(document.getElementById('expectativa').value)||0;
+  const ingresoDeseado=parseFloat(document.getElementById('ingreso-deseado').value)||0;
+  const cuotasIVM=parseFloat(document.getElementById('cuotas-ivm').value)||0;
+  const salarioRef=parseFloat(document.getElementById('salario-ref').value)||0;
+  const saldoROP=parseFloat(document.getElementById('saldo-rop').value)||0;
+  const tieneVol=document.getElementById('tiene-voluntaria').value==='Sí';
+  const saldoVol=tieneVol?(parseFloat(document.getElementById('saldo-voluntaria').value)||0):0;
+  const aporteVol=tieneVol?(parseFloat(document.getElementById('aporte-voluntaria').value)||0):0;
+  const rendFondo=(parseFloat(document.getElementById('rend-fondo').value)||7)/100;
+  const rendRetiro=(parseFloat(document.getElementById('rend-retiro').value)||4)/100;
+
+  // Cuotas restantes
+  const restantes=Math.max(0,300-cuotasIVM);
+  document.getElementById('cuotas-restantes').value=restantes;
+
+  if(!edad||!retiro||!expectativa){return;}
+
+  const añosRetiro=retiro-edad;
+  const añosEnRetiro=expectativa-retiro;
+  const mesesRetiro=añosRetiro*12;
+  const mesesEnRetiro=añosEnRetiro*12;
+
+  // IVM
+  const cuotasFuturas=añosRetiro*12;
+  const cuotasProy=Math.min(cuotasIVM+cuotasFuturas,420);
+  const añosCotizados=cuotasProy/12;
+  // Tasa reemplazo: 52.5% con 25 años (300 cuotas), +2% por año adicional, tope 72.5%
+  let tasaReemplazo=0;
+  if(cuotasProy>=300){
+    const añosExtra=Math.max(0,añosCotizados-25);
+    tasaReemplazo=Math.min(0.525+añosExtra*0.02,0.725);
+  }else if(cuotasProy>=180){
+    tasaReemplazo=0.3; // proporcional estimado
+  }
+  const pensionIVM=Math.min(Math.max(salarioRef*tasaReemplazo,142517),1666062);
+
+  // ROP
+  const rendAnualOPC=rendFondo;
+  const rendMensualOPC=Math.pow(1+rendAnualOPC,1/12)-1;
+  const saldoROPproy=saldoROP*Math.pow(1+rendAnualOPC,añosRetiro);
+
+  // Voluntaria
+  let saldoVolProy=0;
+  if(tieneVol&&saldoVol>0){
+    saldoVolProy=saldoVol*Math.pow(1+rendAnualOPC,añosRetiro);
+    if(aporteVol>0&&mesesRetiro>0){
+      saldoVolProy+=aporteVol*(Math.pow(1+rendMensualOPC,mesesRetiro)-1)/rendMensualOPC;
+    }
+  }
+
+  // Renta mensual sostenible (PMT inverso)
+  const rendMensRetiro=Math.pow(1+rendRetiro,1/12)-1;
+  let rentaROP=0,rentaVol=0;
+  if(mesesEnRetiro>0&&rendMensRetiro>0){
+    rentaROP=saldoROPproy*rendMensRetiro/(1-Math.pow(1+rendMensRetiro,-mesesEnRetiro));
+    rentaVol=saldoVolProy>0?saldoVolProy*rendMensRetiro/(1-Math.pow(1+rendMensRetiro,-mesesEnRetiro)):0;
+  }
+
+  const totalProy=pensionIVM+rentaROP+rentaVol;
+  const brecha=Math.max(0,ingresoDeseado-totalProy);
+
+  // Capital necesario para cubrir brecha
+  let capitalNecesario=0,ahorroMensualNecesario=0;
+  if(brecha>0&&mesesEnRetiro>0&&rendMensRetiro>0){
+    capitalNecesario=brecha*(1-Math.pow(1+rendMensRetiro,-mesesEnRetiro))/rendMensRetiro;
+  }
+  if(capitalNecesario>0&&mesesRetiro>0&&rendMensualOPC>0){
+    ahorroMensualNecesario=capitalNecesario*rendMensualOPC/(Math.pow(1+rendMensualOPC,mesesRetiro)-1);
+  }
+
+  // Ahorro fiscal: 10% del ingreso bruto anual o ₡843,000, tramo 15%
+  const salarioBruto=parseFloat(document.getElementById('salario-bruto').value)||0;
+  const limiteDeduccion=Math.min(salarioBruto*12*0.10,843000);
+  const ahorroFiscal=limiteDeduccion*0.15;
+
+  // Mostrar
+  document.getElementById('s-años-retiro').textContent=añosRetiro>0?añosRetiro+' años':'—';
+  document.getElementById('s-años-en-retiro').textContent=añosEnRetiro>0?añosEnRetiro+' años':'—';
+  document.getElementById('s-cuotas-proy').textContent=Math.round(cuotasProy);
+  document.getElementById('s-años-cotizados').textContent=añosCotizados.toFixed(1);
+  document.getElementById('s-tasa-reemplazo').textContent=fmtPct(tasaReemplazo);
+  document.getElementById('s-pension-ivm').textContent=fmt(pensionIVM);
+  document.getElementById('s-rop-proy').textContent=fmt(saldoROPproy);
+  document.getElementById('s-vol-proy').textContent=tieneVol?fmt(saldoVolProy):'No aplica';
+  document.getElementById('s-renta-rop').textContent=fmt(rentaROP);
+  document.getElementById('s-renta-vol').textContent=tieneVol?fmt(rentaVol):'No aplica';
+  document.getElementById('s-total-proy').textContent=fmt(totalProy);
+  document.getElementById('s-deseado').textContent=fmt(ingresoDeseado);
+  document.getElementById('s-capital').textContent=fmt(capitalNecesario);
+  document.getElementById('s-ahorro-mensual').textContent=fmt(ahorroMensualNecesario);
+  document.getElementById('s-ahorro-fiscal').textContent=fmt(ahorroFiscal);
+
+  // Brecha display
+  const bd=document.getElementById('brecha-display');
+  if(brecha<=0){
+    bd.className='brecha-big ok';
+    bd.textContent='✅ ¡Brecha cubierta! Tu proyección supera tu meta de retiro';
+  }else{
+    bd.className='brecha-big gap';
+    bd.textContent='⚠️ BRECHA MENSUAL: '+fmt(brecha);
+  }
+
+  // Advertencia cuotas
+  document.getElementById('warn-cuotas').style.display=cuotasProy<300?'block':'none';
+}
+
+// ===== GUARDAR / CARGAR =====
+function recopilar(){
+  const campos={};
+  document.querySelectorAll('input,select,textarea').forEach(e=>{if(e.id)campos[e.id]=e.value;});
+  return campos;
+}
+
+async function guardar(){
+  if(!CID){alert('No hay clienta cargada.');return;}
+  const msg=document.getElementById('smsg');
+  msg.textContent='Guardando...';
+  const campos=recopilar();
+  try{
+    const ex=await dbReq(TBL_S8+'?clienta_id=eq.'+CID+'&limit=1');
+    if(ex&&ex[0]){
+      await dbReq(TBL_S8+'?clienta_id=eq.'+CID,'PATCH',{datos:{campos},updated_at:new Date().toISOString()});
+    }else{
+      await dbReq(TBL_S8,'POST',{clienta_id:CID,datos:{campos}});
+    }
+    msg.textContent='✓ Guardado';
+    setTimeout(()=>msg.textContent='',3000);
+  }catch(e){msg.textContent='Error al guardar';console.error(e);}
+}
+
+
+
+function showTabS8(n){
+  document.querySelectorAll('[id^="s8tab"]').forEach((t,i)=>t.classList.toggle('active',i===n));
+  const p8=document.getElementById('panel8');
+  p8.querySelectorAll('.tab-panel').forEach((p,i)=>p.classList.toggle('active',i===n));
+}
+</script>
+</body>
+</html>
