@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Panel Consultora</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f4f0; color: #1a1a1a; }
+.app { display: flex; height: 100vh; }
+.sidebar { width: 220px; background: #fff; border-right: 1px solid #e8e6e0; padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+.logo { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e8e6e0; }
+.logo span { font-size: 11px; color: #888; display: block; font-weight: 400; margin-top: 2px; }
+.nav-item { padding: 8px 10px; border-radius: 8px; font-size: 13px; color: #666; cursor: pointer; }
+.nav-item.active { background: #f0faf5; color: #0F6E56; font-weight: 500; }
+.main { flex: 1; overflow-y: auto; padding: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.header h1 { font-size: 18px; font-weight: 500; }
+.btn { padding: 7px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; border: 1px solid #ddd; background: #fff; color: #1a1a1a; }
+.btn:hover { background: #f5f4f0; }
+.btn-primary { background: #1D9E75; color: white; border-color: #1D9E75; }
+.btn-primary:hover { background: #0F6E56; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+.stat-card { background: #f0faf5; border-radius: 8px; padding: 1rem; }
+.stat-card .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.stat-card .value { font-size: 24px; font-weight: 500; color: #1a1a1a; }
+.table-wrap { background: #fff; border-radius: 12px; border: 1px solid #e8e6e0; overflow: hidden; }
+.table-header { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 80px; padding: 10px 16px; border-bottom: 1px solid #e8e6e0; font-size: 12px; color: #888; font-weight: 500; }
+.table-row { display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 80px; padding: 12px 16px; border-bottom: 1px solid #e8e6e0; align-items: center; cursor: pointer; transition: background 0.1s; }
+.table-row:last-child { border-bottom: none; }
+.table-row:hover { background: #fafaf8; }
+.name-cell { display: flex; align-items: center; gap: 10px; }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: #E1F5EE; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #0F6E56; flex-shrink: 0; }
+.name-text { font-size: 14px; font-weight: 500; }
+.fase-badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+.fase-1 { background: #E6F1FB; color: #185FA5; }
+.fase-2 { background: #E1F5EE; color: #0F6E56; }
+.fase-3 { background: #FAEEDA; color: #854F0B; }
+.fase-4 { background: #EEEDFE; color: #534AB7; }
+.icon-btn { padding: 4px 8px; border-radius: 6px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; background: transparent; color: #666; }
+.icon-btn:hover { background: #f5f4f0; color: #1a1a1a; }
+.empty-state { text-align: center; padding: 3rem; color: #888; font-size: 14px; }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: #fff; border-radius: 12px; border: 1px solid #e8e6e0; padding: 1.5rem; width: 420px; max-width: 95vw; }
+.modal h2 { font-size: 16px; font-weight: 500; margin-bottom: 1.25rem; }
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
+.form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid #ddd; font-size: 14px; font-family: inherit; background: #fff; color: #1a1a1a; outline: none; }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #1D9E75; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 1.25rem; }
+.detail-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: flex-start; justify-content: center; padding: 2rem 1rem; overflow-y: auto; }
+.detail-bg.open { display: flex; }
+.detail-panel { background: #fff; border-radius: 12px; border: 1px solid #e8e6e0; padding: 1.5rem; width: 580px; max-width: 100%; margin-bottom: 2rem; }
+.detail-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem; }
+.detail-name { font-size: 18px; font-weight: 600; }
+.detail-meta { font-size: 13px; color: #666; margin-top: 3px; }
+.sesiones-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.25rem; }
+.sesion-card { border: 1px solid #e8e6e0; border-radius: 8px; padding: 12px; }
+.sesion-card.bloqueada { opacity: 0.45; }
+.s-num { font-size: 11px; color: #888; margin-bottom: 2px; }
+.s-title { font-size: 13px; font-weight: 500; }
+.s-status { font-size: 11px; margin-top: 6px; }
+.s-status.ok { color: #1D9E75; }
+.s-status.locked { color: #aaa; }
+.toggle-btn { margin-top: 8px; font-size: 11px; padding: 3px 8px; }
+.notas-section { border-top: 1px solid #e8e6e0; padding-top: 1rem; }
+.notas-section h3 { font-size: 14px; font-weight: 500; margin-bottom: 10px; }
+.nota-item { font-size: 13px; padding: 8px 0; border-bottom: 1px solid #f0ede6; }
+.nota-date { font-size: 11px; color: #aaa; margin-top: 2px; }
+.loading { text-align: center; padding: 2rem; color: #aaa; font-size: 14px; }
+.error-msg { color: #c0392b; font-size: 13px; margin-top: 8px; }
+
+.notas-cliente-section { border-top: 1px solid #e8e6e0; padding-top: 1rem; margin-top: 1rem; }
+.notas-cliente-section h3 { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+.notas-cliente-section .sub { font-size: 12px; color: #888; margin-bottom: 12px; }
+.nc-tabs { display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap; }
+.nc-tab { padding: 5px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; border: 1px solid #ddd; background: #fff; color: #666; }
+.nc-tab.active { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+.nc-page { display: none; }
+.nc-page.active { display: block; }
+.nc-field { margin-bottom: 10px; }
+.nc-field label { display: block; font-size: 11px; color: #666; margin-bottom: 4px; font-weight: 500; }
+.nc-field textarea { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; font-family: inherit; resize: vertical; min-height: 80px; outline: none; }
+.nc-field textarea:focus { border-color: #1D9E75; }
+.nc-field input[type=url] { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; }
+.nc-field input[type=url]:focus { border-color: #1D9E75; }
+.nc-hint { font-size: 11px; color: #aaa; margin-top: 3px; }
+.nc-save-status { font-size: 12px; margin-top: 6px; min-height: 14px; }
+.nc-save-ok  { color: #0F6E56; }
+.nc-save-err { color: #c0392b; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="logo">Tomá el Volante<span>Panel consultora</span></div>
+    <div class="nav-item active">Clientas</div>
+  </div>
+  <div class="main">
+    <div class="header">
+      <h1>Mis clientas</h1>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+<button class="btn" style="background:#f0faf5;color:#0F6E56;border-color:#9fe1cb;" onclick="accionAbrir()">Abrir Sesión F1</button>
+        <button class="btn" style="background:#EEEDFE;color:#534AB7;border-color:#AFA9EC;" onclick="accionAbrirF2()">Abrir Sesión F2</button>
+        <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirS5()">Abrir Sesión 5</button>
+        <button class="btn" style="background:#FEF0ED;color:#B74A34;border-color:#ECA99A;" onclick="accionAbrirS6()">Abrir Sesión 6</button>
+        <button class="btn" style="background:#FFF5E6;color:#B87333;border-color:#E8C080;" onclick="accionAbrirF4()">Abrir Sesión F4</button>
+        <button class="btn" style="color:#185FA5;" onclick="accionModificar()">Modificar</button>
+        <button class="btn" style="color:#A32D2D;" onclick="accionEliminar()">Eliminar</button>
+        <button class="btn btn-primary" onclick="document.getElementById('modal-nueva').classList.add('open')">+ Nueva clienta</button>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat-card"><div class="label">Total clientas</div><div class="value" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="label">Activas</div><div class="value" id="stat-activas">—</div></div>
+      <div class="stat-card"><div class="label">En Fase 1</div><div class="value" id="stat-f1">—</div></div>
+      <div class="stat-card"><div class="label">Completadas</div><div class="value" id="stat-comp">—</div></div>
+    </div>
+    <div class="table-wrap">
+      <div class="table-header" style="grid-template-columns:40px 2fr 1.5fr 1fr 1fr 130px;">
+        <div><input type="checkbox" id="chk-all" onclick="toggleAll(this)" style="cursor:pointer;width:16px;height:16px;"></div>
+        <div>Clienta</div><div>Email</div><div>Fase</div><div>Ingreso</div><div>Acciones</div>
+      </div>
+      <div id="tabla-clientas"><div class="loading">Cargando...</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal nueva clienta -->
+<div class="modal-bg" id="modal-nueva">
+  <div class="modal">
+    <h2>Nueva clienta</h2>
+    <div class="form-row">
+      <div class="form-group"><label>Nombre completo</label><input type="text" id="f-nombre" placeholder="Ana García"></div>
+      <div class="form-group"><label>Teléfono</label><input type="text" id="f-tel" placeholder="8888-8888"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="f-email" placeholder="ana@email.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo de ingreso</label>
+        <select id="f-ingreso">
+          <option value="fijo">Fijo</option>
+          <option value="variable">Variable</option>
+          <option value="mixto">Mixto</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Fase actual</label>
+        <select id="f-fase">
+          <option value="1">Fase 1 — Orden</option>
+          <option value="2">Fase 2 — Claridad</option>
+          <option value="3">Fase 3 — Estrategia</option>
+          <option value="4">Fase 4 — Crecimiento</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label>Notas iniciales</label><input type="text" id="f-notas" placeholder="Contexto inicial..."></div>
+    <div id="error-nueva" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="cerrarModalNueva()">Cancelar</button>
+      <button class="btn btn-primary" onclick="crearClienta()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal modificar clienta -->
+<div class="modal-bg" id="modal-modificar">
+  <div class="modal">
+    <h2>Modificar clienta</h2>
+    <input type="hidden" id="mod-id">
+    <div class="form-row">
+      <div class="form-group"><label>Nombre completo</label><input type="text" id="mod-nombre"></div>
+      <div class="form-group"><label>Teléfono</label><input type="text" id="mod-tel"></div>
+    </div>
+    <div class="form-group"><label>Email</label><input type="email" id="mod-email"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Tipo de ingreso</label>
+        <select id="mod-ingreso">
+          <option value="fijo">Fijo</option>
+          <option value="variable">Variable</option>
+          <option value="mixto">Mixto</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Fase actual</label>
+        <select id="mod-fase">
+          <option value="1">Fase 1 — Orden</option>
+          <option value="2">Fase 2 — Claridad</option>
+          <option value="3">Fase 3 — Estrategia</option>
+          <option value="4">Fase 4 — Crecimiento</option>
+        </select>
+      </div>
+    </div>
+    <div id="error-mod" class="error-msg"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="document.getElementById('modal-modificar').classList.remove('open')">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarModificacion()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- Panel detalle clienta -->
+<div class="detail-bg" id="detail-panel">
+  <div class="detail-panel">
+    <div class="detail-top">
+      <div>
+        <div class="detail-name" id="d-nombre"></div>
+        <div class="detail-meta" id="d-meta"></div>
+      </div>
+      <button class="btn" onclick="document.getElementById('detail-panel').classList.remove('open')">Cerrar</button>
+    </div>
+    <div class="sesiones-grid" id="d-sesiones"></div>
+    <div class="notas-section">
+      <h3>Notas de sesión</h3>
+      <div id="d-notas-list"></div>
+      <div class="form-group" style="margin-top:12px;">
+        <textarea id="nota-input" rows="3" placeholder="Escribí una nota sobre esta sesión..."></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="guardarNota()">Guardar nota</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- Modal Notas para Cliente -->
+<div class="modal-bg" id="modal-notas">
+  <div class="modal" style="width:520px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+      <div>
+        <h2 style="margin-bottom:2px;">📬 Notas para la cliente</h2>
+        <div style="font-size:12px;color:#888;" id="nc-nombre-header"></div>
+      </div>
+      <button class="btn" onclick="cerrarModalNotas()">Cerrar</button>
+    </div>
+    <p style="font-size:12px;color:#888;margin-bottom:1rem;">Aparece en la app de la cliente. Podés agregar texto, tarea y un link a material externo.</p>
+
+    <!-- Botones de fase -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;">
+      <button class="btn" id="ncbtn-0" onclick="ncFase(0)" style="font-size:12px;background:#E6F1FB;color:#185FA5;border-color:#b0cfe8;">S1 · Diagnóstico</button>
+      <button class="btn" id="ncbtn-1" onclick="ncFase(1)" style="font-size:12px;">S2 · Flujo</button>
+      <button class="btn" id="ncbtn-2" onclick="ncFase(2)" style="font-size:12px;">S2 · Ecuación</button>
+      <button class="btn" id="ncbtn-3" onclick="ncFase(3)" style="font-size:12px;">S3 · Ratios</button>
+      <button class="btn" id="ncbtn-4" onclick="ncFase(4)" style="font-size:12px;">S4 · Dinero Invisible</button>
+    </div>
+
+    <!-- Paneles -->
+    <div id="nc-panel-0">
+      <div class="nc-field"><label>Notas para ella</label><textarea id="nc-s1-texto" placeholder="Lo que querés que ella lea..."></textarea></div>
+      <div class="nc-field"><label>Tarea</label><textarea id="nc-s1-tarea" rows="2" placeholder="Investigá sobre tus ingresos..."></textarea></div>
+      <div class="nc-field"><label>Link externo (opcional)</label><input type="url" id="nc-s1-link" placeholder="https://canva.com/..."><div class="nc-hint">Canva, Google Slides, YouTube, lo que quieras</div></div>
+      <div class="nc-field"><label>Texto del botón</label><input type="text" id="nc-s1-link-label" placeholder="Ver presentación de la sesión" style="border-radius:8px;width:100%;padding:8px 10px;border:1px solid #ddd;font-size:13px;font-family:inherit;"></div>
+    </div>
+    <div id="nc-panel-1" style="display:none;">
+      <div class="nc-field"><label>Notas sobre el Flujo</label><textarea id="nc-s2-flujo" placeholder="Reflexión sobre su flujo..."></textarea></div>
+      <div class="nc-field"><label>Link externo (opcional)</label><input type="url" id="nc-s2-flujo-link" placeholder="https://..."><div class="nc-hint">Presentación, video, etc.</div></div>
+      <div class="nc-field"><label>Texto del botón</label><input type="text" id="nc-s2-flujo-link-label" placeholder="Ver material del flujo" style="border-radius:8px;width:100%;padding:8px 10px;border:1px solid #ddd;font-size:13px;font-family:inherit;"></div>
+    </div>
+    <div id="nc-panel-2" style="display:none;">
+      <div class="nc-field"><label>Notas sobre Ecuación Contable</label><textarea id="nc-s2-ec" placeholder="Activos y pasivos..."></textarea></div>
+      <div class="nc-field"><label>Tarea S2</label><textarea id="nc-s2-tarea" rows="2" placeholder="Investigá tus deudas..."></textarea></div>
+      <div class="nc-field"><label>Link externo (opcional)</label><input type="url" id="nc-s2-ec-link" placeholder="https://..."><div class="nc-hint">Presentación, video, etc.</div></div>
+      <div class="nc-field"><label>Texto del botón</label><input type="text" id="nc-s2-ec-link-label" placeholder="Ver material de ecuación" style="border-radius:8px;width:100%;padding:8px 10px;border:1px solid #ddd;font-size:13px;font-family:inherit;"></div>
+    </div>
+    <div id="nc-panel-3" style="display:none;">
+      <div class="nc-field"><label>Notas sobre Ratios e Indicadores</label><textarea id="nc-s3-texto" placeholder="Reflexión sobre sus indicadores..."></textarea></div>
+      <div class="nc-field"><label>Tarea S3</label><textarea id="nc-s3-tarea" rows="2" placeholder="Revisá tus gastos..."></textarea></div>
+      <div class="nc-field"><label>Link externo (opcional)</label><input type="url" id="nc-s3-link" placeholder="https://..."><div class="nc-hint">Presentación, video, etc.</div></div>
+      <div class="nc-field"><label>Texto del botón</label><input type="text" id="nc-s3-link-label" placeholder="Ver material de la sesión" style="border-radius:8px;width:100%;padding:8px 10px;border:1px solid #ddd;font-size:13px;font-family:inherit;"></div>
+    </div>
+    <div id="nc-panel-4" style="display:none;">
+      <div class="nc-field"><label>Notas sobre Dinero Invisible</label><textarea id="nc-s4-texto" placeholder="Reflexión sobre gastos ocultos..."></textarea></div>
+      <div class="nc-field"><label>Tarea S4</label><textarea id="nc-s4-tarea" rows="2" placeholder="Revisá gastos estacionales..."></textarea></div>
+      <div class="nc-field"><label>Link externo (opcional)</label><input type="url" id="nc-s4-link" placeholder="https://..."><div class="nc-hint">Presentación, video, etc.</div></div>
+      <div class="nc-field"><label>Texto del botón</label><input type="text" id="nc-s4-link-label" placeholder="Ver material de la sesión" style="border-radius:8px;width:100%;padding:8px 10px;border:1px solid #ddd;font-size:13px;font-family:inherit;"></div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;margin-top:1rem;gap:8px;">
+      <button class="btn" onclick="cerrarModalNotas()">Cancelar</button>
+      <button class="btn btn-primary" onclick="guardarNotasCliente()">Guardar</button>
+    </div>
+    <div class="nc-save-status" id="nc-status"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://syxlgphermluvmpbnylb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const H = { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+
+let clientaActual = null;
+
+const SESIONES_DEF = [
+  { num: 1, fase: 1, titulo: 'Diagnóstico (gratuita)' },
+  { num: 2, fase: 1, titulo: 'Flujo y ecuación contable' },
+  { num: 3, fase: 1, titulo: 'Presupuesto e indicadores' },
+  { num: 4, fase: 2, titulo: 'Dinero invisible' },
+  { num: 5, fase: 3, titulo: 'Diagnóstico de deudas' },
+  { num: 6, fase: 3, titulo: 'Estrategia de deudas' },
+  { num: 7, fase: 4, titulo: 'Fondo de emergencia' },
+  { num: 8, fase: 4, titulo: 'Pensiones' },
+];
+
+async function api(path, method='GET', body=null) {
+  const headers = Object.assign({}, H);
+  if (method === 'PATCH' || method === 'POST' || method === 'DELETE') {
+    headers['Prefer'] = 'return=minimal';
+  }
+  const opts = { method, headers };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SUPABASE_URL + '/rest/v1/' + path, opts);
+  if (!r.ok) {
+    let e = {};
+    try { e = await r.json(); } catch(_) {}
+    throw new Error(JSON.stringify(e));
+  }
+  return method === 'GET' ? r.json() : r;
+}
+
+function initials(n) { return n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+
+async function cargarClientas() {
+  try {
+    const data = await api('clientas?select=*&order=created_at.desc');
+    document.getElementById('stat-total').textContent = data.length;
+    document.getElementById('stat-activas').textContent = data.filter(c=>c.activa).length;
+    document.getElementById('stat-f1').textContent = data.filter(c=>c.fase_actual===1).length;
+    document.getElementById('stat-comp').textContent = data.filter(c=>c.fase_actual===4).length;
+    const el = document.getElementById('tabla-clientas');
+    if (!data.length) { el.innerHTML = '<div class="empty-state">Aún no tenés clientas. Agregá la primera.</div>'; return; }
+    window._clientasData = data;
+    el.innerHTML = data.map(c => `
+      <div class="table-row" style="grid-template-columns:40px 2fr 1.5fr 1fr 1fr 130px;" onclick="abrirDetalle('${c.id}')">
+        <div onclick="event.stopPropagation()" style="display:flex;align-items:center;justify-content:center;">
+          <input type="checkbox" class="chk-clienta" value="${c.id}"
+            data-nombre="${c.nombre}" data-email="${c.email}"
+            data-tel="${c.telefono||''}" data-ingreso="${c.tipo_ingreso||'fijo'}" data-fase="${c.fase_actual||1}"
+            style="cursor:pointer;width:16px;height:16px;" onclick="event.stopPropagation()">
+        </div>
+        <div class="name-cell">
+          <div class="avatar">${initials(c.nombre)}</div>
+          <div class="name-text">${c.nombre}</div>
+        </div>
+        <div style="font-size:13px;color:#666">${c.email}</div>
+        <div><span class="fase-badge fase-${c.fase_actual}">Fase ${c.fase_actual}</span></div>
+        <div style="font-size:13px;color:#666">${c.tipo_ingreso||'—'}</div>
+        <div onclick="event.stopPropagation()" style="display:flex;gap:4px;">
+          <button class="icon-btn" onclick="abrirDetalle('${c.id}')">Ver</button>
+          <button class="icon-btn" style="color:#1D9E75;border-color:#9fe1cb;" onclick="abrirNotas('${c.id}','${c.nombre}')">📬 Notas</button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    document.getElementById('tabla-clientas').innerHTML = '<div class="empty-state">Error al cargar datos.</div>';
+  }
+}
+
+function cerrarModalNueva() {
+  document.getElementById('modal-nueva').classList.remove('open');
+  document.getElementById('error-nueva').textContent = '';
+}
+
+async function crearClienta() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const errEl = document.getElementById('error-nueva');
+  if (!nombre || !email) { errEl.textContent = 'Nombre y email son obligatorios.'; return; }
+  try {
+    await api('clientas', 'POST', {
+      nombre, email,
+      telefono: document.getElementById('f-tel').value.trim(),
+      tipo_ingreso: document.getElementById('f-ingreso').value,
+      fase_actual: parseInt(document.getElementById('f-fase').value),
+      notas_generales: document.getElementById('f-notas').value.trim()
+    });
+    cerrarModalNueva();
+    ['f-nombre','f-email','f-tel','f-notas'].forEach(id => document.getElementById(id).value='');
+    await cargarClientas();
+  } catch(e) {
+    errEl.textContent = 'Error al guardar. Verificá que el email no esté repetido.';
+  }
+}
+
+async function abrirDetalle(id) {
+  const clientas = await api('clientas?id=eq.'+id);
+  clientaActual = clientas[0];
+  document.getElementById('d-nombre').textContent = clientaActual.nombre;
+  document.getElementById('d-meta').textContent = clientaActual.email + ' · ' + (clientaActual.tipo_ingreso||'') + ' · Fase ' + clientaActual.fase_actual;
+
+  let sesiones = await api('sesiones?clienta_id=eq.'+id+'&order=numero_sesion.asc');
+  if (!sesiones.length) {
+    for (const s of SESIONES_DEF) {
+      await api('sesiones', 'POST', { clienta_id: id, numero_sesion: s.num, fase: s.fase, titulo: s.titulo, desbloqueada: s.num===1, completada: false });
+    }
+    sesiones = await api('sesiones?clienta_id=eq.'+id+'&order=numero_sesion.asc');
+  }
+
+  document.getElementById('d-sesiones').innerHTML = sesiones.map(s => `
+    <div class="sesion-card ${s.desbloqueada ? '' : 'bloqueada'}">
+      <div class="s-num">Sesión ${s.numero_sesion} · Fase ${s.fase}</div>
+      <div class="s-title">${s.titulo}</div>
+      <div class="s-status ${s.desbloqueada ? 'ok' : 'locked'}">${s.completada ? '✓ Completada' : s.desbloqueada ? 'Desbloqueada' : 'Bloqueada'}</div>
+      <button class="btn toggle-btn" onclick="toggleSesion('${s.id}',${s.desbloqueada},${s.completada})">
+        ${s.completada ? 'Marcar pendiente' : s.desbloqueada ? 'Marcar completa' : 'Desbloquear'}
+      </button>
+      ${s.desbloqueada && !s.completada ? `<button class="btn toggle-btn" style="color:#A32D2D;margin-top:4px;" onclick="bloquearSesion('${s.id}')">🔒 Bloquear</button>` : ''}
+    </div>
+  `).join('');
+
+  await cargarNotas(id);
+  await cargarNotasCliente(id);
+  ncTab(0);
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+async function toggleSesion(sesionId, desbloqueada, completada) {
+  // Convertir a booleano por si vienen como strings desde el HTML
+  const esDesbloqueada = desbloqueada === true || desbloqueada === 'true';
+  const esCompletada   = completada   === true || completada   === 'true';
+  let update;
+  if (!esDesbloqueada) update = { desbloqueada: true };
+  else if (!esCompletada) update = { completada: true };
+  else update = { completada: false };
+  await api('sesiones?id=eq.'+sesionId, 'PATCH', update);
+  await abrirDetalle(clientaActual.id);
+}
+
+async function cargarNotas(clientaId) {
+  const notas = await api('notas?clienta_id=eq.'+clientaId+'&order=created_at.desc');
+  document.getElementById('d-notas-list').innerHTML = notas.length
+    ? notas.map(n => `<div class="nota-item">${n.contenido}<div class="nota-date">${new Date(n.created_at).toLocaleDateString('es-CR')}</div></div>`).join('')
+    : '<div style="font-size:13px;color:#aaa;padding:8px 0 12px;">Sin notas aún.</div>';
+}
+
+async function guardarNota() {
+  const contenido = document.getElementById('nota-input').value.trim();
+  if (!contenido || !clientaActual) return;
+  await api('notas', 'POST', { clienta_id: clientaActual.id, contenido });
+  document.getElementById('nota-input').value = '';
+  await cargarNotas(clientaActual.id);
+}
+
+cargarClientas();
+
+function getChecked() {
+  const checks = document.querySelectorAll('.chk-clienta:checked');
+  if (!checks.length) { alert('Primero seleccioná una o más clientas con el checkbox.'); return null; }
+  return Array.from(checks);
+}
+
+function toggleAll(chk) {
+  document.querySelectorAll('.chk-clienta').forEach(c => c.checked = chk.checked);
+}
+
+function accionAbrir() {
+  const checks = getChecked(); if (!checks) return;
+  checks.forEach(c => window.open('sesion.html?c=' + c.value, '_blank'));
+}
+
+function accionAbrirF2() {
+  const checks = getChecked(); if (!checks) return;
+  checks.forEach(c => window.open('sesion-f2.html?c=' + c.value, '_blank'));
+}
+
+function accionAbrirS5() {
+  const checks = getChecked(); if (!checks) return;
+  checks.forEach(c => window.open('sesion5.html?c=' + c.value, '_blank'));
+}
+
+function accionAbrirS6() {
+  const checks = getChecked(); if (!checks) return;
+  checks.forEach(c => window.open('sesion6.html?c=' + c.value, '_blank'));
+}
+
+function accionAbrirF4() {
+  const checks = getChecked(); if (!checks) return;
+  checks.forEach(c => window.open('sesion-f4.html?c=' + c.value, '_blank'));
+}
+
+function accionModificar() {
+  const checks = getChecked(); if (!checks) return;
+  if (checks.length > 1) { alert('Solo podés modificar una clienta a la vez.'); return; }
+  const c = checks[0];
+  abrirModificar(c.value, c.dataset.nombre, c.dataset.email, c.dataset.tel, c.dataset.ingreso, c.dataset.fase);
+}
+
+function accionEliminar() {
+  const checks = getChecked(); if (!checks) return;
+  const nombres = checks.map(c => c.dataset.nombre).join(', ');
+  if (!confirm('¿Segura que querés eliminar a: ' + nombres + '? Esta acción no se puede deshacer.')) return;
+  Promise.all(checks.map(async c => {
+    await api('sesiones_data?clienta_id=eq.'+c.value, 'DELETE');
+    await api('notas?clienta_id=eq.'+c.value, 'DELETE');
+    await api('sesiones?clienta_id=eq.'+c.value, 'DELETE');
+    await api('clientas?id=eq.'+c.value, 'DELETE');
+  })).then(() => cargarClientas()).catch(e => alert('Error: ' + e.message));
+}
+
+function abrirModificar(id, nombre, email, tel, ingreso, fase) {
+  document.getElementById('mod-id').value = id;
+  document.getElementById('mod-nombre').value = nombre;
+  document.getElementById('mod-email').value = email;
+  document.getElementById('mod-tel').value = tel;
+  document.getElementById('mod-ingreso').value = ingreso;
+  document.getElementById('mod-fase').value = fase;
+  document.getElementById('error-mod').textContent = '';
+  document.getElementById('modal-modificar').classList.add('open');
+}
+
+async function guardarModificacion() {
+  const id = document.getElementById('mod-id').value;
+  const nombre = document.getElementById('mod-nombre').value.trim();
+  const email = document.getElementById('mod-email').value.trim();
+  if (!nombre || !email) { document.getElementById('error-mod').textContent = 'Nombre y email son obligatorios.'; return; }
+  try {
+    await api('clientas?id=eq.'+id, 'PATCH', {
+      nombre, email,
+      telefono: document.getElementById('mod-tel').value.trim(),
+      tipo_ingreso: document.getElementById('mod-ingreso').value,
+      fase_actual: parseInt(document.getElementById('mod-fase').value)
+    });
+    document.getElementById('modal-modificar').classList.remove('open');
+    await cargarClientas();
+  } catch(e) { document.getElementById('error-mod').textContent = 'Error al guardar.'; }
+}
+
+async function confirmarEliminar(id, nombre) {
+  if (!confirm('¿Segura que querés eliminar a ' + nombre + '? Esta acción no se puede deshacer.')) return;
+  try {
+    await api('sesiones_data?clienta_id=eq.'+id, 'DELETE');
+    await api('notas?clienta_id=eq.'+id, 'DELETE');
+    await api('sesiones?clienta_id=eq.'+id, 'DELETE');
+    await api('clientas?id=eq.'+id, 'DELETE');
+    await cargarClientas();
+  } catch(e) { alert('Error al eliminar: ' + e.message); }
+}
+
+async function bloquearSesion(sesionId) {
+  if (!confirm('¿Querés bloquear esta sesión?')) return;
+  await api('sesiones?id=eq.'+sesionId, 'PATCH', { desbloqueada: false, completada: false });
+  await abrirDetalle(clientaActual.id);
+}
+
+// ── Notas modal ──
+let _ncClientaId = null;
+
+function ncFase(n) {
+  for (let i = 0; i <= 4; i++) {
+    const p = document.getElementById('nc-panel-' + i);
+    const b = document.getElementById('ncbtn-' + i);
+    if (p) p.style.display = i === n ? 'block' : 'none';
+    if (b) {
+      b.style.background = i === n ? '#1D9E75' : '';
+      b.style.color = i === n ? '#fff' : '';
+      b.style.borderColor = i === n ? '#1D9E75' : '#ddd';
+    }
+  }
+}
+
+async function abrirNotas(clientaId, nombre) {
+  _ncClientaId = clientaId;
+  document.getElementById('nc-nombre-header').textContent = nombre;
+  document.getElementById('nc-status').textContent = '';
+  // Limpiar campos
+  ['nc-s1-texto','nc-s1-tarea','nc-s1-link','nc-s1-link-label',
+   'nc-s2-flujo','nc-s2-flujo-link','nc-s2-flujo-link-label',
+   'nc-s2-ec','nc-s2-tarea','nc-s2-ec-link','nc-s2-ec-link-label',
+   'nc-s3-texto','nc-s3-tarea','nc-s3-link','nc-s3-link-label',
+   'nc-s4-texto','nc-s4-tarea','nc-s4-link','nc-s4-link-label'
+  ].forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+  // Cargar datos
+  try {
+    const arr = await api('sesiones_data?clienta_id=eq.' + clientaId + '&limit=1');
+    if (arr && arr.length && arr[0].datos) {
+      const d = arr[0].datos;
+      const map = {
+        'nc-s1-texto':'cliente-s1-teorico','nc-s1-tarea':'cliente-s1-tarea',
+        'nc-s1-link':'cliente-s1-link','nc-s1-link-label':'cliente-s1-link-label',
+        'nc-s2-flujo':'cliente-s2-teorico','nc-s2-flujo-link':'cliente-s2-flujo-link',
+        'nc-s2-flujo-link-label':'cliente-s2-flujo-link-label',
+        'nc-s2-ec':'cliente-s2-teorico-ec','nc-s2-tarea':'cliente-s2-tarea',
+        'nc-s2-ec-link':'cliente-s2-ec-link','nc-s2-ec-link-label':'cliente-s2-ec-link-label',
+        'nc-s3-texto':'cliente-s3-teorico','nc-s3-tarea':'cliente-s3-tarea',
+        'nc-s3-link':'cliente-s3-link','nc-s3-link-label':'cliente-s3-link-label',
+        'nc-s4-texto':'cliente-s4-teorico','nc-s4-tarea':'cliente-s4-tarea',
+        'nc-s4-link':'cliente-s4-link','nc-s4-link-label':'cliente-s4-link-label',
+      };
+      Object.entries(map).forEach(([elId, dataKey]) => {
+        const e = document.getElementById(elId);
+        if (e && d[dataKey]) e.value = d[dataKey];
+      });
+    }
+  } catch(e) {}
+  ncFase(0);
+  document.getElementById('modal-notas').classList.add('open');
+}
+
+function cerrarModalNotas() {
+  document.getElementById('modal-notas').classList.remove('open');
+}
+
+// Mantener compatibilidad con abrirDetalle que llama cargarNotasCliente
+async function cargarNotasCliente(clientaId) {}
+
+// ── Guardar notas para cliente ──
+async function guardarNotasCliente() {
+  const id = _ncClientaId || (clientaActual && clientaActual.id);
+  if (!id) return;
+  const st = document.getElementById('nc-status');
+  st.textContent = 'Guardando...'; st.className = 'nc-save-status';
+  const gv = elId => { const e = document.getElementById(elId); return e ? e.value : ''; };
+  const campos = {
+    'cliente-s1-teorico': gv('nc-s1-texto'), 'cliente-s1-tarea': gv('nc-s1-tarea'),
+    'cliente-s1-link': gv('nc-s1-link'), 'cliente-s1-link-label': gv('nc-s1-link-label'),
+    'cliente-s2-teorico': gv('nc-s2-flujo'), 'cliente-s2-flujo-link': gv('nc-s2-flujo-link'),
+    'cliente-s2-flujo-link-label': gv('nc-s2-flujo-link-label'),
+    'cliente-s2-teorico-ec': gv('nc-s2-ec'), 'cliente-s2-tarea': gv('nc-s2-tarea'),
+    'cliente-s2-ec-link': gv('nc-s2-ec-link'), 'cliente-s2-ec-link-label': gv('nc-s2-ec-link-label'),
+    'cliente-s3-teorico': gv('nc-s3-texto'), 'cliente-s3-tarea': gv('nc-s3-tarea'),
+    'cliente-s3-link': gv('nc-s3-link'), 'cliente-s3-link-label': gv('nc-s3-link-label'),
+    'cliente-s4-teorico': gv('nc-s4-texto'), 'cliente-s4-tarea': gv('nc-s4-tarea'),
+    'cliente-s4-link': gv('nc-s4-link'), 'cliente-s4-link-label': gv('nc-s4-link-label'),
+  };
+  try {
+    const existe = await api('sesiones_data?clienta_id=eq.' + id);
+    if (existe && existe.length > 0) {
+      const nuevosDatos = Object.assign({}, existe[0].datos || {}, campos);
+      await api('sesiones_data?clienta_id=eq.' + id, 'PATCH',
+        { datos: nuevosDatos, updated_at: new Date().toISOString() });
+    } else {
+      await api('sesiones_data', 'POST', { clienta_id: id, datos: campos });
+    }
+    st.textContent = '✅ Guardado';
+    st.className = 'nc-save-status nc-save-ok';
+  } catch(e) {
+    st.textContent = '❌ Error al guardar';
+    st.className = 'nc-save-status nc-save-err';
+  }
+}
+
+// ── Cargar notas cliente al abrir detalle ──
+async function cargarNotasCliente(clientaId) {
+  const campos = ['nc-s1-texto','nc-s1-tarea','nc-s1-link','nc-s1-link-label',
+    'nc-s2-flujo','nc-s2-flujo-link','nc-s2-flujo-link-label',
+    'nc-s2-ec','nc-s2-tarea','nc-s2-ec-link','nc-s2-ec-link-label',
+    'nc-s3-texto','nc-s3-tarea','nc-s3-link','nc-s3-link-label'];
+  campos.forEach(id => { const e = document.getElementById(id); if(e) e.value = ''; });
+  document.getElementById('nc-status').textContent = '';
+  try {
+    const arr = await api('sesiones_data?clienta_id=eq.' + clientaId + '&limit=1');
+    if (!arr || !arr.length || !arr[0].datos) return;
+    const d = arr[0].datos;
+    const map = {
+      'nc-s1-texto': 'cliente-s1-teorico', 'nc-s1-tarea': 'cliente-s1-tarea',
+      'nc-s1-link': 'cliente-s1-link', 'nc-s1-link-label': 'cliente-s1-link-label',
+      'nc-s2-flujo': 'cliente-s2-teorico', 'nc-s2-flujo-link': 'cliente-s2-flujo-link',
+      'nc-s2-flujo-link-label': 'cliente-s2-flujo-link-label',
+      'nc-s2-ec': 'cliente-s2-teorico-ec', 'nc-s2-tarea': 'cliente-s2-tarea',
+      'nc-s2-ec-link': 'cliente-s2-ec-link', 'nc-s2-ec-link-label': 'cliente-s2-ec-link-label',
+      'nc-s3-texto': 'cliente-s3-teorico', 'nc-s3-tarea': 'cliente-s3-tarea',
+      'nc-s3-link': 'cliente-s3-link', 'nc-s3-link-label': 'cliente-s3-link-label',
+    };
+    Object.entries(map).forEach(([elId, dataKey]) => {
+      const e = document.getElementById(elId);
+      if (e && d[dataKey]) e.value = d[dataKey];
+    });
+  } catch(e) {}
+}
+</script>
+</body>
+</html>
