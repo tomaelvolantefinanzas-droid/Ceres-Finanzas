@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Tu espacio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --verde: #1D9E75;
+  --verde-dark: #0F6E56;
+  --verde-light: #E8F7EE;
+  --crema: #FAF8F3;
+  --crema-dark: #F0ECE3;
+  --ink: #1a1a1a;
+  --muted: #888;
+  --border: #E5E0D5;
+  --rojo: #C0392B;
+  --naranja: #E67E22;
+  --azul: #2980B9;
+  --morado: #8E44AD;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--crema);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ─── PANTALLAS DE AUTH ─── */
+.auth-screen {
+  display: none;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--crema);
+}
+.auth-screen.visible { display: flex; }
+
+.auth-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--ink);
+}
+.auth-logo span { color: var(--verde); }
+.auth-tagline {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.auth-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.auth-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 0.78rem; color: #555; margin-bottom: 4px; font-weight: 500; }
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus { border-color: var(--verde); }
+
+.btn-main {
+  width: 100%;
+  padding: 11px;
+  background: var(--verde);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+}
+.btn-main:hover { background: var(--verde-dark); }
+.btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.auth-error {
+  font-size: 0.78rem;
+  color: var(--rojo);
+  margin-top: 0.75rem;
+  display: none;
+}
+.auth-success {
+  font-size: 0.82rem;
+  color: var(--verde-dark);
+  background: var(--verde-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 0.75rem;
+  display: none;
+  line-height: 1.5;
+}
+
+/* ─── APP PRINCIPAL ─── */
+#app { display: none; }
+#app.visible { display: block; }
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.topbar-logo span { color: var(--verde); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-name { font-size: 0.82rem; color: var(--muted); }
+.btn-salir {
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-salir:hover { background: var(--crema); }
+
+.main-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Bienvenida */
+.bienvenida {
+  margin-bottom: 2rem;
+}
+.bienvenida h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+.bienvenida h1 em { color: var(--verde); font-style: normal; }
+.bienvenida p {
+  font-size: 0.88rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* Sesiones */
+.sesiones-titulo {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 1rem;
+}
+
+.sesion-card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.sesion-card.disponible { border-color: var(--verde); }
+.sesion-card.bloqueada { opacity: 0.55; }
+
+.sesion-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+}
+.sesion-card.bloqueada .sesion-head { cursor: default; }
+
+.s-num-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--crema-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sesion-card.disponible .s-num-badge {
+  background: var(--verde-light);
+  color: var(--verde-dark);
+}
+.sesion-card.completada .s-num-badge {
+  background: var(--verde);
+  color: #fff;
+}
+
+.s-info { flex: 1; }
+.s-name {
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.s-fase {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.s-lock { font-size: 1rem; color: #ccc; }
+.s-arrow { font-size: 0.75rem; color: var(--verde); }
+
+.sesion-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--crema-dark);
+}
+.sesion-body.open { display: block; }
+
+/* ─── CONTENIDO S1 ─── */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--verde-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--verde-light);
+}
+.section-label:first-child { margin-top: 16px; }
+
+/* Datos personales */
+.datos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+.dato-item .dato-lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.dato-item .dato-val {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.dato-item.full { grid-column: 1 / -1; }
+
+/* Daños */
+.daño-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 4px 4px 4px 0;
+}
+.daño-pill.financiero { background: #FDECEA; color: #A93226; }
+.daño-pill.psicologico { background: #F4ECF7; color: #7D3C98; }
+.daño-pill.relacional { background: #EAF2FF; color: #1A5276; }
+.daño-pill.legal { background: #FEF9E7; color: #9A7D0A; }
+.daño-pill.patrimonial { background: #E8F8F5; color: #1A5E40; }
+
+.daño-nota-box {
+  background: var(--crema);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  border-left: 3px solid #ddd;
+}
+
+/* Diagnóstico emocional */
+.diagnostico-emocional {
+  background: linear-gradient(135deg, #F4ECF7, #EAF2FF);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--ink);
+  font-style: italic;
+  border-left: 4px solid var(--morado);
+}
+
+/* Fases */
+.fases-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+.fase-card {
+  border-radius: 10px;
+  padding: 14px;
+  border: 1.5px solid;
+}
+.fase-card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fase-card ul {
+  padding-left: 16px;
+  font-size: 0.78rem;
+  line-height: 1.9;
+  color: inherit;
+  opacity: 0.85;
+}
+.fc-1 { border-color: #27AE60; background: #E8F7EE; color: #1A5C35; }
+.fc-2 { border-color: #F0AD4E; background: #FFF8E1; color: #7D5A00; }
+.fc-3 { border-color: #E74C3C; background: #FDECEA; color: #7D1A1A; }
+.fc-4 { border-color: #4A90D9; background: #E8F0FE; color: #1A3A6E; }
+
+/* Programa */
+.programa-box {
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: #fff;
+  margin-top: 4px;
+}
+.programa-box h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.programa-box p {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  line-height: 1.6;
+}
+.programa-box .prog-detalle {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.pd-item {
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.pd-n { font-size: 1.3rem; font-weight: 700; color: var(--verde); }
+.pd-l { font-size: 0.7rem; opacity: 0.6; margin-top: 2px; }
+
+/* Teórico / Tarea */
+.teorico-box {
+  background: #FFFBF0;
+  border: 1.5px solid #F0AD4E;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 4px;
+}
+.teorico-box h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #854F0B;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.teorico-box p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #5a3e00;
+  white-space: pre-wrap;
+}
+.tarea-box {
+  background: #E8F0FE;
+  border: 1.5px solid #4A90D9;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 10px;
+}
+.tarea-box h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A3A6E;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tarea-box p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #1a3a6e;
+  white-space: pre-wrap;
+}
+
+/* Bloqueada placeholder */
+.locked-msg {
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.locked-msg .lock-icon { font-size: 1.8rem; margin-bottom: 8px; }
+
+/* Cargando */
+.loading-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--crema);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 200;
+}
+.loading-screen.visible { display: flex; }
+.spin {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-screen p { font-size: 0.85rem; color: var(--muted); }
+
+@media (max-width: 480px) {
+  .fases-grid { grid-template-columns: 1fr; }
+  .datos-grid { grid-template-columns: 1fr; }
+  .prog-detalle { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── ESTILOS S2 ─── */
+.s2-section { margin-bottom: 1.5rem; }
+.s2-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1rem; gap: 4px; flex-wrap: wrap; }
+.s2-tab { padding: 8px 16px; font-size: 0.8rem; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; font-weight: 500; white-space: nowrap; }
+.s2-tab.active { color: var(--verde-dark); border-bottom-color: var(--verde); }
+.s2-page { display: none; }
+.s2-page.active { display: block; }
+.table-s2 { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.table-s2 th { font-size: 0.72rem; font-weight: 600; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--border); background: var(--crema); text-align: left; }
+.table-s2 td { padding: 3px 4px; vertical-align: middle; }
+.table-s2 td.lbl { font-size: 0.8rem; color: #444; padding: 5px 8px; }
+.table-s2 td.sub { font-size: 0.8rem; color: #555; padding: 5px 8px 5px 18px; }
+.table-s2 tr.sh td { background: #f0ede6; font-size: 0.72rem; font-weight: 700; color: #555; padding: 6px 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+.table-s2 tr.sh2 td { background: var(--crema); font-size: 0.7rem; font-weight: 600; color: var(--muted); padding: 4px 8px 3px 16px; text-transform: uppercase; }
+.table-s2 tr.stot td { border-top: 1px solid var(--border); }
+.table-s2 tr.stot td.lbl { font-weight: 600; font-size: 0.8rem; }
+.table-s2 tr.tot td { border-top: 2px solid var(--verde); }
+.table-s2 tr.tot td.lbl { font-weight: 700; color: var(--verde-dark); }
+.s2-input { border: 1.5px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 0.82rem; width: 100%; font-family: inherit; background: #fff; color: var(--ink); }
+.s2-input:focus { border-color: var(--verde); outline: none; }
+.s2-input[readonly] { background: var(--verde-light); color: var(--verde-dark); font-weight: 600; border-color: #c8ead8; }
+.s2-input.readonly-gray { background: var(--crema); color: #666; font-weight: 500; border-color: var(--border); }
+.flujo-box { border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+.flujo-pos { background: var(--verde-light); border: 1.5px solid #9fe1cb; }
+.flujo-neg { background: #FDECEA; border: 1.5px solid #e9aaaa; }
+.flujo-eq  { background: #FFF8E1; border: 1.5px solid #F0AD4E; }
+.flujo-lbl { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.flujo-val { font-size: 1.4rem; font-weight: 700; }
+.flujo-pos .flujo-val { color: var(--verde-dark); }
+.flujo-neg .flujo-val { color: var(--rojo); }
+.flujo-eq  .flujo-val { color: #854F0B; }
+.irc-pill { background: #FFF8E1; border: 1.5px solid #F0AD4E; border-radius: 10px; padding: 12px 16px; margin-top: 12px; }
+.irc-pill .ip-lbl { font-size: 0.72rem; color: #854F0B; font-weight: 700; margin-bottom: 3px; }
+.irc-pill .ip-val { font-size: 1.3rem; font-weight: 700; color: #854F0B; }
+.irc-pill .ip-note { font-size: 0.72rem; color: #854F0B; opacity: 0.75; margin-top: 4px; line-height: 1.5; }
+.escenarios-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.esc-card { border-radius: 10px; padding: 14px; border: 1.5px solid; }
+.esc-bajo  { border-color: #e9aaaa; background: #FDECEA; color: #7d1a1a; }
+.esc-medio { border-color: #F0AD4E; background: #FFF8E1; color: #7d5a00; }
+.esc-alto  { border-color: #9fe1cb; background: var(--verde-light); color: #1a5c35; }
+.esc-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+.esc-row { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.esc-row:last-child { border-bottom: none; font-weight: 700; font-size: 0.82rem; }
+.bar-chart { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-mes { font-size: 0.72rem; color: var(--muted); width: 30px; flex-shrink: 0; }
+.bar-outer { flex: 1; background: var(--crema-dark); border-radius: 4px; height: 16px; overflow: hidden; }
+.bar-inner { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.bar-val { font-size: 0.72rem; color: #555; width: 80px; text-align: right; flex-shrink: 0; }
+.balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.bal-card { border-radius: 10px; padding: 14px; border: 1.5px solid var(--border); text-align: center; }
+.bal-lbl { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+.bal-val { font-size: 1.2rem; font-weight: 700; }
+.bal-pos { color: var(--verde-dark); }
+.bal-neg { color: var(--rojo); }
+.btn-guardar-s2 { background: var(--verde); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 1rem; width: 100%; }
+.btn-guardar-s2:hover { background: var(--verde-dark); }
+.save-status { font-size: 0.78rem; text-align: center; margin-top: 6px; min-height: 16px; }
+.save-ok  { color: var(--verde-dark); }
+.save-err { color: var(--rojo); }
+@media (max-width: 480px) {
+  .escenarios-grid { grid-template-columns: 1fr; }
+  .balance-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loading">
+  <div class="spin"></div>
+  <p>Cargando tu espacio...</p>
+</div>
+
+<!-- PANTALLA 1: Ingresar email para magic link -->
+<div class="auth-screen" id="screen-email">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Ingresá a tu espacio</div>
+    <div class="auth-sub">Te enviamos un enlace a tu correo para entrar de forma segura.</div>
+    <div class="field">
+      <label>Tu correo electrónico</label>
+      <input type="email" id="inp-email" placeholder="tu@correo.com" onkeydown="if(event.key==='Enter')enviarMagicLink()">
+    </div>
+    <button class="btn-main" id="btn-magic" onclick="enviarMagicLink()">Enviar enlace de acceso</button>
+    <div class="auth-error" id="err-email"></div>
+    <div class="auth-success" id="ok-email"></div>
+  </div>
+</div>
+
+<!-- PANTALLA 2: Crear contraseña (primera vez) -->
+<div class="auth-screen" id="screen-password">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Creá tu contraseña</div>
+    <div class="auth-sub">Es la primera vez que entrás. Creá una contraseña para poder acceder fácilmente la próxima vez.</div>
+    <div class="field">
+      <label>Nueva contraseña</label>
+      <input type="password" id="inp-pass1" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="field">
+      <label>Confirmá tu contraseña</label>
+      <input type="password" id="inp-pass2" placeholder="Repetí la contraseña" onkeydown="if(event.key==='Enter')crearPassword()">
+    </div>
+    <button class="btn-main" onclick="crearPassword()">Guardar contraseña y entrar</button>
+    <div class="auth-error" id="err-pass"></div>
+  </div>
+</div>
+
+<!-- PANTALLA 3: Login normal email+password -->
+<div class="auth-screen" id="screen-login">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Bienvenida de nuevo</div>
+    <div class="auth-sub">Ingresá con tu correo y contraseña.</div>
+    <div class="field">
+      <label>Correo electrónico</label>
+      <input type="email" id="login-email" placeholder="tu@correo.com">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter')loginConPassword()">
+    </div>
+    <button class="btn-main" onclick="loginConPassword()">Entrar</button>
+    <div class="auth-error" id="err-login"></div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="mostrar('screen-email')" style="background:none;border:none;font-size:0.8rem;color:var(--muted);cursor:pointer;font-family:inherit;">¿Olvidaste tu contraseña? Entrá con magic link</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">Tomá el <span>Volante</span></div>
+    <div class="topbar-right">
+      <span class="topbar-name" id="user-name"></span>
+      <button class="btn-salir" onclick="salir()">Salir</button>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="bienvenida">
+      <h1>Hola, <em id="greeting-name">—</em> 👋</h1>
+      <p>Este es tu espacio personal del proceso. Acá encontrás el resumen de cada sesión, tus datos y lo necesario para la siguiente sesión.</p>
+    </div>
+
+    <div class="sesiones-titulo">Fase 1 — Orden</div>
+
+    <!-- SESIÓN 1 -->
+    <div class="sesion-card" id="card-s1">
+      <div class="sesion-head" onclick="toggleSesion(1)">
+        <div class="s-num-badge" id="badge-s1">1</div>
+        <div class="s-info">
+          <div class="s-name">Diagnóstico</div>
+          <div class="s-fase">Sesión 1 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s1">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s1">
+        <div id="content-s1"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión aún no está disponible. Tu consultora te avisará cuando esté lista.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 2 -->
+    <div class="sesion-card" id="card-s2">
+      <div class="sesion-head" onclick="toggleSesion(2)">
+        <div class="s-num-badge" id="badge-s2">2</div>
+        <div class="s-info">
+          <div class="s-name">Flujo de efectivo + Ecuación contable</div>
+          <div class="s-fase">Sesión 2 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s2">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s2">
+        <div id="content-s2"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará después de completar la Sesión 1.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 3 -->
+    <div class="sesion-card" id="card-s3">
+      <div class="sesion-head" onclick="toggleSesion(3)">
+        <div class="s-num-badge" id="badge-s3">3</div>
+        <div class="s-info">
+          <div class="s-name">Presupuesto e Indicadores</div>
+          <div class="s-fase">Sesión 3 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s3">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s3">
+        <div id="content-s3"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA = 'https://syxlgphermluvmpbnylb.supabase.co';
+const KEY  = 'sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const H    = { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + KEY };
+
+// ── Auth state ──
+let _session = null;
+let _clientaId = null;
+let _clientaData = null;
+let _sesionesData = null;
+let _sesionDataGuardada = null;
+
+function H_auth(token) {
+  return { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + token };
+}
+
+async function db(path, method='GET', body=null, token=null) {
+  const heads = token ? H_auth(token) : H;
+  if (method !== 'GET') heads['Prefer'] = 'return=minimal';
+  const opts = { method, headers: heads };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SUPA + '/rest/v1/' + path, opts);
+  if (method === 'GET') return r.json();
+  return r;
+}
+
+async function authPost(path, body) {
+  const r = await fetch(SUPA + '/auth/v1/' + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': KEY },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ── Helpers UI ──
+function mostrar(id) {
+  ['screen-email','screen-password','screen-login','app'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('visible');
+    if (s === 'app') el.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  if (id === 'app') { target.style.display = 'block'; target.classList.add('visible'); }
+  else target.classList.add('visible');
+}
+
+function loading(show) {
+  document.getElementById('loading').classList.toggle('visible', show);
+}
+
+function fmt(val) { return val || '—'; }
+
+function formatFecha(str) {
+  if (!str) return '—';
+  try { return new Date(str + 'T00:00:00').toLocaleDateString('es-CR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+  catch { return str; }
+}
+
+// ── Inicio: detectar sesión ──
+async function init() {
+  loading(true);
+
+  // Detectar magic link en la URL
+  const hash = window.location.hash;
+  const params = new URLSearchParams(hash.replace('#', '?'));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const type = params.get('type');
+
+  if (accessToken) {
+    // Limpiar URL
+    window.history.replaceState(null, '', window.location.pathname);
+    // Verificar si ya tiene contraseña configurada (user_metadata)
+    const userResp = await fetch(SUPA + '/auth/v1/user', {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + accessToken }
+    });
+    const userData = await userResp.json();
+    _session = { access_token: accessToken, user: userData };
+
+    if (userData.user_metadata && userData.user_metadata.password_set) {
+      // Ya tiene contraseña, entrar directo
+      await cargarApp(accessToken);
+    } else {
+      // Primera vez, pedir contraseña
+      loading(false);
+      mostrar('screen-password');
+    }
+    return;
+  }
+
+  // Sin token: mostrar login o email
+  loading(false);
+  mostrar('screen-login');
+}
+
+// ── Magic link ──
+async function enviarMagicLink() {
+  const email = document.getElementById('inp-email').value.trim();
+  const errEl = document.getElementById('err-email');
+  const okEl  = document.getElementById('ok-email');
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+
+  if (!email) { errEl.textContent = 'Ingresá tu correo.'; errEl.style.display = 'block'; return; }
+
+  document.getElementById('btn-magic').disabled = true;
+  const res = await authPost('magiclink', { email });
+  document.getElementById('btn-magic').disabled = false;
+
+  if (res.error) {
+    errEl.textContent = 'Error: ' + res.error.message;
+    errEl.style.display = 'block';
+  } else {
+    okEl.textContent = '¡Listo! Revisá tu correo. El enlace expira en 1 hora.';
+    okEl.style.display = 'block';
+  }
+}
+
+// ── Crear contraseña (primera vez) ──
+async function crearPassword() {
+  const p1 = document.getElementById('inp-pass1').value;
+  const p2 = document.getElementById('inp-pass2').value;
+  const errEl = document.getElementById('err-pass');
+  errEl.style.display = 'none';
+
+  if (p1.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; errEl.style.display = 'block'; return; }
+  if (p1 !== p2) { errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display = 'block'; return; }
+
+  loading(true);
+  const token = _session.access_token;
+
+  // Actualizar contraseña
+  const r = await fetch(SUPA + '/auth/v1/user', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ password: p1, data: { password_set: true } })
+  });
+  const res = await r.json();
+
+  if (res.error) {
+    loading(false);
+    errEl.textContent = 'Error: ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  await cargarApp(token);
+}
+
+// ── Login con email + password ──
+async function loginConPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('err-login');
+  errEl.style.display = 'none';
+
+  if (!email || !pass) { errEl.textContent = 'Completá todos los campos.'; errEl.style.display = 'block'; return; }
+
+  loading(true);
+  const res = await authPost('token?grant_type=password', { email, password: pass });
+
+  if (res.error) {
+    loading(false);
+    errEl.textContent = 'Correo o contraseña incorrectos.';
+    errEl.style.display = 'block';
+    return;
+  }
+  _session = res;
+  await cargarApp(res.access_token);
+}
+
+// ── Salir ──
+function salir() {
+  _session = null; _clientaId = null; _clientaData = null;
+  mostrar('screen-login');
+}
+
+// ── Cargar app ──
+async function cargarApp(token) {
+  loading(true);
+  try {
+    // Obtener usuario
+    const userResp = await fetch(SUPA + '/auth/v1/user', {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const userData = await userResp.json();
+    const email = userData.email;
+
+    // Buscar clienta por email
+    const clientas = await db('clientas?email=eq.' + encodeURIComponent(email) + '&limit=1', 'GET', null, token);
+    if (!clientas || !clientas.length) {
+      loading(false);
+      mostrar('screen-login');
+      document.getElementById('err-login').textContent = 'No encontramos tu cuenta. Contactá a tu consultora.';
+      document.getElementById('err-login').style.display = 'block';
+      return;
+    }
+
+    _clientaData = clientas[0];
+    _clientaId = _clientaData.id;
+
+    // Nombre para saludo
+    const nombre = (_clientaData.nombre || '').split(' ')[0];
+    document.getElementById('greeting-name').textContent = nombre;
+    document.getElementById('user-name').textContent = nombre;
+
+    // Cargar sesiones
+    const sesiones = await db('sesiones?clienta_id=eq.' + _clientaId + '&order=numero_sesion.asc', 'GET', null, token);
+    _sesionesData = sesiones;
+
+    // Cargar datos de sesiones (lo que llenó la consultora)
+    const sdArr = await db('sesiones_data?clienta_id=eq.' + _clientaId + '&limit=1', 'GET', null, token);
+    _sesionDataGuardada = (sdArr && sdArr.length) ? sdArr[0].datos : null;
+
+    // Renderizar sesiones
+    renderSesiones(sesiones);
+
+    loading(false);
+    mostrar('app');
+  } catch(e) {
+    loading(false);
+    mostrar('screen-login');
+  }
+}
+
+// ── Renderizar sesiones ──
+function renderSesiones(sesiones) {
+  const mapa = {};
+  (sesiones || []).forEach(s => mapa[s.numero_sesion] = s);
+
+  [1, 2, 3].forEach(n => {
+    const s = mapa[n];
+    const card = document.getElementById('card-s' + n);
+    const badge = document.getElementById('badge-s' + n);
+    const icon  = document.getElementById('icon-s' + n);
+    const content = document.getElementById('content-s' + n);
+
+    if (!s || !s.desbloqueada) {
+      card.className = 'sesion-card bloqueada';
+      badge.style.background = '';
+      icon.textContent = '🔒';
+      return;
+    }
+
+    card.className = 'sesion-card disponible' + (s.completada ? ' completada' : '');
+    icon.textContent = s.completada ? '✓' : '›';
+    icon.className = s.completada ? '' : 's-arrow';
+
+    if (n === 1) {
+      content.innerHTML = renderS1();
+    } else if (n === 2) {
+      content.innerHTML = renderS2();
+      initS2();
+    } else {
+      content.innerHTML = '<div class="locked-msg" style="color:var(--verde-dark);"><p>Contenido de sesión disponible próximamente.</p></div>';
+    }
+  });
+}
+
+
+// ── Render link externo ──
+function renderLink(url, label) {
+  if (!url) return '';
+  const txt = label || 'Ver material de la sesión';
+  return `<a href="${url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#1D9E75;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.85rem;font-weight:500;margin-top:12px;">🔗 ${txt} ↗</a>`;
+}
+
+// ── Contenido Sesión 1 ──
+function renderS1() {
+  const d = _sesionDataGuardada || {};
+  const c = _clientaData || {};
+
+  // Daños
+  const danosDef = [
+    { key: 'financiero',  icon: '💸', label: 'Daño Financiero' },
+    { key: 'psicologico', icon: '🧠', label: 'Daño Psicológico' },
+    { key: 'relacional',  icon: '👥', label: 'Daño Relacional' },
+    { key: 'legal',       icon: '⚖️', label: 'Daño Legal' },
+    { key: 'patrimonial', icon: '🏚️', label: 'Daño Patrimonial' },
+  ];
+
+  const danosPills = danosDef.map(dn => {
+    const val = d['daño-' + dn.key + '-val'];
+    if (val !== 'Sí') return '';
+    return `<div class="daño-pill ${dn.key}">${dn.icon} ${dn.label}</div>`;
+  }).join('');
+
+  const danosNotas = danosDef.map(dn => {
+    const val  = d['daño-' + dn.key + '-val'];
+    const nota = d['txt-' + dn.key];
+    if (val !== 'Sí' || !nota) return '';
+    return `<div class="daño-nota-box"><strong>${dn.icon} ${dn.label}:</strong> ${nota}</div>`;
+  }).join('');
+
+  const diagnosticoEmocional = d['s1-ia-diagnostico'] || '';
+  const teorico = d['cliente-s1-teorico'] || '';
+  const tarea   = d['cliente-s1-tarea'] || 'Investigá sobre tus ingresos, gastos, activos y pasivos. Anotá todo lo que recordés de cada categoría para la próxima sesión.';
+
+  return `
+    <div class="section-label">👤 Tus datos</div>
+    <div class="datos-grid">
+      <div class="dato-item">
+        <div class="dato-lbl">Nombre</div>
+        <div class="dato-val">${fmt(c.nombre)}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Fecha de diagnóstico</div>
+        <div class="dato-val">${formatFecha(d['s1-fecha'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Tipo de ingreso</div>
+        <div class="dato-val" style="text-transform:capitalize">${fmt(c.tipo_ingreso)}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Estado civil</div>
+        <div class="dato-val">${fmt(d['s1-estado'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Ocupación</div>
+        <div class="dato-val">${fmt(d['s1-ocup'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Dependientes</div>
+        <div class="dato-val">${d['s1-dep'] !== undefined && d['s1-dep'] !== '' ? d['s1-dep'] : '—'}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Vivienda</div>
+        <div class="dato-val">${fmt(d['s1-viv'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Vehículo</div>
+        <div class="dato-val">${fmt(d['s1-tiene-vehiculo'])}</div>
+      </div>
+    </div>
+
+    ${danosPills || danosNotas ? `
+    <div class="section-label">⚠️ Daños identificados</div>
+    <div>${danosPills || '<p style="font-size:0.82rem;color:var(--muted)">No se identificaron daños en esta sesión.</p>'}</div>
+    ${danosNotas}
+    ` : ''}
+
+    ${diagnosticoEmocional ? `
+    <div class="section-label">💜 Diagnóstico emocional</div>
+    <div class="diagnostico-emocional">${diagnosticoEmocional}</div>
+    ` : ''}
+
+    <div class="section-label">🗺️ Tu camino — Las 4 fases</div>
+    <div class="fases-grid">
+      <div class="fase-card fc-1">
+        <h4>📋 Fase 1 — Orden · 2 sesiones · 3 herramientas</h4>
+        <ul>
+          <li>Sabés cuánto entra, cuánto sale y a dónde va tu dinero</li>
+          <li>Construimos tu flujo de efectivo real</li>
+          <li>Analizamos tus activos y pasivos</li>
+          <li>Calculamos tus indicadores financieros personales</li>
+          <li>Tenés el control de saber dónde está tu dinero</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-2">
+        <h4>🔍 Fase 2 — Claridad · 1 sesión · 1 herramienta</h4>
+        <ul>
+          <li>Encontramos el dinero que desaparece sin que lo veás</li>
+          <li>Identificamos gastos fijos que olvidaste</li>
+          <li>Descubrimos gastos que solo aparecen en ciertas épocas</li>
+          <li>Recuperás dinero sin necesidad de ganar más</li>
+          <li>Salís con un mapa claro de a dónde va lo que "no alcanza"</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-3">
+        <h4>⚔️ Fase 3 — Estrategia · 2 sesiones · 2 herramientas prácticas + 1 teórica</h4>
+        <ul>
+          <li>Aquí inicia la acción — no solo el análisis</li>
+          <li>Analizamos cada deuda que tenés en detalle</li>
+          <li>Construimos un plan concreto para reducirlas</li>
+          <li>Exploramos condiciones que podés renegociar con el banco</li>
+          <li>Salís con un plan de acción real para pagar menos cada mes</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-4">
+        <h4>🌱 Fase 4 — Crecimiento · 1 sesión · 2 herramientas</h4>
+        <ul>
+          <li>Lo importante es protegerte y ayudarte a crecer</li>
+          <li>Calculamos tu fondo de emergencia ideal y cómo construirlo</li>
+          <li>Revisamos tu situación de pensión actual</li>
+          <li>Proyectamos lo que necesitás para una vejez plena</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-label">📦 Programa completo</div>
+    <div class="programa-box">
+      <h4>Todo lo que vas a construir juntas</h4>
+      <p>Podés iniciar solo con la Fase 1 o hacer el programa completo de las 4 fases.</p>
+      <div class="prog-detalle">
+        <div class="pd-item"><div class="pd-n">4</div><div class="pd-l">Fases</div></div>
+        <div class="pd-item"><div class="pd-n">7</div><div class="pd-l">Sesiones</div></div>
+        <div class="pd-item"><div class="pd-n">9</div><div class="pd-l">Herramientas</div></div>
+        <div class="pd-item"><div class="pd-n">1</div><div class="pd-l">Plan propio</div></div>
+      </div>
+    </div>
+
+    ${teorico ? `
+    <div class="section-label">📖 Notas de tu consultora</div>
+    <div class="teorico-box">
+      <h4>✍️ Para vos</h4>
+      <p>${teorico}</p>
+    </div>
+    ` : ''}
+
+    <div class="section-label">📝 Tu tarea</div>
+    <div class="tarea-box">
+      <h4>✅ Para la próxima sesión</h4>
+      <p>${tarea}</p>
+    </div>
+    ${renderLink(d['cliente-s1-link'], d['cliente-s1-link-label'])}
+  `;
+}
+
+// ── Toggle sesión ──
+function toggleSesion(n) {
+  const card = document.getElementById('card-s' + n);
+  if (card.classList.contains('bloqueada')) return;
+  const body = document.getElementById('body-s' + n);
+  body.classList.toggle('open');
+}
+
+
+// ── Formateo ──
+function fmtC(v) {
+  if (!v && v !== 0) return '';
+  return '₡' + Math.round(v).toLocaleString('es-CR');
+}
+function nv(id) {
+  const e = document.getElementById(id);
+  if (!e) return 0;
+  return parseFloat(e.value) || 0;
+}
+function setV(id, val) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.value = val !== undefined && val !== null ? val : '';
+}
+function setFmt(id, val) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.value = val ? fmtC(val) : '';
+}
+
+// ── Guardar datos S2 cliente ──
+async function guardarS2Cliente() {
+  const statusEl = document.getElementById('s2-save-status');
+  statusEl.textContent = 'Guardando...';
+  statusEl.className = 'save-status';
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="cs2-"]').forEach(el => {
+      if (el.value !== '') campos[el.id] = el.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH', { datos_s2: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s2: campos });
+    }
+    statusEl.textContent = '✅ Cambios guardados';
+    statusEl.className = 'save-status save-ok';
+  } catch(e) {
+    statusEl.textContent = '❌ Error al guardar';
+    statusEl.className = 'save-status save-err';
+  }
+}
+
+// ── Tabs S2 ──
+function s2GoTab(n) {
+  document.querySelectorAll('.s2-tab').forEach((t,i) => t.classList.toggle('active', i === n));
+  document.querySelectorAll('.s2-page').forEach((p,i) => p.classList.toggle('active', i === n));
+}
+
+// ── Cálculos flujo fijo cliente ──
+function calcS2FF() {
+  const s = (...ids) => ids.reduce((a, id) => a + nv(id), 0);
+  const ingF = s('cs2-fi1','cs2-fi2','cs2-fi3','cs2-fi4','cs2-fi5','cs2-fi6','cs2-fi7','cs2-fi8');
+  const ingV = s('cs2-fi9','cs2-fi10','cs2-fi11','cs2-fi12','cs2-fi13','cs2-fi14');
+  const ingE = s('cs2-fi15','cs2-fi16','cs2-fi17');
+  const tIng = ingF + ingV + ingE;
+  setFmt('cs2-fi-sf', ingF); setFmt('cs2-fi-sv', ingV); setFmt('cs2-fi-se', ingE); setFmt('cs2-fi-tot', tIng);
+  const viv  = s('cs2-fg1','cs2-fg2','cs2-fg3');
+  const serv = s('cs2-fg4','cs2-fg5','cs2-fg6','cs2-fg7','cs2-fg8','cs2-fg9');
+  const traf = s('cs2-fg10','cs2-fg11','cs2-fg12','cs2-fg13');
+  const deu  = s('cs2-fg14','cs2-fg15','cs2-fg16','cs2-fg17','cs2-fg18','cs2-fg19','cs2-fg20','cs2-fg21');
+  const fam  = s('cs2-fg22','cs2-fg23','cs2-fg24');
+  const sal  = s('cs2-fg25','cs2-fg26','cs2-fg27');
+  const otf  = s('cs2-fg28','cs2-fg29','cs2-fg30');
+  const tGF  = viv+serv+traf+deu+fam+sal+otf;
+  setFmt('cs2-fg-sviv',viv); setFmt('cs2-fg-sserv',serv); setFmt('cs2-fg-stra',traf);
+  setFmt('cs2-fg-sdeu',deu); setFmt('cs2-fg-sfam',fam); setFmt('cs2-fg-ssal',sal);
+  setFmt('cs2-fg-sotf',otf); setFmt('cs2-fg-totf',tGF);
+  const tvar = s('cs2-fv1','cs2-fv2','cs2-fv3','cs2-fv4');
+  const ali  = s('cs2-fv5','cs2-fv6','cs2-fv7','cs2-fv8');
+  const famv = s('cs2-fv9','cs2-fv10');
+  const salv = s('cs2-fv11','cs2-fv12');
+  const masc = nv('cs2-fv13');
+  const tGV  = tvar+ali+famv+salv+masc;
+  setFmt('cs2-fv-stra',tvar); setFmt('cs2-fv-sali',ali); setFmt('cs2-fv-sfam',famv);
+  setFmt('cs2-fv-ssal',salv); setFmt('cs2-fv-tot',tGV);
+  const tDisc = s('cs2-fd1','cs2-fd2','cs2-fd3','cs2-fd4','cs2-fd5','cs2-fd6','cs2-fd7');
+  setFmt('cs2-fd-tot', tDisc);
+  const tG = tGF + tGV + tDisc; setFmt('cs2-f-totg', tG);
+  const tAh = s('cs2-fa1','cs2-fa2','cs2-fa3','cs2-fa4','cs2-fa5','cs2-fa6');
+  setFmt('cs2-fa-tot', tAh);
+  const sal2 = tG + tAh; const flujo = tIng - sal2;
+  setFmt('cs2-fr-ing', tIng); setFmt('cs2-fr-g', tG);
+  setFmt('cs2-fr-ah', tAh); setFmt('cs2-fr-sal', sal2); setFmt('cs2-fr-flujo', flujo);
+  const box = document.getElementById('cs2-fr-box');
+  if (box) {
+    box.style.display = 'block';
+    if (flujo > 0) { box.className = 'flujo-box flujo-pos'; box.innerHTML = `<div class="flujo-lbl">✅ Flujo positivo</div><div class="flujo-val">${fmtC(flujo)}</div>`; }
+    else if (flujo < 0) { box.className = 'flujo-box flujo-neg'; box.innerHTML = `<div class="flujo-lbl">❌ Flujo negativo</div><div class="flujo-val">${fmtC(flujo)}</div>`; }
+    else { box.className = 'flujo-box flujo-eq'; box.innerHTML = `<div class="flujo-lbl">⚖️ Equilibrio</div><div class="flujo-val">₡0</div>`; }
+  }
+}
+
+// ── Cálculos Ecuación contable ──
+function calcS2Bal() {
+  const s = (...ids) => ids.reduce((a, id) => a + nv(id), 0);
+  const acC = s('cs2-ac1','cs2-ac2','cs2-ac3','cs2-ac4','cs2-ac5','cs2-ac6','cs2-ac7','cs2-ac8','cs2-ac9');
+  const acNC= s('cs2-ac10','cs2-ac11','cs2-ac12','cs2-ac13','cs2-ac14','cs2-ac15','cs2-ac16');
+  const totAc = acC + acNC;
+  setFmt('cs2-ac-sc', acC); setFmt('cs2-ac-snc', acNC); setFmt('cs2-ac-tot', totAc);
+  const paC = s('cs2-pa1','cs2-pa2','cs2-pa3','cs2-pa4','cs2-pa5','cs2-pa6','cs2-pa7','cs2-pa8','cs2-pa9','cs2-pa10','cs2-pa11','cs2-pa12','cs2-pa13');
+  const paNC= s('cs2-pa14','cs2-pa15','cs2-pa16','cs2-pa17','cs2-pa18');
+  const totPa = paC + paNC;
+  setFmt('cs2-pa-sc', paC); setFmt('cs2-pa-snc', paNC); setFmt('cs2-pa-tot', totPa);
+  const balance = totAc - totPa;
+  setFmt('cs2-bal-ac', totAc); setFmt('cs2-bal-pa', totPa);
+  const balEl = document.getElementById('cs2-bal-neto');
+  if (balEl) {
+    balEl.textContent = fmtC(balance);
+    balEl.className = 'bal-val ' + (balance >= 0 ? 'bal-pos' : 'bal-neg');
+  }
+}
+
+// ── Mapa estacionalidad (solo lectura desde datos consultora) ──
+function renderMapaMixto(d) {
+  const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
+  const tots = [];
+  let totalAnual = 0, mejor = 0, bajo = Infinity, irc = 0;
+  let sf = 0, sv = 0, sd = 0;
+  for (let i = 0; i < 12; i++) {
+    const f = parseFloat(d['mp-f-'+i]) || 0;
+    const v = parseFloat(d['mp-v-'+i]) || 0;
+    const dd = parseFloat(d['mp-d-'+i]) || 0;
+    const t = f + v + dd;
+    tots.push(t); totalAnual += t; sf += f; sv += v; sd += dd;
+    if (t > mejor) mejor = t;
+    if (t > 0 && t < bajo) bajo = t;
+  }
+  if (bajo === Infinity) bajo = 0;
+  const prom = totalAnual / 12;
+  const vals = tots.filter(t => t > 0).sort((a,b) => a - b);
+  irc = vals[Math.floor(vals.length * 0.25)] || vals[0] || 0;
+  const max = Math.max(...tots, 1);
+
+  let rows = '';
+  tots.forEach((t, i) => {
+    const cls = t === 0 ? '—' : t >= prom * 1.15 ? '🟢 Mes Alto' : t >= prom * 0.85 ? '🟡 Mes Medio' : '🔴 Mes Bajo';
+    rows += `<tr>
+      <td class="lbl" style="padding:5px 8px;font-size:0.8rem;">${MESES[i]}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${(parseFloat(d['mp-f-'+i])||0) ? fmtC(parseFloat(d['mp-f-'+i])) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${(parseFloat(d['mp-v-'+i])||0) ? fmtC(parseFloat(d['mp-v-'+i])) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${t ? fmtC(t) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.78rem;font-weight:500;">${cls}</td>
+    </tr>`;
+  });
+
+  const barras = tots.map((t,i) => {
+    const pct = Math.round(t / max * 100);
+    const color = t >= prom*1.15 ? '#1D9E75' : t >= prom*0.85 ? '#EF9F27' : '#E24B4A';
+    return `<div class="bar-row">
+      <div class="bar-mes">${MESES[i]}</div>
+      <div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${color}"></div></div>
+      <div class="bar-val">${t > 0 ? fmtC(t) : ''}</div>
+    </div>`;
+  }).join('');
+
+  // Escenarios
+  const gfB = () => {
+    const ids = ['mx-v1-b','mx-v2-b','mx-s1-b','mx-s2-b','mx-s3-b','mx-s4-b','mx-s5-b','mx-s6-b',
+      'mx-t1-b','mx-t2-b','mx-t3-b','mx-d1-b','mx-d2-b','mx-d3-b','mx-d4-b','mx-d5-b','mx-d6-b','mx-d7-b',
+      'mx-f1-b','mx-f2-b','mx-f3-b','mx-sal1-b','mx-sal2-b','mx-sal3-b','mx-o1-b','mx-o2-b','mx-o3-b'];
+    return ids.reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  };
+  const gvB = () => ['mx-gv1-b','mx-gv2-b','mx-gv3-b','mx-gv4-b','mx-gv5-b','mx-gv6-b','mx-gv7-b','mx-gv8-b']
+    .reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  const gdB = () => ['mx-disc1-b','mx-disc2-b','mx-disc3-b'].reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  const totalGastosB = gfB() + gvB();
+  const escBajo = irc - totalGastosB;
+  const escMedio = prom - totalGastosB;
+  const escAlto = mejor - totalGastosB;
+
+  return `
+    <div class="section-label" style="margin-top:16px;">📅 Mapa de Estacionalidad</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th>Mes</th><th>Fijo (₡)</th><th>Variable (₡)</th><th>Total</th><th>Clasificación</th></tr>
+        ${rows}
+      </table>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <div class="bal-card"><div class="bal-lbl">Total año</div><div class="bal-val" style="font-size:1rem;">${fmtC(totalAnual)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Mejor mes</div><div class="bal-val" style="font-size:1rem;">${fmtC(mejor)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Mes más bajo</div><div class="bal-val" style="font-size:1rem;">${fmtC(bajo)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Promedio mensual</div><div class="bal-val" style="font-size:1rem;">${fmtC(prom)}</div></div>
+    </div>
+    <div class="irc-pill">
+      <div class="ip-lbl">⭐ IRC — Ingreso de Referencia Conservador</div>
+      <div class="ip-val">${fmtC(irc)}</div>
+      <div class="ip-note">No es el promedio — es el ingreso que la mayoría de los meses normales supera. Base de toda tu planificación.</div>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📊 Comportamiento del ingreso</div>
+    <div class="bar-chart">${barras}</div>
+
+    <div class="section-label" style="margin-top:20px;">📈 Tus 3 Escenarios</div>
+    <div class="escenarios-grid">
+      <div class="esc-card esc-bajo">
+        <div class="esc-title">📉 Mes Bajo</div>
+        <div class="esc-row"><span>Ingreso (IRC)</span><span>${fmtC(irc)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escBajo)}</span></div>
+      </div>
+      <div class="esc-card esc-medio">
+        <div class="esc-title">📊 Mes Medio</div>
+        <div class="esc-row"><span>Ingreso (Prom)</span><span>${fmtC(prom)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escMedio)}</span></div>
+      </div>
+      <div class="esc-card esc-alto">
+        <div class="esc-title">📈 Mes Alto</div>
+        <div class="esc-row"><span>Ingreso (Mejor)</span><span>${fmtC(mejor)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escAlto)}</span></div>
+      </div>
+    </div>`;
+}
+
+// ── Render Sesión 2 ──
+function renderS2() {
+  const d = _sesionDataGuardada || {};
+  const tipo = d.tipo || _clientaData.tipo_ingreso || 'fijo';
+  const teorico  = d['cliente-s2-teorico'] || '';
+  const teoEc    = d['cliente-s2-teorico-ec'] || '';
+  const tarea    = d['cliente-s2-tarea'] || '';
+  const esMixto  = tipo === 'mixto' || tipo === 'variable';
+
+  // Pre-llenado desde datos consultora
+  const preFF = (id) => {
+    const val = parseFloat(d[id]) || 0;
+    return val ? val : '';
+  };
+
+  // Filas flujo fijo
+  const rowFF = (csId, origId, lbl) =>
+    `<tr><td class="sub">${lbl}</td><td><input class="s2-input" type="number" id="${csId}" value="${preFF(origId)}" oninput="calcS2FF()"></td></tr>`;
+
+  const rowRO = (csId, lbl) =>
+    `<tr><td class="sub">${lbl}</td><td><input class="s2-input readonly-gray" readonly id="${csId}"></td></tr>`;
+
+  const htmlFlujoFijo = `
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Monto (₡)</th></tr>
+      <tr class="sh"><td colspan="2">💵 Ingresos Fijos</td></tr>
+      ${rowFF('cs2-fi1','fi-1','Salario / Empleo principal (neto)')}
+      ${rowFF('cs2-fi2','fi-2','Pensión / Jubilación')}
+      ${rowFF('cs2-fi3','fi-3','Alquiler de propiedad')}
+      ${rowFF('cs2-fi4','fi-4','Pensión alimenticia que recibo')}
+      ${rowFF('cs2-fi5','fi-5','Apoyo de familia (regular)')}
+      ${rowFF('cs2-fi6','fi-6','Transferencias regulares')}
+      ${rowFF('cs2-fi7','fi-7','Otro ingreso fijo 1')}
+      ${rowFF('cs2-fi8','fi-8','Otro ingreso fijo 2')}
+      <tr class="stot"><td class="lbl">Subtotal Ingresos Fijos</td><td><input class="s2-input" readonly id="cs2-fi-sf"></td></tr>
+      <tr class="sh"><td colspan="2">📊 Ingresos Variables</td></tr>
+      ${rowFF('cs2-fi9','fi-9','Freelance / Servicios independientes')}
+      ${rowFF('cs2-fi10','fi-10','Negocio propio')}
+      ${rowFF('cs2-fi11','fi-11','Comisiones / Bonos')}
+      ${rowFF('cs2-fi12','fi-12','Proyectos / Consultorías')}
+      ${rowFF('cs2-fi13','fi-13','Intereses / Inversiones')}
+      ${rowFF('cs2-fi14','fi-14','Otro ingreso variable')}
+      <tr class="stot"><td class="lbl">Subtotal Variables</td><td><input class="s2-input" readonly id="cs2-fi-sv"></td></tr>
+      <tr class="sh"><td colspan="2">🎁 Ingresos Esporádicos</td></tr>
+      ${rowFF('cs2-fi15','fi-15','Bono / Aguinaldo / Extra')}
+      ${rowFF('cs2-fi16','fi-16','Dividendos / Rendimiento inversiones')}
+      ${rowFF('cs2-fi17','fi-17','Venta de activos / bienes')}
+      <tr class="stot"><td class="lbl">Subtotal Esporádicos</td><td><input class="s2-input" readonly id="cs2-fi-se"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL INGRESOS</td><td><input class="s2-input" readonly id="cs2-fi-tot"></td></tr>
+      <tr class="sh"><td colspan="2">🔒 Gastos Fijos</td></tr>
+      <tr class="sh2"><td colspan="2">🏠 Vivienda</td></tr>
+      ${rowFF('cs2-fg1','fg-1','Renta o pago de hipoteca')}
+      ${rowFF('cs2-fg2','fg-2','Cuota de condominio / mantenimiento')}
+      ${rowFF('cs2-fg3','fg-3','Predial / bienes raíces (÷12)')}
+      <tr class="stot"><td class="lbl">Subtotal Vivienda</td><td><input class="s2-input" readonly id="cs2-fg-sviv"></td></tr>
+      <tr class="sh2"><td colspan="2">⚡ Servicios Básicos</td></tr>
+      ${rowFF('cs2-fg4','fg-4','Electricidad (CNFL / ICE / ESPH)')}
+      ${rowFF('cs2-fg5','fg-5','Agua (AyA / municipal)')}
+      ${rowFF('cs2-fg6','fg-6','Internet fijo')}
+      ${rowFF('cs2-fg7','fg-7','Teléfono celular')}
+      ${rowFF('cs2-fg8','fg-8','Cable / Streaming')}
+      ${rowFF('cs2-fg9','fg-9','Gas')}
+      <tr class="stot"><td class="lbl">Subtotal Servicios Básicos</td><td><input class="s2-input" readonly id="cs2-fg-sserv"></td></tr>
+      <tr class="sh2"><td colspan="2">🚗 Transporte Fijo</td></tr>
+      ${rowFF('cs2-fg10','fg-10','Crédito del auto')}
+      ${rowFF('cs2-fg11','fg-11','Seguro del auto (INS)')}
+      ${rowFF('cs2-fg12','fg-12','Marchamo (COSEVI ÷12)')}
+      ${rowFF('cs2-fg13','fg-13','Revisión técnica (÷12)')}
+      <tr class="stot"><td class="lbl">Subtotal Transporte Fijo</td><td><input class="s2-input" readonly id="cs2-fg-stra"></td></tr>
+      <tr class="sh2"><td colspan="2">💳 Pagos de Deudas</td></tr>
+      ${rowFF('cs2-fg14','fg-14','Tarjeta de crédito 1')}
+      ${rowFF('cs2-fg15','fg-15','Tarjeta de crédito 2')}
+      ${rowFF('cs2-fg16','fg-16','Tarjeta de crédito 3')}
+      ${rowFF('cs2-fg17','fg-17','Préstamo personal')}
+      ${rowFF('cs2-fg18','fg-18','Préstamo de vehículo')}
+      ${rowFF('cs2-fg19','fg-19','Hipoteca')}
+      ${rowFF('cs2-fg20','fg-20','Préstamo familiar / informal')}
+      ${rowFF('cs2-fg21','fg-21','Compras a meses sin intereses')}
+      <tr class="stot"><td class="lbl">Subtotal Pagos de Deudas</td><td><input class="s2-input" readonly id="cs2-fg-sdeu"></td></tr>
+      <tr class="sh2"><td colspan="2">👨‍👩‍👧 Familia</td></tr>
+      ${rowFF('cs2-fg22','fg-22','Colegiatura / Guardería / Kínder')}
+      ${rowFF('cs2-fg23','fg-23','Pensión alimenticia que pago')}
+      ${rowFF('cs2-fg24','fg-24','Ayuda a padres / familiares')}
+      <tr class="stot"><td class="lbl">Subtotal Familia</td><td><input class="s2-input" readonly id="cs2-fg-sfam"></td></tr>
+      <tr class="sh2"><td colspan="2">💊 Salud Fija</td></tr>
+      ${rowFF('cs2-fg25','fg-25','Seguro de gastos médicos')}
+      ${rowFF('cs2-fg26','fg-26','Terapia / Psicólogo')}
+      ${rowFF('cs2-fg27','fg-27','Medicamentos crónicos')}
+      <tr class="stot"><td class="lbl">Subtotal Salud Fija</td><td><input class="s2-input" readonly id="cs2-fg-ssal"></td></tr>
+      <tr class="sh2"><td colspan="2">📱 Otros Fijos</td></tr>
+      ${rowFF('cs2-fg28','fg-28','Ayuda doméstica')}
+      ${rowFF('cs2-fg29','fg-29','Apps / Suscripciones')}
+      ${rowFF('cs2-fg30','fg-30','Envíos de dinero a familia')}
+      <tr class="stot"><td class="lbl" style="font-weight:700;">SUBTOTAL GASTOS FIJOS</td><td><input class="s2-input" readonly id="cs2-fg-totf"></td></tr>
+      <tr class="sh"><td colspan="2">📊 Gastos Variables</td></tr>
+      ${rowFF('cs2-fv1','fv-1','Gasolina')}
+      ${rowFF('cs2-fv2','fv-2','Transporte público / Uber')}
+      ${rowFF('cs2-fv3','fv-3','Estacionamientos / casetas')}
+      ${rowFF('cs2-fv4','fv-4','Mantenimiento del auto')}
+      <tr class="stot"><td class="lbl">Subtotal Transporte Variable</td><td><input class="s2-input" readonly id="cs2-fv-stra"></td></tr>
+      ${rowFF('cs2-fv5','fv-5','Supermercado / Despensa')}
+      ${rowFF('cs2-fv6','fv-6','Productos de limpieza')}
+      ${rowFF('cs2-fv7','fv-7','Artículos de higiene personal')}
+      ${rowFF('cs2-fv8','fv-8','Gas (si es variable)')}
+      <tr class="stot"><td class="lbl">Subtotal Alimentación y Hogar</td><td><input class="s2-input" readonly id="cs2-fv-sali"></td></tr>
+      ${rowFF('cs2-fv9','fv-9','Útiles / uniformes escolares')}
+      ${rowFF('cs2-fv10','fv-10','Pañales / leche / bebé')}
+      <tr class="stot"><td class="lbl">Subtotal Familia Variable</td><td><input class="s2-input" readonly id="cs2-fv-sfam"></td></tr>
+      ${rowFF('cs2-fv11','fv-11','Medicamentos (no crónicos)')}
+      ${rowFF('cs2-fv12','fv-12','Consultas médicas')}
+      <tr class="stot"><td class="lbl">Subtotal Salud Variable</td><td><input class="s2-input" readonly id="cs2-fv-ssal"></td></tr>
+      ${rowFF('cs2-fv13','fv-13','Comida / veterinario (mascotas)')}
+      <tr class="stot"><td class="lbl">SUBTOTAL GASTOS VARIABLES</td><td><input class="s2-input" readonly id="cs2-fv-tot"></td></tr>
+      <tr class="sh"><td colspan="2">🎯 Gastos Discrecionales</td></tr>
+      ${rowFF('cs2-fd1','fd-1','Restaurantes / delivery')}
+      ${rowFF('cs2-fd2','fd-2','Cafés / snacks / antojos')}
+      ${rowFF('cs2-fd3','fd-3','Estética / salón / manicure')}
+      ${rowFF('cs2-fd4','fd-4','Ropa / calzado / accesorios')}
+      ${rowFF('cs2-fd5','fd-5','Salidas / cine / conciertos')}
+      ${rowFF('cs2-fd6','fd-6','Viajes / vacaciones (÷12)')}
+      ${rowFF('cs2-fd7','fd-7','Otro discrecional')}
+      <tr class="stot"><td class="lbl">SUBTOTAL DISCRECIONALES</td><td><input class="s2-input" readonly id="cs2-fd-tot"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL GASTOS</td><td><input class="s2-input" readonly id="cs2-f-totg"></td></tr>
+      <tr class="sh"><td colspan="2">💰 Ahorro y Protección</td></tr>
+      ${rowFF('cs2-fa1','fa-1','Ahorro automático mensual')}
+      ${rowFF('cs2-fa2','fa-2','Inversiones mensuales (SAFIs, CDPs)')}
+      ${rowFF('cs2-fa3','fa-3','Ahorro para metas específicas')}
+      ${rowFF('cs2-fa4','fa-4','Aportación voluntaria a pensión (OPC/ROP)')}
+      ${rowFF('cs2-fa5','fa-5','Fondo de emergencias mensual')}
+      ${rowFF('cs2-fa6','fa-6','Reserva reparaciones hogar / auto')}
+      <tr class="tot"><td class="lbl">TOTAL AHORRO</td><td><input class="s2-input" readonly id="cs2-fa-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">🎯 Mi Flujo — Resumen</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Monto (₡)</th></tr>
+      <tr><td class="lbl">💵 Total Ingresos</td><td><input class="s2-input" readonly id="cs2-fr-ing"></td></tr>
+      <tr><td class="lbl">💸 Total Gastos</td><td><input class="s2-input" readonly id="cs2-fr-g"></td></tr>
+      <tr><td class="lbl">💰 Total Ahorro</td><td><input class="s2-input" readonly id="cs2-fr-ah"></td></tr>
+      <tr class="stot"><td class="lbl">📤 Total Salidas</td><td><input class="s2-input" readonly id="cs2-fr-sal"></td></tr>
+      <tr class="tot"><td class="lbl">🎯 Flujo Final</td><td><input class="s2-input" readonly id="cs2-fr-flujo"></td></tr>
+    </table>
+    <div id="cs2-fr-box" style="display:none;"></div>`;
+
+  const htmlEcuacion = `
+    <div class="section-label">🏦 Mis Activos</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Valor (₡)</th></tr>
+      <tr class="sh"><td colspan="2">💧 Activos Corrientes (líquidos)</td></tr>
+      <tr><td class="sub">Efectivo en casa</td><td><input class="s2-input" type="number" id="cs2-ac1" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta de ahorro — Banco 1</td><td><input class="s2-input" type="number" id="cs2-ac2" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta de ahorro — Banco 2</td><td><input class="s2-input" type="number" id="cs2-ac3" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta corriente 1</td><td><input class="s2-input" type="number" id="cs2-ac4" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta corriente 2</td><td><input class="s2-input" type="number" id="cs2-ac5" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Certificados a Plazo (CDPs)</td><td><input class="s2-input" type="number" id="cs2-ac6" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Fondos de inversión (SAFIs)</td><td><input class="s2-input" type="number" id="cs2-ac7" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Acciones en bolsa / BNV</td><td><input class="s2-input" type="number" id="cs2-ac8" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Criptomonedas</td><td><input class="s2-input" type="number" id="cs2-ac9" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Activos Corrientes</td><td><input class="s2-input" readonly id="cs2-ac-sc"></td></tr>
+      <tr class="sh"><td colspan="2">🏠 Activos No Corrientes</td></tr>
+      <tr><td class="sub">OPC / Pensión Complementaria (ROP)</td><td><input class="s2-input" type="number" id="cs2-ac10" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Casa / Departamento donde vivo</td><td><input class="s2-input" type="number" id="cs2-ac11" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Segunda propiedad</td><td><input class="s2-input" type="number" id="cs2-ac12" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Terreno</td><td><input class="s2-input" type="number" id="cs2-ac13" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Auto (si es tuyo)</td><td><input class="s2-input" type="number" id="cs2-ac14" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Joyería de valor (+$1,000)</td><td><input class="s2-input" type="number" id="cs2-ac15" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Equipo profesional</td><td><input class="s2-input" type="number" id="cs2-ac16" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Activos No Corrientes</td><td><input class="s2-input" readonly id="cs2-ac-snc"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL ACTIVOS</td><td><input class="s2-input" readonly id="cs2-ac-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">💳 Mis Pasivos</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Saldo (₡)</th></tr>
+      <tr class="sh"><td colspan="2">⚡ Pasivos Circulantes (corto plazo)</td></tr>
+      <tr><td class="sub">Tarjeta de crédito 1</td><td><input class="s2-input" type="number" id="cs2-pa1" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta de crédito 2</td><td><input class="s2-input" type="number" id="cs2-pa2" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta de crédito 3</td><td><input class="s2-input" type="number" id="cs2-pa3" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta departamental 1</td><td><input class="s2-input" type="number" id="cs2-pa4" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta departamental 2</td><td><input class="s2-input" type="number" id="cs2-pa5" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo rápido 1</td><td><input class="s2-input" type="number" id="cs2-pa6" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo rápido 2</td><td><input class="s2-input" type="number" id="cs2-pa7" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Adelanto de nómina</td><td><input class="s2-input" type="number" id="cs2-pa8" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo de familiar 1</td><td><input class="s2-input" type="number" id="cs2-pa9" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo de familiar 2</td><td><input class="s2-input" type="number" id="cs2-pa10" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Dinero prestado a amigo</td><td><input class="s2-input" type="number" id="cs2-pa11" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Compra 1 a meses sin intereses</td><td><input class="s2-input" type="number" id="cs2-pa12" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Compra 2 a meses sin intereses</td><td><input class="s2-input" type="number" id="cs2-pa13" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Pasivos Circulantes</td><td><input class="s2-input" readonly id="cs2-pa-sc"></td></tr>
+      <tr class="sh"><td colspan="2">🏦 Pasivos a Largo Plazo</td></tr>
+      <tr><td class="sub">Hipoteca</td><td><input class="s2-input" type="number" id="cs2-pa14" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Crédito automotriz</td><td><input class="s2-input" type="number" id="cs2-pa15" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo personal bancario</td><td><input class="s2-input" type="number" id="cs2-pa16" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Crédito educativo</td><td><input class="s2-input" type="number" id="cs2-pa17" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo cooperativa</td><td><input class="s2-input" type="number" id="cs2-pa18" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Pasivos a Largo Plazo</td><td><input class="s2-input" readonly id="cs2-pa-snc"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL PASIVOS</td><td><input class="s2-input" readonly id="cs2-pa-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">⚖️ Mi Balance</div>
+    <div class="balance-grid">
+      <div class="bal-card">
+        <div class="bal-lbl">Total Activos</div>
+        <input class="s2-input" readonly id="cs2-bal-ac" style="text-align:center;font-size:1rem;font-weight:700;margin-top:4px;">
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Total Pasivos</div>
+        <input class="s2-input readonly-gray" readonly id="cs2-bal-pa" style="text-align:center;font-size:1rem;font-weight:700;margin-top:4px;">
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Patrimonio Neto</div>
+        <div class="bal-val" id="cs2-bal-neto" style="margin-top:4px;">—</div>
+      </div>
+    </div>`;
+
+  const tabs = esMixto
+    ? ['📖 Para vos', '📅 Mapa + Escenarios', '📝 Ecuación Contable', '📖 Notas Ec.', '📝 Tu tarea']
+    : ['📖 Para vos', '💵 Flujo de Efectivo', '📝 Ecuación Contable', '📖 Notas Ec.', '📝 Tu tarea'];
+
+  return `
+    <div class="s2-tabs">
+      ${tabs.map((t,i) => `<div class="s2-tab ${i===0?'active':''}" onclick="s2GoTab(${i})">${t}</div>`).join('')}
+    </div>
+
+    <!-- TAB 0: Teórico Flujo -->
+    <div class="s2-page active" id="s2p-0">
+      ${teorico
+        ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+      ${renderLink(d['cliente-s2-flujo-link'], d['cliente-s2-flujo-link-label'])}
+    </div>
+
+    <!-- TAB 1: Flujo -->
+    <div class="s2-page" id="s2p-1">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Podés actualizar tus números cuando quieras. Los cambios se guardan en tu perfil.</p>
+      ${esMixto ? '<div id="cs2-mapa-mixto"></div>' : htmlFlujoFijo}
+    </div>
+
+    <!-- TAB 2: Ecuación Contable -->
+    <div class="s2-page" id="s2p-2">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Actualizá tus activos y pasivos cuando algo cambie.</p>
+      ${htmlEcuacion}
+    </div>
+
+    <!-- TAB 3: Teórico Ecuación -->
+    <div class="s2-page" id="s2p-3">
+      ${teoEc
+        ? `<div class="teorico-box"><h4>✍️ Para vos — Ecuación Contable</h4><p>${teoEc}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas sobre tu ecuación contable aquí.</div>`}
+      ${renderLink(d['cliente-s2-ec-link'], d['cliente-s2-ec-link-label'])}
+    </div>
+
+    <!-- TAB 4: Tarea -->
+    <div class="s2-page" id="s2p-4">
+      ${tarea
+        ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>
+
+    <button class="btn-guardar-s2" onclick="guardarS2Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s2-save-status"></div>`;
+}
+
+// ── Init S2: cargar datos guardados de la cliente y calcular ──
+async function initS2() {
+  const d = _sesionDataGuardada || {};
+  const tipo = d.tipo || _clientaData.tipo_ingreso || 'fijo';
+  const esMixto = tipo === 'mixto' || tipo === 'variable';
+
+  // Cargar datos propios de la cliente si existen
+  let clienteD = {};
+  try {
+    const arr = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId + '&limit=1');
+    if (arr && arr.length && arr[0].datos_s2) clienteD = arr[0].datos_s2;
+  } catch(e) {}
+
+  if (esMixto) {
+    const mapaEl = document.getElementById('cs2-mapa-mixto');
+    if (mapaEl) mapaEl.innerHTML = renderMapaMixto(d);
+  } else {
+    // Pre-llenar flujo fijo con datos consultora, luego sobreescribir con datos cliente si los tiene
+    const campos = ['fi-1','fi-2','fi-3','fi-4','fi-5','fi-6','fi-7','fi-8',
+      'fi-9','fi-10','fi-11','fi-12','fi-13','fi-14','fi-15','fi-16','fi-17',
+      'fg-1','fg-2','fg-3','fg-4','fg-5','fg-6','fg-7','fg-8','fg-9','fg-10',
+      'fg-11','fg-12','fg-13','fg-14','fg-15','fg-16','fg-17','fg-18','fg-19','fg-20','fg-21',
+      'fg-22','fg-23','fg-24','fg-25','fg-26','fg-27','fg-28','fg-29','fg-30',
+      'fv-1','fv-2','fv-3','fv-4','fv-5','fv-6','fv-7','fv-8','fv-9','fv-10',
+      'fv-11','fv-12','fv-13','fd-1','fd-2','fd-3','fd-4','fd-5','fd-6','fd-7',
+      'fa-1','fa-2','fa-3','fa-4','fa-5','fa-6'];
+    campos.forEach(id => {
+      const csId = 'cs2-' + id.replace('-','');
+      const val = clienteD['cs2-' + id.replace('-','')] || d[id] || '';
+      setV(csId, val);
+    });
+    calcS2FF();
+  }
+
+  // Ecuación contable: datos consultora → luego sobreescribir con datos cliente
+  for (let i = 1; i <= 16; i++) {
+    const csId = 'cs2-ac' + i;
+    const origId = 'ac-' + i;
+    setV(csId, clienteD[csId] || d[origId] || '');
+  }
+  for (let i = 1; i <= 18; i++) {
+    const csId = 'cs2-pa' + i;
+    const origId = 'pa-' + i;
+    setV(csId, clienteD[csId] || d[origId] || '');
+  }
+  calcS2Bal();
+}
+
+// ── Iniciar ──
+init();
+</script>
+</body>
+</html>
