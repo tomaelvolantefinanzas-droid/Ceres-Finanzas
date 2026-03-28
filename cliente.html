@@ -1,0 +1,3470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tomá el Volante — Tu espacio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --verde: #1D9E75;
+  --verde-dark: #0F6E56;
+  --verde-light: #E8F7EE;
+  --crema: #FAF8F3;
+  --crema-dark: #F0ECE3;
+  --ink: #1a1a1a;
+  --muted: #888;
+  --border: #E5E0D5;
+  --rojo: #C0392B;
+  --naranja: #E67E22;
+  --azul: #2980B9;
+  --morado: #8E44AD;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--crema);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ─── PANTALLAS DE AUTH ─── */
+.auth-screen {
+  display: none;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: var(--crema);
+}
+.auth-screen.visible { display: flex; }
+
+.auth-box {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--ink);
+}
+.auth-logo span { color: var(--verde); }
+.auth-tagline {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+  font-style: italic;
+}
+
+.auth-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+.auth-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.field { margin-bottom: 1rem; }
+.field label { display: block; font-size: 0.78rem; color: #555; margin-bottom: 4px; font-weight: 500; }
+.field input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field input:focus { border-color: var(--verde); }
+
+.btn-main {
+  width: 100%;
+  padding: 11px;
+  background: var(--verde);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-top: 0.25rem;
+}
+.btn-main:hover { background: var(--verde-dark); }
+.btn-main:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.auth-error {
+  font-size: 0.78rem;
+  color: var(--rojo);
+  margin-top: 0.75rem;
+  display: none;
+}
+.auth-success {
+  font-size: 0.82rem;
+  color: var(--verde-dark);
+  background: var(--verde-light);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 0.75rem;
+  display: none;
+  line-height: 1.5;
+}
+
+/* ─── APP PRINCIPAL ─── */
+#app { display: none; }
+#app.visible { display: block; }
+
+.topbar {
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.topbar-logo span { color: var(--verde); }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-name { font-size: 0.82rem; color: var(--muted); }
+.btn-salir {
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.btn-salir:hover { background: var(--crema); }
+
+.main-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* Bienvenida */
+.bienvenida {
+  margin-bottom: 2rem;
+}
+.bienvenida h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+.bienvenida h1 em { color: var(--verde); font-style: normal; }
+.bienvenida p {
+  font-size: 0.88rem;
+  color: #555;
+  line-height: 1.7;
+}
+
+/* Sesiones */
+.sesiones-titulo {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 1rem;
+}
+
+.sesion-card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+.sesion-card.disponible { border-color: var(--verde); }
+.sesion-card.bloqueada { opacity: 0.55; }
+
+.sesion-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+}
+.sesion-card.bloqueada .sesion-head { cursor: default; }
+
+.s-num-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--crema-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sesion-card.disponible .s-num-badge {
+  background: var(--verde-light);
+  color: var(--verde-dark);
+}
+.sesion-card.completada .s-num-badge {
+  background: var(--verde);
+  color: #fff;
+}
+
+.s-info { flex: 1; }
+.s-name {
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+.s-fase {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.s-lock { font-size: 1rem; color: #ccc; }
+.s-arrow { font-size: 0.75rem; color: var(--verde); }
+
+.sesion-body {
+  display: none;
+  padding: 0 20px 20px;
+  border-top: 1px solid var(--crema-dark);
+}
+.sesion-body.open { display: block; }
+
+/* ─── CONTENIDO S1 ─── */
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--verde-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin: 20px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1.5px solid var(--verde-light);
+}
+.section-label:first-child { margin-top: 16px; }
+
+/* Datos personales */
+.datos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+.dato-item .dato-lbl {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.dato-item .dato-val {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.dato-item.full { grid-column: 1 / -1; }
+
+/* Daños */
+.daño-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin: 4px 4px 4px 0;
+}
+.daño-pill.financiero { background: #FDECEA; color: #A93226; }
+.daño-pill.psicologico { background: #F4ECF7; color: #7D3C98; }
+.daño-pill.relacional { background: #EAF2FF; color: #1A5276; }
+.daño-pill.legal { background: #FEF9E7; color: #9A7D0A; }
+.daño-pill.patrimonial { background: #E8F8F5; color: #1A5E40; }
+
+.daño-nota-box {
+  background: var(--crema);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.6;
+  margin-top: 6px;
+  margin-bottom: 8px;
+  border-left: 3px solid #ddd;
+}
+
+/* Diagnóstico emocional */
+.diagnostico-emocional {
+  background: linear-gradient(135deg, #F4ECF7, #EAF2FF);
+  border-radius: 12px;
+  padding: 16px 18px;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  color: var(--ink);
+  font-style: italic;
+  border-left: 4px solid var(--morado);
+}
+
+/* Fases */
+.fases-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+.fase-card {
+  border-radius: 10px;
+  padding: 14px;
+  border: 1.5px solid;
+}
+.fase-card h4 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fase-card ul {
+  padding-left: 16px;
+  font-size: 0.78rem;
+  line-height: 1.9;
+  color: inherit;
+  opacity: 0.85;
+}
+.fc-1 { border-color: #27AE60; background: #E8F7EE; color: #1A5C35; }
+.fc-2 { border-color: #F0AD4E; background: #FFF8E1; color: #7D5A00; }
+.fc-3 { border-color: #E74C3C; background: #FDECEA; color: #7D1A1A; }
+.fc-4 { border-color: #4A90D9; background: #E8F0FE; color: #1A3A6E; }
+
+/* Programa */
+.programa-box {
+  background: var(--ink);
+  border-radius: 12px;
+  padding: 18px 20px;
+  color: #fff;
+  margin-top: 4px;
+}
+.programa-box h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  margin-bottom: 6px;
+}
+.programa-box p {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  line-height: 1.6;
+}
+.programa-box .prog-detalle {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+.pd-item {
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.pd-n { font-size: 1.3rem; font-weight: 700; color: var(--verde); }
+.pd-l { font-size: 0.7rem; opacity: 0.6; margin-top: 2px; }
+
+/* Teórico / Tarea */
+.teorico-box {
+  background: #FFFBF0;
+  border: 1.5px solid #F0AD4E;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 4px;
+}
+.teorico-box h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #854F0B;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.teorico-box p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #5a3e00;
+  white-space: pre-wrap;
+}
+.tarea-box {
+  background: #E8F0FE;
+  border: 1.5px solid #4A90D9;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-top: 10px;
+}
+.tarea-box h4 {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1A3A6E;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tarea-box p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: #1a3a6e;
+  white-space: pre-wrap;
+}
+
+/* Bloqueada placeholder */
+.locked-msg {
+  padding: 20px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.locked-msg .lock-icon { font-size: 1.8rem; margin-bottom: 8px; }
+
+/* Cargando */
+.loading-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--crema);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 200;
+}
+.loading-screen.visible { display: flex; }
+.spin {
+  width: 32px; height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-screen p { font-size: 0.85rem; color: var(--muted); }
+
+@media (max-width: 480px) {
+  .fases-grid { grid-template-columns: 1fr; }
+  .datos-grid { grid-template-columns: 1fr; }
+  .prog-detalle { grid-template-columns: 1fr 1fr; }
+}
+
+/* ─── ESTILOS S2 ─── */
+.s2-section { margin-bottom: 1.5rem; }
+.s2-tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1rem; gap: 4px; flex-wrap: wrap; }
+.s2-tab { padding: 8px 16px; font-size: 0.8rem; cursor: pointer; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -2px; font-weight: 500; white-space: nowrap; }
+.s2-tab.active { color: var(--verde-dark); border-bottom-color: var(--verde); }
+.s2-page { display: none; }
+.s2-page.active { display: block; }
+.table-s2 { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.table-s2 th { font-size: 0.72rem; font-weight: 600; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--border); background: var(--crema); text-align: left; }
+.table-s2 td { padding: 3px 4px; vertical-align: middle; }
+.table-s2 td.lbl { font-size: 0.8rem; color: #444; padding: 5px 8px; }
+.table-s2 td.sub { font-size: 0.8rem; color: #555; padding: 5px 8px 5px 18px; }
+.table-s2 tr.sh td { background: #f0ede6; font-size: 0.72rem; font-weight: 700; color: #555; padding: 6px 8px; text-transform: uppercase; letter-spacing: 0.4px; }
+.table-s2 tr.sh2 td { background: var(--crema); font-size: 0.7rem; font-weight: 600; color: var(--muted); padding: 4px 8px 3px 16px; text-transform: uppercase; }
+.table-s2 tr.stot td { border-top: 1px solid var(--border); }
+.table-s2 tr.stot td.lbl { font-weight: 600; font-size: 0.8rem; }
+.table-s2 tr.tot td { border-top: 2px solid var(--verde); }
+.table-s2 tr.tot td.lbl { font-weight: 700; color: var(--verde-dark); }
+.s2-input { border: 1.5px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 0.82rem; width: 100%; font-family: inherit; background: #fff; color: var(--ink); }
+.s2-input:focus { border-color: var(--verde); outline: none; }
+.s2-input[readonly] { background: var(--verde-light); color: var(--verde-dark); font-weight: 600; border-color: #c8ead8; }
+.s2-input.readonly-gray { background: var(--crema); color: #666; font-weight: 500; border-color: var(--border); }
+.flujo-box { border-radius: 10px; padding: 14px 16px; margin-top: 12px; }
+.flujo-pos { background: var(--verde-light); border: 1.5px solid #9fe1cb; }
+.flujo-neg { background: #FDECEA; border: 1.5px solid #e9aaaa; }
+.flujo-eq  { background: #FFF8E1; border: 1.5px solid #F0AD4E; }
+.flujo-lbl { font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
+.flujo-val { font-size: 1.4rem; font-weight: 700; }
+.flujo-pos .flujo-val { color: var(--verde-dark); }
+.flujo-neg .flujo-val { color: var(--rojo); }
+.flujo-eq  .flujo-val { color: #854F0B; }
+.irc-pill { background: #FFF8E1; border: 1.5px solid #F0AD4E; border-radius: 10px; padding: 12px 16px; margin-top: 12px; }
+.irc-pill .ip-lbl { font-size: 0.72rem; color: #854F0B; font-weight: 700; margin-bottom: 3px; }
+.irc-pill .ip-val { font-size: 1.3rem; font-weight: 700; color: #854F0B; }
+.irc-pill .ip-note { font-size: 0.72rem; color: #854F0B; opacity: 0.75; margin-top: 4px; line-height: 1.5; }
+.escenarios-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.esc-card { border-radius: 10px; padding: 14px; border: 1.5px solid; }
+.esc-bajo  { border-color: #e9aaaa; background: #FDECEA; color: #7d1a1a; }
+.esc-medio { border-color: #F0AD4E; background: #FFF8E1; color: #7d5a00; }
+.esc-alto  { border-color: #9fe1cb; background: var(--verde-light); color: #1a5c35; }
+.esc-title { font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; }
+.esc-row { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 3px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+.esc-row:last-child { border-bottom: none; font-weight: 700; font-size: 0.82rem; }
+.bar-chart { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-mes { font-size: 0.72rem; color: var(--muted); width: 30px; flex-shrink: 0; }
+.bar-outer { flex: 1; background: var(--crema-dark); border-radius: 4px; height: 16px; overflow: hidden; }
+.bar-inner { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.bar-val { font-size: 0.72rem; color: #555; width: 80px; text-align: right; flex-shrink: 0; }
+.balance-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 10px; }
+.bal-card { border-radius: 10px; padding: 14px; border: 1.5px solid var(--border); text-align: center; }
+.bal-lbl { font-size: 0.72rem; color: var(--muted); margin-bottom: 6px; }
+.bal-val { font-size: 1.2rem; font-weight: 700; }
+.bal-pos { color: var(--verde-dark); }
+.bal-neg { color: var(--rojo); }
+.btn-guardar-s2 { background: var(--verde); color: #fff; border: none; border-radius: 8px; padding: 10px 20px; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 1rem; width: 100%; }
+.btn-guardar-s2:hover { background: var(--verde-dark); }
+.save-status { font-size: 0.78rem; text-align: center; margin-top: 6px; min-height: 16px; }
+.save-ok  { color: var(--verde-dark); }
+.save-err { color: var(--rojo); }
+@media (max-width: 480px) {
+  .escenarios-grid { grid-template-columns: 1fr; }
+  .balance-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── ESTILOS S3 ─── */
+.ratio-card { border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.ratio-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.ratio-info { flex: 1; }
+.ratio-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; }
+.ratio-ref { font-size: 0.75rem; color: var(--verde-dark); font-weight: 500; background: var(--verde-light); padding: 2px 8px; border-radius: 10px; display: inline-block; margin-bottom: 4px; }
+.ratio-sig { font-size: 0.78rem; color: #555; line-height: 1.5; }
+.ratio-right { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.ratio-val { font-size: 1.4rem; font-weight: 700; color: var(--ink); }
+.ratio-sem { font-size: 1.4rem; }
+.ratio-verde { color: var(--verde-dark); }
+.ratio-rojo  { color: var(--rojo); }
+.ratio-naranja { color: #854F0B; }
+.resumen-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 1rem; }
+.res-card { background: var(--crema); border-radius: 10px; padding: 12px; }
+.res-card .rl { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; }
+.res-card .rv { font-size: 1rem; font-weight: 600; }
+.semaforo-resumen { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; }
+.sem-pill { display: flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 500; }
+.sem-verde  { background: var(--verde-light); color: var(--verde-dark); }
+.sem-naranja { background: #FFF8E1; color: #854F0B; }
+.sem-rojo   { background: #FDECEA; color: var(--rojo); }
+@media (max-width: 480px) { .resumen-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loading">
+  <div class="spin"></div>
+  <p>Cargando tu espacio...</p>
+</div>
+
+<!-- PANTALLA 1: Ingresar email para magic link -->
+<div class="auth-screen" id="screen-email">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Ingresá a tu espacio</div>
+    <div class="auth-sub">Te enviamos un enlace a tu correo para entrar de forma segura.</div>
+    <div class="field">
+      <label>Tu correo electrónico</label>
+      <input type="email" id="inp-email" placeholder="tu@correo.com" onkeydown="if(event.key==='Enter')enviarMagicLink()">
+    </div>
+    <button class="btn-main" id="btn-magic" onclick="enviarMagicLink()">Enviar enlace de acceso</button>
+    <div class="auth-error" id="err-email"></div>
+    <div class="auth-success" id="ok-email"></div>
+  </div>
+</div>
+
+<!-- PANTALLA 2: Crear contraseña (primera vez) -->
+<div class="auth-screen" id="screen-password">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Creá tu contraseña</div>
+    <div class="auth-sub">Es la primera vez que entrás. Creá una contraseña para poder acceder fácilmente la próxima vez.</div>
+    <div class="field">
+      <label>Nueva contraseña</label>
+      <input type="password" id="inp-pass1" placeholder="Mínimo 6 caracteres">
+    </div>
+    <div class="field">
+      <label>Confirmá tu contraseña</label>
+      <input type="password" id="inp-pass2" placeholder="Repetí la contraseña" onkeydown="if(event.key==='Enter')crearPassword()">
+    </div>
+    <button class="btn-main" onclick="crearPassword()">Guardar contraseña y entrar</button>
+    <div class="auth-error" id="err-pass"></div>
+  </div>
+</div>
+
+<!-- PANTALLA 3: Login normal email+password -->
+<div class="auth-screen" id="screen-login">
+  <div class="auth-box">
+    <div class="auth-logo">Tomá el <span>Volante</span></div>
+    <div class="auth-tagline">Tu espacio financiero personal</div>
+    <div class="auth-title">Bienvenida de nuevo</div>
+    <div class="auth-sub">Ingresá con tu correo y contraseña.</div>
+    <div class="field">
+      <label>Correo electrónico</label>
+      <input type="email" id="login-email" placeholder="tu@correo.com">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="login-pass" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter')loginConPassword()">
+    </div>
+    <button class="btn-main" onclick="loginConPassword()">Entrar</button>
+    <div class="auth-error" id="err-login"></div>
+    <div style="text-align:center;margin-top:1rem;">
+      <button onclick="mostrar('screen-email')" style="background:none;border:none;font-size:0.8rem;color:var(--muted);cursor:pointer;font-family:inherit;">¿Olvidaste tu contraseña? Entrá con magic link</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP PRINCIPAL -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">Tomá el <span>Volante</span></div>
+    <div class="topbar-right">
+      <span class="topbar-name" id="user-name"></span>
+      <button class="btn-salir" onclick="salir()">Salir</button>
+    </div>
+  </div>
+
+  <div class="main-wrap">
+    <div class="bienvenida">
+      <h1>Hola, <em id="greeting-name">—</em> 👋</h1>
+      <p>Este es tu espacio personal del proceso. Acá encontrás el resumen de cada sesión, tus datos y lo necesario para la siguiente sesión.</p>
+    </div>
+
+    <div class="sesiones-titulo">Fase 1 — Orden</div>
+
+    <!-- SESIÓN 1 -->
+    <div class="sesion-card" id="card-s1">
+      <div class="sesion-head" onclick="toggleSesion(1)">
+        <div class="s-num-badge" id="badge-s1">1</div>
+        <div class="s-info">
+          <div class="s-name">Diagnóstico</div>
+          <div class="s-fase">Sesión 1 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s1">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s1">
+        <div id="content-s1"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión aún no está disponible. Tu consultora te avisará cuando esté lista.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 2 -->
+    <div class="sesion-card" id="card-s2">
+      <div class="sesion-head" onclick="toggleSesion(2)">
+        <div class="s-num-badge" id="badge-s2">2</div>
+        <div class="s-info">
+          <div class="s-name">Flujo de efectivo + Ecuación contable</div>
+          <div class="s-fase">Sesión 2 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s2">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s2">
+        <div id="content-s2"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará después de completar la Sesión 1.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 3 -->
+    <div class="sesion-card" id="card-s3">
+      <div class="sesion-head" onclick="toggleSesion(3)">
+        <div class="s-num-badge" id="badge-s3">3</div>
+        <div class="s-info">
+          <div class="s-name">Presupuesto e Indicadores</div>
+          <div class="s-fase">Sesión 3 de 3 · Fase 1</div>
+        </div>
+        <div id="icon-s3">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s3">
+        <div id="content-s3"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+
+    <div class="sesiones-titulo" style="margin-top:1.5rem;">Fase 2 — Claridad</div>
+
+    <!-- SESIÓN 4 -->
+    <div class="sesion-card" id="card-s4">
+      <div class="sesion-head" onclick="toggleSesion(4)">
+        <div class="s-num-badge" id="badge-s4">4</div>
+        <div class="s-info">
+          <div class="s-name">Dinero Invisible</div>
+          <div class="s-fase">Sesión 1 de 1 · Fase 2</div>
+        </div>
+        <div id="icon-s4">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s4">
+        <div id="content-s4"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+
+    <div class="sesiones-titulo" style="margin-top:1.5rem;">Fase 3 — Estrategia</div>
+
+    <!-- SESIÓN 5 -->
+    <div class="sesion-card" id="card-s5">
+      <div class="sesion-head" onclick="toggleSesion(5)">
+        <div class="s-num-badge" id="badge-s5">5</div>
+        <div class="s-info">
+          <div class="s-name">Diagnóstico de Deudas</div>
+          <div class="s-fase">Sesión 1 de 2 · Fase 3</div>
+        </div>
+        <div id="icon-s5">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s5">
+        <div id="content-s5"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 6 -->
+    <div class="sesion-card" id="card-s6">
+      <div class="sesion-head" onclick="toggleSesion(6)">
+        <div class="s-num-badge" id="badge-s6">6</div>
+        <div class="s-info">
+          <div class="s-name">Estrategia de Deudas</div>
+          <div class="s-fase">Sesión 2 de 2 · Fase 3</div>
+        </div>
+        <div id="icon-s6">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s6">
+        <div id="content-s6"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+
+    <div class="sesiones-titulo" style="margin-top:1.5rem;">Fase 4 — Crecimiento</div>
+
+    <!-- SESIÓN 7 -->
+    <div class="sesion-card" id="card-s7">
+      <div class="sesion-head" onclick="toggleSesion(7)">
+        <div class="s-num-badge" id="badge-s7">7</div>
+        <div class="s-info">
+          <div class="s-name">Fondo de Emergencia</div>
+          <div class="s-fase">Sesión 1 de 2 · Fase 4</div>
+        </div>
+        <div id="icon-s7">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s7">
+        <div id="content-s7"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+
+    <!-- SESIÓN 8 -->
+    <div class="sesion-card" id="card-s8">
+      <div class="sesion-head" onclick="toggleSesion(8)">
+        <div class="s-num-badge" id="badge-s8">8</div>
+        <div class="s-info">
+          <div class="s-name">Pensiones</div>
+          <div class="s-fase">Sesión 2 de 2 · Fase 4</div>
+        </div>
+        <div id="icon-s8">🔒</div>
+      </div>
+      <div class="sesion-body" id="body-s8">
+        <div id="content-s8"><div class="locked-msg"><div class="lock-icon">🔒</div>Esta sesión se desbloqueará cuando tu consultora la habilite.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPA = 'https://syxlgphermluvmpbnylb.supabase.co';
+const KEY  = 'sb_publishable_2IDlVfrVE2b9E4b79bUQEQ_zYoPa9hg';
+const H    = { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + KEY };
+
+// ── Auth state ──
+let _session = null;
+let _clientaId = null;
+let _clientaData = null;
+let _sesionesData = null;
+let _sesionDataGuardada = null;
+let _s4Data = null;
+let _s5Data = null;
+let _s7Data = null;
+let _s8Data = null;
+let _opcData = null;
+
+function H_auth(token) {
+  return { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + token };
+}
+
+async function db(path, method='GET', body=null, token=null) {
+  const heads = token ? H_auth(token) : H;
+  if (method !== 'GET') heads['Prefer'] = 'return=minimal';
+  const opts = { method, headers: heads };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(SUPA + '/rest/v1/' + path, opts);
+  if (method === 'GET') return r.json();
+  return r;
+}
+
+async function authPost(path, body) {
+  const r = await fetch(SUPA + '/auth/v1/' + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': KEY },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ── Helpers UI ──
+function mostrar(id) {
+  ['screen-email','screen-password','screen-login','app'].forEach(s => {
+    const el = document.getElementById(s);
+    el.classList.remove('visible');
+    if (s === 'app') el.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  if (id === 'app') { target.style.display = 'block'; target.classList.add('visible'); }
+  else target.classList.add('visible');
+}
+
+function loading(show) {
+  document.getElementById('loading').classList.toggle('visible', show);
+}
+
+function fmt(val) { return val || '—'; }
+
+function formatFecha(str) {
+  if (!str) return '—';
+  try { return new Date(str + 'T00:00:00').toLocaleDateString('es-CR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+  catch { return str; }
+}
+
+// ── Inicio: detectar sesión ──
+async function init() {
+  loading(true);
+
+  // Detectar magic link en la URL
+  const hash = window.location.hash;
+  const params = new URLSearchParams(hash.replace('#', '?'));
+  const accessToken = params.get('access_token');
+  const refreshToken = params.get('refresh_token');
+  const type = params.get('type');
+
+  if (accessToken) {
+    // Limpiar URL
+    window.history.replaceState(null, '', window.location.pathname);
+    // Verificar si ya tiene contraseña configurada (user_metadata)
+    const userResp = await fetch(SUPA + '/auth/v1/user', {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + accessToken }
+    });
+    const userData = await userResp.json();
+    _session = { access_token: accessToken, user: userData };
+
+    if (userData.user_metadata && userData.user_metadata.password_set) {
+      // Ya tiene contraseña, entrar directo
+      await cargarApp(accessToken);
+    } else {
+      // Primera vez, pedir contraseña
+      loading(false);
+      mostrar('screen-password');
+    }
+    return;
+  }
+
+  // Sin token: mostrar login o email
+  loading(false);
+  mostrar('screen-login');
+}
+
+// ── Magic link ──
+async function enviarMagicLink() {
+  const email = document.getElementById('inp-email').value.trim();
+  const errEl = document.getElementById('err-email');
+  const okEl  = document.getElementById('ok-email');
+  errEl.style.display = 'none';
+  okEl.style.display = 'none';
+
+  if (!email) { errEl.textContent = 'Ingresá tu correo.'; errEl.style.display = 'block'; return; }
+
+  document.getElementById('btn-magic').disabled = true;
+  const res = await authPost('magiclink', { email });
+  document.getElementById('btn-magic').disabled = false;
+
+  if (res.error) {
+    errEl.textContent = 'Error: ' + res.error.message;
+    errEl.style.display = 'block';
+  } else {
+    okEl.textContent = '¡Listo! Revisá tu correo. El enlace expira en 1 hora.';
+    okEl.style.display = 'block';
+  }
+}
+
+// ── Crear contraseña (primera vez) ──
+async function crearPassword() {
+  const p1 = document.getElementById('inp-pass1').value;
+  const p2 = document.getElementById('inp-pass2').value;
+  const errEl = document.getElementById('err-pass');
+  errEl.style.display = 'none';
+
+  if (p1.length < 6) { errEl.textContent = 'La contraseña debe tener al menos 6 caracteres.'; errEl.style.display = 'block'; return; }
+  if (p1 !== p2) { errEl.textContent = 'Las contraseñas no coinciden.'; errEl.style.display = 'block'; return; }
+
+  loading(true);
+  const token = _session.access_token;
+
+  // Actualizar contraseña
+  const r = await fetch(SUPA + '/auth/v1/user', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'apikey': KEY, 'Authorization': 'Bearer ' + token },
+    body: JSON.stringify({ password: p1, data: { password_set: true } })
+  });
+  const res = await r.json();
+
+  if (res.error) {
+    loading(false);
+    errEl.textContent = 'Error: ' + res.error.message;
+    errEl.style.display = 'block';
+    return;
+  }
+  await cargarApp(token);
+}
+
+// ── Login con email + password ──
+async function loginConPassword() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('err-login');
+  errEl.style.display = 'none';
+
+  if (!email || !pass) { errEl.textContent = 'Completá todos los campos.'; errEl.style.display = 'block'; return; }
+
+  loading(true);
+  const res = await authPost('token?grant_type=password', { email, password: pass });
+
+  if (res.error) {
+    loading(false);
+    errEl.textContent = 'Correo o contraseña incorrectos.';
+    errEl.style.display = 'block';
+    return;
+  }
+  _session = res;
+  await cargarApp(res.access_token);
+}
+
+// ── Salir ──
+function salir() {
+  _session = null; _clientaId = null; _clientaData = null;
+  mostrar('screen-login');
+}
+
+// ── Cargar app ──
+async function cargarApp(token) {
+  loading(true);
+  try {
+    // Obtener usuario
+    const userResp = await fetch(SUPA + '/auth/v1/user', {
+      headers: { 'apikey': KEY, 'Authorization': 'Bearer ' + token }
+    });
+    const userData = await userResp.json();
+    const email = userData.email;
+
+    // Buscar clienta por email
+    const clientas = await db('clientas?email=eq.' + encodeURIComponent(email) + '&limit=1', 'GET', null, token);
+    if (!clientas || !clientas.length) {
+      loading(false);
+      mostrar('screen-login');
+      document.getElementById('err-login').textContent = 'No encontramos tu cuenta. Contactá a tu consultora.';
+      document.getElementById('err-login').style.display = 'block';
+      return;
+    }
+
+    _clientaData = clientas[0];
+    _clientaId = _clientaData.id;
+
+    // Nombre para saludo
+    const nombre = (_clientaData.nombre || '').split(' ')[0];
+    document.getElementById('greeting-name').textContent = nombre;
+    document.getElementById('user-name').textContent = nombre;
+
+    // Cargar sesiones
+    const sesiones = await db('sesiones?clienta_id=eq.' + _clientaId + '&order=numero_sesion.asc', 'GET', null, token);
+    _sesionesData = sesiones;
+
+    // Cargar datos de sesiones (lo que llenó la consultora)
+    const sdArr = await db('sesiones_data?clienta_id=eq.' + _clientaId + '&limit=1', 'GET', null, token);
+    _sesionDataGuardada = (sdArr && sdArr.length) ? sdArr[0].datos : null;
+
+    // Cargar datos sesiones F3 (S5/S6), F4 (S7), S8
+    const sdF3 = await db('sesiones_data_f3?clienta_id=eq.' + _clientaId + '&limit=1', 'GET', null, token);
+    _s5Data = (sdF3 && sdF3.length) ? sdF3[0].datos : null;
+    const sdF4 = await db('sesiones_data_f4?clienta_id=eq.' + _clientaId + '&limit=1', 'GET', null, token);
+    _s7Data = (sdF4 && sdF4.length) ? sdF4[0].datos : null;
+    const sdS8 = await db('sesiones_data_s8?clienta_id=eq.' + _clientaId + '&limit=1', 'GET', null, token);
+    _s8Data = (sdS8 && sdS8.length) ? sdS8[0].datos : null;
+
+    // Renderizar sesiones
+    renderSesiones(sesiones);
+
+    loading(false);
+    mostrar('app');
+  } catch(e) {
+    loading(false);
+    mostrar('screen-login');
+  }
+}
+
+// ── Renderizar sesiones ──
+function renderSesiones(sesiones) {
+  const mapa = {};
+  (sesiones || []).forEach(s => mapa[s.numero_sesion] = s);
+
+  [1, 2, 3, 4, 5, 6, 7, 8].forEach(n => {
+    const s = mapa[n];
+    const card = document.getElementById('card-s' + n);
+    const badge = document.getElementById('badge-s' + n);
+    const icon  = document.getElementById('icon-s' + n);
+    const content = document.getElementById('content-s' + n);
+
+    if (!s || !s.desbloqueada) {
+      card.className = 'sesion-card bloqueada';
+      badge.style.background = '';
+      icon.textContent = '🔒';
+      return;
+    }
+
+    card.className = 'sesion-card disponible' + (s.completada ? ' completada' : '');
+    icon.textContent = s.completada ? '✓' : '›';
+    icon.className = s.completada ? '' : 's-arrow';
+
+    if (n === 1) {
+      content.innerHTML = renderS1();
+    } else if (n === 2) {
+      content.innerHTML = renderS2();
+      initS2();
+    } else if (n === 3) {
+      content.innerHTML = renderS3();
+      initS3();
+    } else if (n === 4) {
+      content.innerHTML = renderS4();
+    } else if (n === 5) {
+      content.innerHTML = renderS5();
+      initS5();
+    } else if (n === 6) {
+      content.innerHTML = renderS6();
+    } else if (n === 7) {
+      content.innerHTML = renderS7();
+    } else if (n === 8) {
+      content.innerHTML = renderS8();
+    } else {
+      content.innerHTML = '<div class="locked-msg" style="color:var(--verde-dark);"><p>Contenido de sesión disponible próximamente.</p></div>';
+    }
+  });
+}
+
+
+// ── Render link externo ──
+function renderLink(url, label) {
+  if (!url) return '';
+  const txt = label || 'Ver material de la sesión';
+  return `<a href="${url}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:#1D9E75;color:#fff;padding:10px 18px;border-radius:8px;text-decoration:none;font-size:0.85rem;font-weight:500;margin-top:12px;">🔗 ${txt} ↗</a>`;
+}
+
+// ── Contenido Sesión 1 ──
+function renderS1() {
+  const d = _sesionDataGuardada || {};
+  const c = _clientaData || {};
+
+  // Daños
+  const danosDef = [
+    { key: 'financiero',  icon: '💸', label: 'Daño Financiero' },
+    { key: 'psicologico', icon: '🧠', label: 'Daño Psicológico' },
+    { key: 'relacional',  icon: '👥', label: 'Daño Relacional' },
+    { key: 'legal',       icon: '⚖️', label: 'Daño Legal' },
+    { key: 'patrimonial', icon: '🏚️', label: 'Daño Patrimonial' },
+  ];
+
+  const danosPills = danosDef.map(dn => {
+    const val = d['daño-' + dn.key + '-val'];
+    if (val !== 'Sí') return '';
+    return `<div class="daño-pill ${dn.key}">${dn.icon} ${dn.label}</div>`;
+  }).join('');
+
+  const danosNotas = danosDef.map(dn => {
+    const val  = d['daño-' + dn.key + '-val'];
+    const nota = d['txt-' + dn.key];
+    if (val !== 'Sí' || !nota) return '';
+    return `<div class="daño-nota-box"><strong>${dn.icon} ${dn.label}:</strong> ${nota}</div>`;
+  }).join('');
+
+  const diagnosticoEmocional = d['s1-ia-diagnostico'] || '';
+  const teorico = d['cliente-s1-teorico'] || '';
+  const tarea   = d['cliente-s1-tarea'] || 'Investigá sobre tus ingresos, gastos, activos y pasivos. Anotá todo lo que recordés de cada categoría para la próxima sesión.';
+
+  return `
+    <div class="section-label">👤 Tus datos</div>
+    <div class="datos-grid">
+      <div class="dato-item">
+        <div class="dato-lbl">Nombre</div>
+        <div class="dato-val">${fmt(c.nombre)}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Fecha de diagnóstico</div>
+        <div class="dato-val">${formatFecha(d['s1-fecha'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Tipo de ingreso</div>
+        <div class="dato-val" style="text-transform:capitalize">${fmt(c.tipo_ingreso)}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Estado civil</div>
+        <div class="dato-val">${fmt(d['s1-estado'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Ocupación</div>
+        <div class="dato-val">${fmt(d['s1-ocup'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Dependientes</div>
+        <div class="dato-val">${d['s1-dep'] !== undefined && d['s1-dep'] !== '' ? d['s1-dep'] : '—'}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Vivienda</div>
+        <div class="dato-val">${fmt(d['s1-viv'])}</div>
+      </div>
+      <div class="dato-item">
+        <div class="dato-lbl">Vehículo</div>
+        <div class="dato-val">${fmt(d['s1-tiene-vehiculo'])}</div>
+      </div>
+    </div>
+
+    ${danosPills || danosNotas ? `
+    <div class="section-label">⚠️ Daños identificados</div>
+    <div>${danosPills || '<p style="font-size:0.82rem;color:var(--muted)">No se identificaron daños en esta sesión.</p>'}</div>
+    ${danosNotas}
+    ` : ''}
+
+    ${diagnosticoEmocional ? `
+    <div class="section-label">💜 Diagnóstico emocional</div>
+    <div class="diagnostico-emocional">${diagnosticoEmocional}</div>
+    ` : ''}
+
+    <div class="section-label">🗺️ Tu camino — Las 4 fases</div>
+    <div class="fases-grid">
+      <div class="fase-card fc-1">
+        <h4>📋 Fase 1 — Orden · 2 sesiones · 3 herramientas</h4>
+        <ul>
+          <li>Sabés cuánto entra, cuánto sale y a dónde va tu dinero</li>
+          <li>Construimos tu flujo de efectivo real</li>
+          <li>Analizamos tus activos y pasivos</li>
+          <li>Calculamos tus indicadores financieros personales</li>
+          <li>Tenés el control de saber dónde está tu dinero</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-2">
+        <h4>🔍 Fase 2 — Claridad · 1 sesión · 1 herramienta</h4>
+        <ul>
+          <li>Encontramos el dinero que desaparece sin que lo veás</li>
+          <li>Identificamos gastos fijos que olvidaste</li>
+          <li>Descubrimos gastos que solo aparecen en ciertas épocas</li>
+          <li>Recuperás dinero sin necesidad de ganar más</li>
+          <li>Salís con un mapa claro de a dónde va lo que "no alcanza"</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-3">
+        <h4>⚔️ Fase 3 — Estrategia · 2 sesiones · 2 herramientas prácticas + 1 teórica</h4>
+        <ul>
+          <li>Aquí inicia la acción — no solo el análisis</li>
+          <li>Analizamos cada deuda que tenés en detalle</li>
+          <li>Construimos un plan concreto para reducirlas</li>
+          <li>Exploramos condiciones que podés renegociar con el banco</li>
+          <li>Salís con un plan de acción real para pagar menos cada mes</li>
+        </ul>
+      </div>
+      <div class="fase-card fc-4">
+        <h4>🌱 Fase 4 — Crecimiento · 1 sesión · 2 herramientas</h4>
+        <ul>
+          <li>Lo importante es protegerte y ayudarte a crecer</li>
+          <li>Calculamos tu fondo de emergencia ideal y cómo construirlo</li>
+          <li>Revisamos tu situación de pensión actual</li>
+          <li>Proyectamos lo que necesitás para una vejez plena</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-label">📦 Programa completo</div>
+    <div class="programa-box">
+      <h4>Todo lo que vas a construir juntas</h4>
+      <p>Podés iniciar solo con la Fase 1 o hacer el programa completo de las 4 fases.</p>
+      <div class="prog-detalle">
+        <div class="pd-item"><div class="pd-n">4</div><div class="pd-l">Fases</div></div>
+        <div class="pd-item"><div class="pd-n">7</div><div class="pd-l">Sesiones</div></div>
+        <div class="pd-item"><div class="pd-n">9</div><div class="pd-l">Herramientas</div></div>
+        <div class="pd-item"><div class="pd-n">1</div><div class="pd-l">Plan propio</div></div>
+      </div>
+    </div>
+
+    ${teorico ? `
+    <div class="section-label">📖 Notas de tu consultora</div>
+    <div class="teorico-box">
+      <h4>✍️ Para vos</h4>
+      <p>${teorico}</p>
+    </div>
+    ` : ''}
+
+    <div class="section-label">📝 Tu tarea</div>
+    <div class="tarea-box">
+      <h4>✅ Para la próxima sesión</h4>
+      <p>${tarea}</p>
+    </div>
+    ${renderLink(d['cliente-s1-link'], d['cliente-s1-link-label'])}
+  `;
+}
+
+// ── Toggle sesión ──
+function toggleSesion(n) {
+  const card = document.getElementById('card-s' + n);
+  if (card.classList.contains('bloqueada')) return;
+  const body = document.getElementById('body-s' + n);
+  body.classList.toggle('open');
+}
+
+
+// ── Formateo ──
+function fmtC(v) {
+  if (!v && v !== 0) return '';
+  return '₡' + Math.round(v).toLocaleString('es-CR');
+}
+function nv(id) {
+  const e = document.getElementById(id);
+  if (!e) return 0;
+  return parseFloat(e.value) || 0;
+}
+function setV(id, val) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.value = val !== undefined && val !== null ? val : '';
+}
+function setFmt(id, val) {
+  const e = document.getElementById(id);
+  if (!e) return;
+  e.value = val ? fmtC(val) : '';
+}
+
+// ── Guardar datos S2 cliente ──
+async function guardarS2Cliente() {
+  const statusEl = document.getElementById('s2-save-status');
+  statusEl.textContent = 'Guardando...';
+  statusEl.className = 'save-status';
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="cs2-"]').forEach(el => {
+      if (el.value !== '') campos[el.id] = el.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH', { datos_s2: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s2: campos });
+    }
+    statusEl.textContent = '✅ Cambios guardados';
+    statusEl.className = 'save-status save-ok';
+  } catch(e) {
+    statusEl.textContent = '❌ Error al guardar';
+    statusEl.className = 'save-status save-err';
+  }
+}
+
+// ── Tabs S2 ──
+function s2GoTab(n) {
+  document.querySelectorAll('.s2-tab').forEach((t,i) => t.classList.toggle('active', i === n));
+  document.querySelectorAll('.s2-page').forEach((p,i) => p.classList.toggle('active', i === n));
+}
+
+// ── Cálculos flujo fijo cliente ──
+function calcS2FF() {
+  const s = (...ids) => ids.reduce((a, id) => a + nv(id), 0);
+  const ingF = s('cs2-fi1','cs2-fi2','cs2-fi3','cs2-fi4','cs2-fi5','cs2-fi6','cs2-fi7','cs2-fi8');
+  const ingV = s('cs2-fi9','cs2-fi10','cs2-fi11','cs2-fi12','cs2-fi13','cs2-fi14');
+  const ingE = s('cs2-fi15','cs2-fi16','cs2-fi17');
+  const tIng = ingF + ingV + ingE;
+  setFmt('cs2-fi-sf', ingF); setFmt('cs2-fi-sv', ingV); setFmt('cs2-fi-se', ingE); setFmt('cs2-fi-tot', tIng);
+  const viv  = s('cs2-fg1','cs2-fg2','cs2-fg3');
+  const serv = s('cs2-fg4','cs2-fg5','cs2-fg6','cs2-fg7','cs2-fg8','cs2-fg9');
+  const traf = s('cs2-fg10','cs2-fg11','cs2-fg12','cs2-fg13');
+  const deu  = s('cs2-fg14','cs2-fg15','cs2-fg16','cs2-fg17','cs2-fg18','cs2-fg19','cs2-fg20','cs2-fg21');
+  const fam  = s('cs2-fg22','cs2-fg23','cs2-fg24');
+  const sal  = s('cs2-fg25','cs2-fg26','cs2-fg27');
+  const otf  = s('cs2-fg28','cs2-fg29','cs2-fg30');
+  const tGF  = viv+serv+traf+deu+fam+sal+otf;
+  setFmt('cs2-fg-sviv',viv); setFmt('cs2-fg-sserv',serv); setFmt('cs2-fg-stra',traf);
+  setFmt('cs2-fg-sdeu',deu); setFmt('cs2-fg-sfam',fam); setFmt('cs2-fg-ssal',sal);
+  setFmt('cs2-fg-sotf',otf); setFmt('cs2-fg-totf',tGF);
+  const tvar = s('cs2-fv1','cs2-fv2','cs2-fv3','cs2-fv4');
+  const ali  = s('cs2-fv5','cs2-fv6','cs2-fv7','cs2-fv8');
+  const famv = s('cs2-fv9','cs2-fv10');
+  const salv = s('cs2-fv11','cs2-fv12');
+  const masc = nv('cs2-fv13');
+  const tGV  = tvar+ali+famv+salv+masc;
+  setFmt('cs2-fv-stra',tvar); setFmt('cs2-fv-sali',ali); setFmt('cs2-fv-sfam',famv);
+  setFmt('cs2-fv-ssal',salv); setFmt('cs2-fv-tot',tGV);
+  const tDisc = s('cs2-fd1','cs2-fd2','cs2-fd3','cs2-fd4','cs2-fd5','cs2-fd6','cs2-fd7');
+  setFmt('cs2-fd-tot', tDisc);
+  const tG = tGF + tGV + tDisc; setFmt('cs2-f-totg', tG);
+  const tAh = s('cs2-fa1','cs2-fa2','cs2-fa3','cs2-fa4','cs2-fa5','cs2-fa6');
+  setFmt('cs2-fa-tot', tAh);
+  const sal2 = tG + tAh; const flujo = tIng - sal2;
+  setFmt('cs2-fr-ing', tIng); setFmt('cs2-fr-g', tG);
+  setFmt('cs2-fr-ah', tAh); setFmt('cs2-fr-sal', sal2); setFmt('cs2-fr-flujo', flujo);
+  const box = document.getElementById('cs2-fr-box');
+  if (box) {
+    box.style.display = 'block';
+    if (flujo > 0) { box.className = 'flujo-box flujo-pos'; box.innerHTML = `<div class="flujo-lbl">✅ Flujo positivo</div><div class="flujo-val">${fmtC(flujo)}</div>`; }
+    else if (flujo < 0) { box.className = 'flujo-box flujo-neg'; box.innerHTML = `<div class="flujo-lbl">❌ Flujo negativo</div><div class="flujo-val">${fmtC(flujo)}</div>`; }
+    else { box.className = 'flujo-box flujo-eq'; box.innerHTML = `<div class="flujo-lbl">⚖️ Equilibrio</div><div class="flujo-val">₡0</div>`; }
+  }
+}
+
+// ── Cálculos Ecuación contable ──
+function calcS2Bal() {
+  const s = (...ids) => ids.reduce((a, id) => a + nv(id), 0);
+  const acC = s('cs2-ac1','cs2-ac2','cs2-ac3','cs2-ac4','cs2-ac5','cs2-ac6','cs2-ac7','cs2-ac8','cs2-ac9');
+  const acNC= s('cs2-ac10','cs2-ac11','cs2-ac12','cs2-ac13','cs2-ac14','cs2-ac15','cs2-ac16');
+  const totAc = acC + acNC;
+  setFmt('cs2-ac-sc', acC); setFmt('cs2-ac-snc', acNC); setFmt('cs2-ac-tot', totAc);
+  const paC = s('cs2-pa1','cs2-pa2','cs2-pa3','cs2-pa4','cs2-pa5','cs2-pa6','cs2-pa7','cs2-pa8','cs2-pa9','cs2-pa10','cs2-pa11','cs2-pa12','cs2-pa13');
+  const paNC= s('cs2-pa14','cs2-pa15','cs2-pa16','cs2-pa17','cs2-pa18');
+  const totPa = paC + paNC;
+  setFmt('cs2-pa-sc', paC); setFmt('cs2-pa-snc', paNC); setFmt('cs2-pa-tot', totPa);
+  const balance = totAc - totPa;
+  setFmt('cs2-bal-ac', totAc); setFmt('cs2-bal-pa', totPa);
+  const balEl = document.getElementById('cs2-bal-neto');
+  if (balEl) {
+    balEl.textContent = fmtC(balance);
+    balEl.className = 'bal-val ' + (balance >= 0 ? 'bal-pos' : 'bal-neg');
+  }
+}
+
+// ── Mapa estacionalidad (solo lectura desde datos consultora) ──
+function renderMapaMixto(d) {
+  const MESES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Set','Oct','Nov','Dic'];
+  const tots = [];
+  let totalAnual = 0, mejor = 0, bajo = Infinity, irc = 0;
+  let sf = 0, sv = 0, sd = 0;
+  for (let i = 0; i < 12; i++) {
+    const f = parseFloat(d['mp-f-'+i]) || 0;
+    const v = parseFloat(d['mp-v-'+i]) || 0;
+    const dd = parseFloat(d['mp-d-'+i]) || 0;
+    const t = f + v + dd;
+    tots.push(t); totalAnual += t; sf += f; sv += v; sd += dd;
+    if (t > mejor) mejor = t;
+    if (t > 0 && t < bajo) bajo = t;
+  }
+  if (bajo === Infinity) bajo = 0;
+  const prom = totalAnual / 12;
+  const vals = tots.filter(t => t > 0).sort((a,b) => a - b);
+  irc = vals[Math.floor(vals.length * 0.25)] || vals[0] || 0;
+  const max = Math.max(...tots, 1);
+
+  let rows = '';
+  tots.forEach((t, i) => {
+    const cls = t === 0 ? '—' : t >= prom * 1.15 ? '🟢 Mes Alto' : t >= prom * 0.85 ? '🟡 Mes Medio' : '🔴 Mes Bajo';
+    rows += `<tr>
+      <td class="lbl" style="padding:5px 8px;font-size:0.8rem;">${MESES[i]}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${(parseFloat(d['mp-f-'+i])||0) ? fmtC(parseFloat(d['mp-f-'+i])) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${(parseFloat(d['mp-v-'+i])||0) ? fmtC(parseFloat(d['mp-v-'+i])) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.8rem;">${t ? fmtC(t) : '—'}</td>
+      <td style="padding:4px 6px;font-size:0.78rem;font-weight:500;">${cls}</td>
+    </tr>`;
+  });
+
+  const barras = tots.map((t,i) => {
+    const pct = Math.round(t / max * 100);
+    const color = t >= prom*1.15 ? '#1D9E75' : t >= prom*0.85 ? '#EF9F27' : '#E24B4A';
+    return `<div class="bar-row">
+      <div class="bar-mes">${MESES[i]}</div>
+      <div class="bar-outer"><div class="bar-inner" style="width:${pct}%;background:${color}"></div></div>
+      <div class="bar-val">${t > 0 ? fmtC(t) : ''}</div>
+    </div>`;
+  }).join('');
+
+  // Escenarios
+  const gfB = () => {
+    const ids = ['mx-v1-b','mx-v2-b','mx-s1-b','mx-s2-b','mx-s3-b','mx-s4-b','mx-s5-b','mx-s6-b',
+      'mx-t1-b','mx-t2-b','mx-t3-b','mx-d1-b','mx-d2-b','mx-d3-b','mx-d4-b','mx-d5-b','mx-d6-b','mx-d7-b',
+      'mx-f1-b','mx-f2-b','mx-f3-b','mx-sal1-b','mx-sal2-b','mx-sal3-b','mx-o1-b','mx-o2-b','mx-o3-b'];
+    return ids.reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  };
+  const gvB = () => ['mx-gv1-b','mx-gv2-b','mx-gv3-b','mx-gv4-b','mx-gv5-b','mx-gv6-b','mx-gv7-b','mx-gv8-b']
+    .reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  const gdB = () => ['mx-disc1-b','mx-disc2-b','mx-disc3-b'].reduce((a,id) => a + (parseFloat(d[id])||0), 0);
+  const totalGastosB = gfB() + gvB();
+  const escBajo = irc - totalGastosB;
+  const escMedio = prom - totalGastosB;
+  const escAlto = mejor - totalGastosB;
+
+  return `
+    <div class="section-label" style="margin-top:16px;">📅 Mapa de Estacionalidad</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th>Mes</th><th>Fijo (₡)</th><th>Variable (₡)</th><th>Total</th><th>Clasificación</th></tr>
+        ${rows}
+      </table>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;flex-wrap:wrap;">
+      <div class="bal-card"><div class="bal-lbl">Total año</div><div class="bal-val" style="font-size:1rem;">${fmtC(totalAnual)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Mejor mes</div><div class="bal-val" style="font-size:1rem;">${fmtC(mejor)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Mes más bajo</div><div class="bal-val" style="font-size:1rem;">${fmtC(bajo)}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Promedio mensual</div><div class="bal-val" style="font-size:1rem;">${fmtC(prom)}</div></div>
+    </div>
+    <div class="irc-pill">
+      <div class="ip-lbl">⭐ IRC — Ingreso de Referencia Conservador</div>
+      <div class="ip-val">${fmtC(irc)}</div>
+      <div class="ip-note">No es el promedio — es el ingreso que la mayoría de los meses normales supera. Base de toda tu planificación.</div>
+    </div>
+
+    <div class="section-label" style="margin-top:20px;">📊 Comportamiento del ingreso</div>
+    <div class="bar-chart">${barras}</div>
+
+    <div class="section-label" style="margin-top:20px;">📈 Tus 3 Escenarios</div>
+    <div class="escenarios-grid">
+      <div class="esc-card esc-bajo">
+        <div class="esc-title">📉 Mes Bajo</div>
+        <div class="esc-row"><span>Ingreso (IRC)</span><span>${fmtC(irc)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escBajo)}</span></div>
+      </div>
+      <div class="esc-card esc-medio">
+        <div class="esc-title">📊 Mes Medio</div>
+        <div class="esc-row"><span>Ingreso (Prom)</span><span>${fmtC(prom)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escMedio)}</span></div>
+      </div>
+      <div class="esc-card esc-alto">
+        <div class="esc-title">📈 Mes Alto</div>
+        <div class="esc-row"><span>Ingreso (Mejor)</span><span>${fmtC(mejor)}</span></div>
+        <div class="esc-row"><span>Gastos base</span><span>${fmtC(totalGastosB)}</span></div>
+        <div class="esc-row"><span>Flujo estimado</span><span>${fmtC(escAlto)}</span></div>
+      </div>
+    </div>`;
+}
+
+// ── Render Sesión 2 ──
+function renderS2() {
+  const d = _sesionDataGuardada || {};
+  const tipo = d.tipo || _clientaData.tipo_ingreso || 'fijo';
+  const teorico  = d['cliente-s2-teorico'] || '';
+  const teoEc    = d['cliente-s2-teorico-ec'] || '';
+  const tarea    = d['cliente-s2-tarea'] || '';
+  const esMixto  = tipo === 'mixto' || tipo === 'variable';
+
+  // Pre-llenado desde datos consultora
+  const preFF = (id) => {
+    const val = parseFloat(d[id]) || 0;
+    return val ? val : '';
+  };
+
+  // Filas flujo fijo
+  const rowFF = (csId, origId, lbl) =>
+    `<tr><td class="sub">${lbl}</td><td><input class="s2-input" type="number" id="${csId}" value="${preFF(origId)}" oninput="calcS2FF()"></td></tr>`;
+
+  const rowRO = (csId, lbl) =>
+    `<tr><td class="sub">${lbl}</td><td><input class="s2-input readonly-gray" readonly id="${csId}"></td></tr>`;
+
+  const htmlFlujoFijo = `
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Monto (₡)</th></tr>
+      <tr class="sh"><td colspan="2">💵 Ingresos Fijos</td></tr>
+      ${rowFF('cs2-fi1','fi-1','Salario / Empleo principal (neto)')}
+      ${rowFF('cs2-fi2','fi-2','Pensión / Jubilación')}
+      ${rowFF('cs2-fi3','fi-3','Alquiler de propiedad')}
+      ${rowFF('cs2-fi4','fi-4','Pensión alimenticia que recibo')}
+      ${rowFF('cs2-fi5','fi-5','Apoyo de familia (regular)')}
+      ${rowFF('cs2-fi6','fi-6','Transferencias regulares')}
+      ${rowFF('cs2-fi7','fi-7','Otro ingreso fijo 1')}
+      ${rowFF('cs2-fi8','fi-8','Otro ingreso fijo 2')}
+      <tr class="stot"><td class="lbl">Subtotal Ingresos Fijos</td><td><input class="s2-input" readonly id="cs2-fi-sf"></td></tr>
+      <tr class="sh"><td colspan="2">📊 Ingresos Variables</td></tr>
+      ${rowFF('cs2-fi9','fi-9','Freelance / Servicios independientes')}
+      ${rowFF('cs2-fi10','fi-10','Negocio propio')}
+      ${rowFF('cs2-fi11','fi-11','Comisiones / Bonos')}
+      ${rowFF('cs2-fi12','fi-12','Proyectos / Consultorías')}
+      ${rowFF('cs2-fi13','fi-13','Intereses / Inversiones')}
+      ${rowFF('cs2-fi14','fi-14','Otro ingreso variable')}
+      <tr class="stot"><td class="lbl">Subtotal Variables</td><td><input class="s2-input" readonly id="cs2-fi-sv"></td></tr>
+      <tr class="sh"><td colspan="2">🎁 Ingresos Esporádicos</td></tr>
+      ${rowFF('cs2-fi15','fi-15','Bono / Aguinaldo / Extra')}
+      ${rowFF('cs2-fi16','fi-16','Dividendos / Rendimiento inversiones')}
+      ${rowFF('cs2-fi17','fi-17','Venta de activos / bienes')}
+      <tr class="stot"><td class="lbl">Subtotal Esporádicos</td><td><input class="s2-input" readonly id="cs2-fi-se"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL INGRESOS</td><td><input class="s2-input" readonly id="cs2-fi-tot"></td></tr>
+      <tr class="sh"><td colspan="2">🔒 Gastos Fijos</td></tr>
+      <tr class="sh2"><td colspan="2">🏠 Vivienda</td></tr>
+      ${rowFF('cs2-fg1','fg-1','Renta o pago de hipoteca')}
+      ${rowFF('cs2-fg2','fg-2','Cuota de condominio / mantenimiento')}
+      ${rowFF('cs2-fg3','fg-3','Predial / bienes raíces (÷12)')}
+      <tr class="stot"><td class="lbl">Subtotal Vivienda</td><td><input class="s2-input" readonly id="cs2-fg-sviv"></td></tr>
+      <tr class="sh2"><td colspan="2">⚡ Servicios Básicos</td></tr>
+      ${rowFF('cs2-fg4','fg-4','Electricidad (CNFL / ICE / ESPH)')}
+      ${rowFF('cs2-fg5','fg-5','Agua (AyA / municipal)')}
+      ${rowFF('cs2-fg6','fg-6','Internet fijo')}
+      ${rowFF('cs2-fg7','fg-7','Teléfono celular')}
+      ${rowFF('cs2-fg8','fg-8','Cable / Streaming')}
+      ${rowFF('cs2-fg9','fg-9','Gas')}
+      <tr class="stot"><td class="lbl">Subtotal Servicios Básicos</td><td><input class="s2-input" readonly id="cs2-fg-sserv"></td></tr>
+      <tr class="sh2"><td colspan="2">🚗 Transporte Fijo</td></tr>
+      ${rowFF('cs2-fg10','fg-10','Crédito del auto')}
+      ${rowFF('cs2-fg11','fg-11','Seguro del auto (INS)')}
+      ${rowFF('cs2-fg12','fg-12','Marchamo (COSEVI ÷12)')}
+      ${rowFF('cs2-fg13','fg-13','Revisión técnica (÷12)')}
+      <tr class="stot"><td class="lbl">Subtotal Transporte Fijo</td><td><input class="s2-input" readonly id="cs2-fg-stra"></td></tr>
+      <tr class="sh2"><td colspan="2">💳 Pagos de Deudas</td></tr>
+      ${rowFF('cs2-fg14','fg-14','Tarjeta de crédito 1')}
+      ${rowFF('cs2-fg15','fg-15','Tarjeta de crédito 2')}
+      ${rowFF('cs2-fg16','fg-16','Tarjeta de crédito 3')}
+      ${rowFF('cs2-fg17','fg-17','Préstamo personal')}
+      ${rowFF('cs2-fg18','fg-18','Préstamo de vehículo')}
+      ${rowFF('cs2-fg19','fg-19','Hipoteca')}
+      ${rowFF('cs2-fg20','fg-20','Préstamo familiar / informal')}
+      ${rowFF('cs2-fg21','fg-21','Compras a meses sin intereses')}
+      <tr class="stot"><td class="lbl">Subtotal Pagos de Deudas</td><td><input class="s2-input" readonly id="cs2-fg-sdeu"></td></tr>
+      <tr class="sh2"><td colspan="2">👨‍👩‍👧 Familia</td></tr>
+      ${rowFF('cs2-fg22','fg-22','Colegiatura / Guardería / Kínder')}
+      ${rowFF('cs2-fg23','fg-23','Pensión alimenticia que pago')}
+      ${rowFF('cs2-fg24','fg-24','Ayuda a padres / familiares')}
+      <tr class="stot"><td class="lbl">Subtotal Familia</td><td><input class="s2-input" readonly id="cs2-fg-sfam"></td></tr>
+      <tr class="sh2"><td colspan="2">💊 Salud Fija</td></tr>
+      ${rowFF('cs2-fg25','fg-25','Seguro de gastos médicos')}
+      ${rowFF('cs2-fg26','fg-26','Terapia / Psicólogo')}
+      ${rowFF('cs2-fg27','fg-27','Medicamentos crónicos')}
+      <tr class="stot"><td class="lbl">Subtotal Salud Fija</td><td><input class="s2-input" readonly id="cs2-fg-ssal"></td></tr>
+      <tr class="sh2"><td colspan="2">📱 Otros Fijos</td></tr>
+      ${rowFF('cs2-fg28','fg-28','Ayuda doméstica')}
+      ${rowFF('cs2-fg29','fg-29','Apps / Suscripciones')}
+      ${rowFF('cs2-fg30','fg-30','Envíos de dinero a familia')}
+      <tr class="stot"><td class="lbl" style="font-weight:700;">SUBTOTAL GASTOS FIJOS</td><td><input class="s2-input" readonly id="cs2-fg-totf"></td></tr>
+      <tr class="sh"><td colspan="2">📊 Gastos Variables</td></tr>
+      ${rowFF('cs2-fv1','fv-1','Gasolina')}
+      ${rowFF('cs2-fv2','fv-2','Transporte público / Uber')}
+      ${rowFF('cs2-fv3','fv-3','Estacionamientos / casetas')}
+      ${rowFF('cs2-fv4','fv-4','Mantenimiento del auto')}
+      <tr class="stot"><td class="lbl">Subtotal Transporte Variable</td><td><input class="s2-input" readonly id="cs2-fv-stra"></td></tr>
+      ${rowFF('cs2-fv5','fv-5','Supermercado / Despensa')}
+      ${rowFF('cs2-fv6','fv-6','Productos de limpieza')}
+      ${rowFF('cs2-fv7','fv-7','Artículos de higiene personal')}
+      ${rowFF('cs2-fv8','fv-8','Gas (si es variable)')}
+      <tr class="stot"><td class="lbl">Subtotal Alimentación y Hogar</td><td><input class="s2-input" readonly id="cs2-fv-sali"></td></tr>
+      ${rowFF('cs2-fv9','fv-9','Útiles / uniformes escolares')}
+      ${rowFF('cs2-fv10','fv-10','Pañales / leche / bebé')}
+      <tr class="stot"><td class="lbl">Subtotal Familia Variable</td><td><input class="s2-input" readonly id="cs2-fv-sfam"></td></tr>
+      ${rowFF('cs2-fv11','fv-11','Medicamentos (no crónicos)')}
+      ${rowFF('cs2-fv12','fv-12','Consultas médicas')}
+      <tr class="stot"><td class="lbl">Subtotal Salud Variable</td><td><input class="s2-input" readonly id="cs2-fv-ssal"></td></tr>
+      ${rowFF('cs2-fv13','fv-13','Comida / veterinario (mascotas)')}
+      <tr class="stot"><td class="lbl">SUBTOTAL GASTOS VARIABLES</td><td><input class="s2-input" readonly id="cs2-fv-tot"></td></tr>
+      <tr class="sh"><td colspan="2">🎯 Gastos Discrecionales</td></tr>
+      ${rowFF('cs2-fd1','fd-1','Restaurantes / delivery')}
+      ${rowFF('cs2-fd2','fd-2','Cafés / snacks / antojos')}
+      ${rowFF('cs2-fd3','fd-3','Estética / salón / manicure')}
+      ${rowFF('cs2-fd4','fd-4','Ropa / calzado / accesorios')}
+      ${rowFF('cs2-fd5','fd-5','Salidas / cine / conciertos')}
+      ${rowFF('cs2-fd6','fd-6','Viajes / vacaciones (÷12)')}
+      ${rowFF('cs2-fd7','fd-7','Otro discrecional')}
+      <tr class="stot"><td class="lbl">SUBTOTAL DISCRECIONALES</td><td><input class="s2-input" readonly id="cs2-fd-tot"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL GASTOS</td><td><input class="s2-input" readonly id="cs2-f-totg"></td></tr>
+      <tr class="sh"><td colspan="2">💰 Ahorro y Protección</td></tr>
+      ${rowFF('cs2-fa1','fa-1','Ahorro automático mensual')}
+      ${rowFF('cs2-fa2','fa-2','Inversiones mensuales (SAFIs, CDPs)')}
+      ${rowFF('cs2-fa3','fa-3','Ahorro para metas específicas')}
+      ${rowFF('cs2-fa4','fa-4','Aportación voluntaria a pensión (OPC/ROP)')}
+      ${rowFF('cs2-fa5','fa-5','Fondo de emergencias mensual')}
+      ${rowFF('cs2-fa6','fa-6','Reserva reparaciones hogar / auto')}
+      <tr class="tot"><td class="lbl">TOTAL AHORRO</td><td><input class="s2-input" readonly id="cs2-fa-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">🎯 Mi Flujo — Resumen</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Monto (₡)</th></tr>
+      <tr><td class="lbl">💵 Total Ingresos</td><td><input class="s2-input" readonly id="cs2-fr-ing"></td></tr>
+      <tr><td class="lbl">💸 Total Gastos</td><td><input class="s2-input" readonly id="cs2-fr-g"></td></tr>
+      <tr><td class="lbl">💰 Total Ahorro</td><td><input class="s2-input" readonly id="cs2-fr-ah"></td></tr>
+      <tr class="stot"><td class="lbl">📤 Total Salidas</td><td><input class="s2-input" readonly id="cs2-fr-sal"></td></tr>
+      <tr class="tot"><td class="lbl">🎯 Flujo Final</td><td><input class="s2-input" readonly id="cs2-fr-flujo"></td></tr>
+    </table>
+    <div id="cs2-fr-box" style="display:none;"></div>`;
+
+  const htmlEcuacion = `
+    <div class="section-label">🏦 Mis Activos</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Valor (₡)</th></tr>
+      <tr class="sh"><td colspan="2">💧 Activos Corrientes (líquidos)</td></tr>
+      <tr><td class="sub">Efectivo en casa</td><td><input class="s2-input" type="number" id="cs2-ac1" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta de ahorro — Banco 1</td><td><input class="s2-input" type="number" id="cs2-ac2" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta de ahorro — Banco 2</td><td><input class="s2-input" type="number" id="cs2-ac3" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta corriente 1</td><td><input class="s2-input" type="number" id="cs2-ac4" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Cuenta corriente 2</td><td><input class="s2-input" type="number" id="cs2-ac5" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Certificados a Plazo (CDPs)</td><td><input class="s2-input" type="number" id="cs2-ac6" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Fondos de inversión (SAFIs)</td><td><input class="s2-input" type="number" id="cs2-ac7" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Acciones en bolsa / BNV</td><td><input class="s2-input" type="number" id="cs2-ac8" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Criptomonedas</td><td><input class="s2-input" type="number" id="cs2-ac9" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Activos Corrientes</td><td><input class="s2-input" readonly id="cs2-ac-sc"></td></tr>
+      <tr class="sh"><td colspan="2">🏠 Activos No Corrientes</td></tr>
+      <tr><td class="sub">OPC / Pensión Complementaria (ROP)</td><td><input class="s2-input" type="number" id="cs2-ac10" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Casa / Departamento donde vivo</td><td><input class="s2-input" type="number" id="cs2-ac11" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Segunda propiedad</td><td><input class="s2-input" type="number" id="cs2-ac12" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Terreno</td><td><input class="s2-input" type="number" id="cs2-ac13" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Auto (si es tuyo)</td><td><input class="s2-input" type="number" id="cs2-ac14" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Joyería de valor (+$1,000)</td><td><input class="s2-input" type="number" id="cs2-ac15" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Equipo profesional</td><td><input class="s2-input" type="number" id="cs2-ac16" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Activos No Corrientes</td><td><input class="s2-input" readonly id="cs2-ac-snc"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL ACTIVOS</td><td><input class="s2-input" readonly id="cs2-ac-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">💳 Mis Pasivos</div>
+    <table class="table-s2">
+      <tr><th style="width:65%">Concepto</th><th>Saldo (₡)</th></tr>
+      <tr class="sh"><td colspan="2">⚡ Pasivos Circulantes (corto plazo)</td></tr>
+      <tr><td class="sub">Tarjeta de crédito 1</td><td><input class="s2-input" type="number" id="cs2-pa1" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta de crédito 2</td><td><input class="s2-input" type="number" id="cs2-pa2" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta de crédito 3</td><td><input class="s2-input" type="number" id="cs2-pa3" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta departamental 1</td><td><input class="s2-input" type="number" id="cs2-pa4" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Tarjeta departamental 2</td><td><input class="s2-input" type="number" id="cs2-pa5" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo rápido 1</td><td><input class="s2-input" type="number" id="cs2-pa6" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo rápido 2</td><td><input class="s2-input" type="number" id="cs2-pa7" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Adelanto de nómina</td><td><input class="s2-input" type="number" id="cs2-pa8" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo de familiar 1</td><td><input class="s2-input" type="number" id="cs2-pa9" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo de familiar 2</td><td><input class="s2-input" type="number" id="cs2-pa10" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Dinero prestado a amigo</td><td><input class="s2-input" type="number" id="cs2-pa11" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Compra 1 a meses sin intereses</td><td><input class="s2-input" type="number" id="cs2-pa12" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Compra 2 a meses sin intereses</td><td><input class="s2-input" type="number" id="cs2-pa13" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Pasivos Circulantes</td><td><input class="s2-input" readonly id="cs2-pa-sc"></td></tr>
+      <tr class="sh"><td colspan="2">🏦 Pasivos a Largo Plazo</td></tr>
+      <tr><td class="sub">Hipoteca</td><td><input class="s2-input" type="number" id="cs2-pa14" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Crédito automotriz</td><td><input class="s2-input" type="number" id="cs2-pa15" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo personal bancario</td><td><input class="s2-input" type="number" id="cs2-pa16" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Crédito educativo</td><td><input class="s2-input" type="number" id="cs2-pa17" oninput="calcS2Bal()"></td></tr>
+      <tr><td class="sub">Préstamo cooperativa</td><td><input class="s2-input" type="number" id="cs2-pa18" oninput="calcS2Bal()"></td></tr>
+      <tr class="stot"><td class="lbl">Subtotal Pasivos a Largo Plazo</td><td><input class="s2-input" readonly id="cs2-pa-snc"></td></tr>
+      <tr class="tot"><td class="lbl">TOTAL PASIVOS</td><td><input class="s2-input" readonly id="cs2-pa-tot"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">⚖️ Mi Balance</div>
+    <div class="balance-grid">
+      <div class="bal-card">
+        <div class="bal-lbl">Total Activos</div>
+        <input class="s2-input" readonly id="cs2-bal-ac" style="text-align:center;font-size:1rem;font-weight:700;margin-top:4px;">
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Total Pasivos</div>
+        <input class="s2-input readonly-gray" readonly id="cs2-bal-pa" style="text-align:center;font-size:1rem;font-weight:700;margin-top:4px;">
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Patrimonio Neto</div>
+        <div class="bal-val" id="cs2-bal-neto" style="margin-top:4px;">—</div>
+      </div>
+    </div>`;
+
+  const tabs = esMixto
+    ? ['📖 Para vos', '📅 Mapa + Escenarios', '📝 Ecuación Contable', '📖 Notas Ec.', '📝 Tu tarea']
+    : ['📖 Para vos', '💵 Flujo de Efectivo', '📝 Ecuación Contable', '📖 Notas Ec.', '📝 Tu tarea'];
+
+  return `
+    <div class="s2-tabs">
+      ${tabs.map((t,i) => `<div class="s2-tab ${i===0?'active':''}" onclick="s2GoTab(${i})">${t}</div>`).join('')}
+    </div>
+
+    <!-- TAB 0: Teórico Flujo -->
+    <div class="s2-page active" id="s2p-0">
+      ${teorico
+        ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+      ${renderLink(d['cliente-s2-flujo-link'], d['cliente-s2-flujo-link-label'])}
+    </div>
+
+    <!-- TAB 1: Flujo -->
+    <div class="s2-page" id="s2p-1">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Podés actualizar tus números cuando quieras. Los cambios se guardan en tu perfil.</p>
+      ${esMixto ? '<div id="cs2-mapa-mixto"></div>' : htmlFlujoFijo}
+    </div>
+
+    <!-- TAB 2: Ecuación Contable -->
+    <div class="s2-page" id="s2p-2">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Actualizá tus activos y pasivos cuando algo cambie.</p>
+      ${htmlEcuacion}
+    </div>
+
+    <!-- TAB 3: Teórico Ecuación -->
+    <div class="s2-page" id="s2p-3">
+      ${teoEc
+        ? `<div class="teorico-box"><h4>✍️ Para vos — Ecuación Contable</h4><p>${teoEc}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas sobre tu ecuación contable aquí.</div>`}
+      ${renderLink(d['cliente-s2-ec-link'], d['cliente-s2-ec-link-label'])}
+    </div>
+
+    <!-- TAB 4: Tarea -->
+    <div class="s2-page" id="s2p-4">
+      ${tarea
+        ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>
+
+    <button class="btn-guardar-s2" onclick="guardarS2Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s2-save-status"></div>`;
+}
+
+// ── Init S2: cargar datos guardados de la cliente y calcular ──
+async function initS2() {
+  const d = _sesionDataGuardada || {};
+  const tipo = d.tipo || _clientaData.tipo_ingreso || 'fijo';
+  const esMixto = tipo === 'mixto' || tipo === 'variable';
+
+  // Cargar datos propios de la cliente si existen
+  let clienteD = {};
+  try {
+    const arr = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId + '&limit=1');
+    if (arr && arr.length && arr[0].datos_s2) clienteD = arr[0].datos_s2;
+  } catch(e) {}
+
+  if (esMixto) {
+    const mapaEl = document.getElementById('cs2-mapa-mixto');
+    if (mapaEl) mapaEl.innerHTML = renderMapaMixto(d);
+  } else {
+    // Pre-llenar flujo fijo con datos consultora, luego sobreescribir con datos cliente si los tiene
+    const campos = ['fi-1','fi-2','fi-3','fi-4','fi-5','fi-6','fi-7','fi-8',
+      'fi-9','fi-10','fi-11','fi-12','fi-13','fi-14','fi-15','fi-16','fi-17',
+      'fg-1','fg-2','fg-3','fg-4','fg-5','fg-6','fg-7','fg-8','fg-9','fg-10',
+      'fg-11','fg-12','fg-13','fg-14','fg-15','fg-16','fg-17','fg-18','fg-19','fg-20','fg-21',
+      'fg-22','fg-23','fg-24','fg-25','fg-26','fg-27','fg-28','fg-29','fg-30',
+      'fv-1','fv-2','fv-3','fv-4','fv-5','fv-6','fv-7','fv-8','fv-9','fv-10',
+      'fv-11','fv-12','fv-13','fd-1','fd-2','fd-3','fd-4','fd-5','fd-6','fd-7',
+      'fa-1','fa-2','fa-3','fa-4','fa-5','fa-6'];
+    campos.forEach(id => {
+      const csId = 'cs2-' + id.replace('-','');
+      const val = clienteD['cs2-' + id.replace('-','')] || d[id] || '';
+      setV(csId, val);
+    });
+    calcS2FF();
+  }
+
+  // Ecuación contable: datos consultora → luego sobreescribir con datos cliente
+  for (let i = 1; i <= 16; i++) {
+    const csId = 'cs2-ac' + i;
+    const origId = 'ac-' + i;
+    setV(csId, clienteD[csId] || d[origId] || '');
+  }
+  for (let i = 1; i <= 18; i++) {
+    const csId = 'cs2-pa' + i;
+    const origId = 'pa-' + i;
+    setV(csId, clienteD[csId] || d[origId] || '');
+  }
+  calcS2Bal();
+}
+
+
+// ════════════════════════════════
+// SESIÓN 3 — RATIOS E INDICADORES
+// ════════════════════════════════
+
+const RATIOS_DEF = [
+  { id:'cob',  n:'Cobertura de Gastos',       ref:'≤ 90%',   pct:true,
+    sig:'Qué porcentaje de tu ingreso se va en gastos. Lo ideal es que sea ≤ 90%. Si está en rojo, los gastos superan lo que ganás.',
+    ok:v=>v<=0.9, w:v=>v<=1.0 },
+  { id:'dist', n:'Distribución del Gasto',    ref:'≤ 50% en gastos fijos', pct:true,
+    sig:'Qué tan atada estás a compromisos fijos cada mes. Si supera el 65%, tenés poca flexibilidad ante imprevistos.',
+    ok:v=>v<=0.5, w:v=>v<=0.65 },
+  { id:'est',  n:'Ingreso Estable',            ref:'≥ 80%',   pct:true,
+    sig:'Qué tan predecible es tu ingreso. ≥ 80% = alta estabilidad. < 50% = mucha incertidumbre mes a mes.',
+    ok:v=>v>=0.8, w:v=>v>=0.5 },
+  { id:'liq',  n:'Liquidez',                   ref:'≥ 1.5x',  pct:false,
+    sig:'Colones disponibles por cada colón que debés pagar este año. Si es menor a 1, no alcanza para cubrir deudas a corto plazo.',
+    ok:v=>v>=1.5, w:v=>v>=1.0 },
+  { id:'end',  n:'Endeudamiento',              ref:'≤ 50%',   pct:true,
+    sig:'Qué porcentaje de lo que poseés está financiado con deuda. Si supera el 50%, más de la mitad de tus bienes son del banco.',
+    ok:v=>v<=0.5, w:v=>v<=0.7 },
+  { id:'aho',  n:'Tasa de Ahorro',             ref:'≥ 10%',   pct:true,
+    sig:'Termómetro de salud financiera. 10% es el mínimo recomendado. 20% es el objetivo de largo plazo.',
+    ok:v=>v>=0.1, w:v=>v>=0.05 },
+  { id:'dbd',  n:'Deuda Buena vs Deuda Mala',  ref:'≤ 40% en corto plazo', pct:true,
+    sig:'Distingue deuda que genera valor (largo plazo) de deuda que consume (tarjetas, préstamos rápidos). Más del 60% en circulante es señal de espiral.',
+    ok:v=>v<=0.4, w:v=>v<=0.6 },
+];
+
+function fmtRatio(val, pct) {
+  if (val === null || val === undefined || isNaN(val) || !isFinite(val)) return '—';
+  if (pct) return (val * 100).toFixed(1) + '%';
+  return val.toFixed(2) + 'x';
+}
+
+function semColor(r, val) {
+  if (val === null || isNaN(val) || !isFinite(val)) return { icon:'—', cls:'' };
+  if (r.ok(val)) return { icon:'🟢', cls:'ratio-verde' };
+  if (r.w(val))  return { icon:'🟡', cls:'ratio-naranja' };
+  return { icon:'🔴', cls:'ratio-rojo' };
+}
+
+function renderS3() {
+  const d  = _sesionDataGuardada || {};
+  const teorico = d['cliente-s3-teorico'] || '';
+  const tarea   = d['cliente-s3-tarea']   || '';
+
+  // Reconstruir _rd desde datos guardados de consultora
+  const rv = id => parseFloat(d[id]) || 0;
+  const fmtRead = id => {
+    const v = d[id] || '';
+    return parseInt((v+'').replace(/[₡\s.]/g,'').replace(/,/g,'')) || 0;
+  };
+
+  const tipo = d.tipo || _clientaData.tipo_ingreso || 'fijo';
+  const esMixto = tipo === 'mixto' || tipo === 'variable';
+
+  let ing, ingF, ingV, totG, gF, ah;
+  if (!esMixto) {
+    ing  = fmtRead('fr-ing') || rv('fi-tot');
+    ingF = rv('fi-sf') || fmtRead('fi-sf');
+    ingV = rv('fi-sv') || fmtRead('fi-sv');
+    totG = fmtRead('fr-g') || rv('f-totg');
+    gF   = fmtRead('fg-totf') || rv('fg-totf');
+    ah   = fmtRead('fr-ah')  || rv('fa-tot');
+  } else {
+    // Para mixto usar IRC como ing
+    const ircEl = d['mp-irc'] || '';
+    ing = parseInt((ircEl+'').replace(/[₡\s.]/g,'').replace(/,/g,'')) || 0;
+    ingF = 0; ingV = ing;
+    const sgfR = fmtRead('mx-sgf-r');
+    const sgvR = fmtRead('mx-sgv-r');
+    const sgdR = fmtRead('mx-sgd-r');
+    totG = sgfR + sgvR + sgdR;
+    gF   = sgfR;
+    ah   = fmtRead('mx-sah-r');
+  }
+
+  // Ecuación contable
+  const acC  = fmtRead('ac-sc')  || rv('ac-sc');
+  const acFij= fmtRead('ac-snc') || rv('ac-snc');
+  const acT  = fmtRead('ac-tot') || rv('ac-tot');
+  const paC  = fmtRead('pa-sc')  || rv('pa-sc');
+  const paLP = fmtRead('pa-slp') || rv('pa-slp');
+  const paT  = fmtRead('pa-tot') || rv('pa-tot');
+
+  const rd = { ing, ingF, ingV, totG, gF, ah, acC, acFij, acT, paC, paLP, paT };
+
+  // Calcular ratios
+  const calcVal = id => {
+    if (id==='cob')  return rd.totG / rd.ing;
+    if (id==='dist') return rd.gF   / rd.totG;
+    if (id==='est')  return rd.ingF / rd.ing;
+    if (id==='liq')  return rd.acC  / rd.paC;
+    if (id==='end')  return rd.paT  / rd.acT;
+    if (id==='aho')  return rd.ah   / rd.ing;
+    if (id==='dbd')  return rd.paC  / rd.paT;
+    return NaN;
+  };
+
+  // Semáforo resumen
+  let verdes = 0, amarillos = 0, rojos = 0;
+  RATIOS_DEF.forEach(r => {
+    const val = calcVal(r.id);
+    if (!isFinite(val) || isNaN(val)) return;
+    if (r.ok(val)) verdes++;
+    else if (r.w(val)) amarillos++;
+    else rojos++;
+  });
+
+  const semResumen = `
+    <div class="semaforo-resumen">
+      ${verdes    ? `<div class="sem-pill sem-verde">🟢 ${verdes} indicador${verdes>1?'es':''} en verde</div>` : ''}
+      ${amarillos ? `<div class="sem-pill sem-naranja">🟡 ${amarillos} en amarillo</div>` : ''}
+      ${rojos     ? `<div class="sem-pill sem-rojo">🔴 ${rojos} en rojo</div>` : ''}
+    </div>`;
+
+  // Resumen financiero
+  const resumen = `
+    <div class="section-label">📊 Tu resumen financiero</div>
+    <div class="resumen-grid">
+      <div class="res-card"><div class="rl">Ingreso base</div><div class="rv">${fmtC(ing)}</div></div>
+      <div class="res-card"><div class="rl">Total gastos</div><div class="rv">${fmtC(totG)}</div></div>
+      <div class="res-card"><div class="rl">Ahorro mensual</div><div class="rv">${fmtC(ah)}</div></div>
+      <div class="res-card"><div class="rl">Total activos</div><div class="rv">${fmtC(acT)}</div></div>
+      <div class="res-card"><div class="rl">Total pasivos</div><div class="rv">${fmtC(paT)}</div></div>
+      <div class="res-card"><div class="rl">Patrimonio neto</div><div class="rv" style="color:${acT-paT>=0?'var(--verde-dark)':'var(--rojo)'}">${fmtC(acT-paT)}</div></div>
+    </div>`;
+
+  // Tarjetas de ratios
+  const ratioCards = RATIOS_DEF.map(r => {
+    const val = calcVal(r.id);
+    const valFmt = fmtRatio(val, r.pct);
+    const sem = semColor(r, val);
+    const interp = d['ri-' + r.id] || '';
+    return `
+      <div class="ratio-card">
+        <div class="ratio-top">
+          <div class="ratio-info">
+            <div class="ratio-name">${r.n}</div>
+            <div class="ratio-ref">Referencia: ${r.ref}</div>
+            <div class="ratio-sig">${r.sig}</div>
+          </div>
+          <div class="ratio-right">
+            <div class="ratio-val ${sem.cls}">${valFmt}</div>
+            <div class="ratio-sem">${sem.icon}</div>
+          </div>
+        </div>
+        ${interp ? `<div style="background:var(--crema);border-radius:8px;padding:10px 12px;margin-top:10px;font-size:0.82rem;color:#444;line-height:1.6;border-left:3px solid var(--verde);">💬 ${interp}</div>` : ''}
+      </div>`;
+  }).join('');
+
+  const tabs = ['📖 Para vos', '📊 Tus Ratios', '📝 Tu tarea'];
+
+  return `
+    <div class="s2-tabs">
+      ${tabs.map((t,i) => `<div class="s2-tab ${i===0?'active':''}" onclick="s3GoTab(${i})">${t}</div>`).join('')}
+    </div>
+
+    <!-- TAB 0: Teórico -->
+    <div class="s2-page active" id="s3p-0">
+      
+    <div class="section-label" style="margin-top:0;">📋 ¿Qué miden tus 7 ratios?</div>
+    <p style="font-size:0.82rem;color:#555;margin-bottom:12px;">Con estos 7 ratios tenés un panorama integral de tu salud financiera:</p>
+    <div style="overflow-x:auto;">
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem;">
+        <thead>
+          <tr style="background:#1a1a1a;color:#fff;">
+            <th style="padding:10px 12px;text-align:left;border-radius:8px 0 0 0;">Ratio</th>
+            <th style="padding:10px 12px;text-align:left;">¿Qué mide?</th>
+            <th style="padding:10px 12px;text-align:left;border-radius:0 8px 0 0;">Tu necesidad</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#f9f7f3;"><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">1. Cobertura</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Vivo dentro de mis medios?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Sostenibilidad básica</td></tr>
+          <tr><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">2. Distribución del Gasto</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Gasto equilibradamente?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Eficiencia en uso de dinero</td></tr>
+          <tr style="background:#f9f7f3;"><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">3. Ingreso Estable</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Qué tan predecibles son mis ingresos?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Predictibilidad</td></tr>
+          <tr><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">4. Liquidez</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Puedo enfrentar emergencias?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Seguridad y paz mental</td></tr>
+          <tr style="background:#f9f7f3;"><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">5. Endeudamiento</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Cuánto debo vs cuánto tengo/gano?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Control de obligaciones</td></tr>
+          <tr><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;font-weight:500;">6. Tasa de Ahorro</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">¿Estoy construyendo futuro?</td><td style="padding:9px 12px;border-bottom:1px solid #e8e6e0;">Crecimiento patrimonial</td></tr>
+          <tr style="background:#f9f7f3;"><td style="padding:9px 12px;font-weight:500;">7. Deuda Buena/Mala</td><td style="padding:9px 12px;">¿Mi deuda es inteligente?</td><td style="padding:9px 12px;">Calidad del endeudamiento</td></tr>
+        </tbody>
+      </table>
+    </div>
+      ${teorico
+        ? `<div class="teorico-box" style="margin-top:16px;"><h4>✍️ Para vos</h4><p>${teorico}</p></div>`
+        : ``}
+      ${renderLink(d['cliente-s3-link'], d['cliente-s3-link-label'])}
+    </div>
+
+    <!-- TAB 1: Ratios -->
+    <div class="s2-page" id="s3p-1">
+      ${resumen}
+      <div class="section-label">🎯 Tus indicadores</div>
+      ${semResumen}
+      ${ratioCards}
+    </div>
+
+    <!-- TAB 2: Tarea -->
+    <div class="s2-page" id="s3p-2">
+      ${tarea
+        ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>`;
+}
+
+function s3GoTab(n) {
+  document.querySelectorAll('#body-s3 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s3 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+function initS3() {
+  // S3 es solo lectura — los ratios se calculan directo desde _sesionDataGuardada
+  // No hay campos editables por la cliente en esta sesión
+}
+
+
+// ════════════════════════════════
+// SESIÓN 4 — DINERO INVISIBLE (F2)
+// ════════════════════════════════
+
+const GF_LABELS = {1: 'Plan de celular', 2: 'Internet hogar', 3: 'Cable / TV streaming pago', 4: 'Paquete adicional de datos', 5: 'Seguro INS vehículo (mensualizado)', 6: 'Seguro privado vehículo (mensualizado)', 7: 'Comisión cuenta corriente / ahorro', 8: 'Membresía / anualidad tarjeta de crédito', 9: 'Seguro de vida tarjeta de crédito', 10: 'Seguro de desempleo tarjeta de crédito', 11: 'Alarma / seguridad del hogar', 12: 'Servicio de limpieza fijo', 13: 'Mantenimiento jardín / piscina', 14: 'Otros servicios con contrato', 15: 'Netflix / Prime / Disney+ / Apple TV', 16: 'Spotify / música', 17: 'Software / aplicaciones de pago', 18: 'Almacenamiento en la nube (iCloud, Google)', 19: 'Otras suscripciones digitales', 20: 'Cuota mensual colegio / academia', 21: 'Clases extracurriculares', 22: 'Plataformas educativas online', 23: 'Útiles por suscripción mensual', 24: 'Comida a domicilio / Delivery', 25: 'Alimentación Extra', 26: 'Otros'};
+
+function renderS4() {
+  const d   = _s4Data  || {};
+  const campos = d.campos || {};
+  const teorico = (_sesionDataGuardada || {})['cliente-s4-teorico'] || '';
+  const tarea   = (_sesionDataGuardada || {})['cliente-s4-tarea']   || '';
+  const dSes   = _sesionDataGuardada || {};
+
+  const fv = id => parseFloat(campos[id]) || 0;
+  const fmtV = v => v ? fmtC(v) : '—';
+
+  // Gastos fijos ocultos — TODOS los ítems, editables por la cliente
+  let gfRows = '';
+  let totalAntes = 0, totalAhorro = 0;
+  for (let i = 1; i <= 26; i++) {
+    const actual = fv('gf-'+i);
+    const dec    = campos['gf-'+i+'d'] || 'Mantener';
+    const nuevo  = fv('gf-'+i+'n');
+    const ahorro = actual > 0 ? (actual - nuevo) : 0;
+    totalAntes  += actual;
+    totalAhorro += ahorro > 0 ? ahorro : 0;
+    const decColor = dec === 'Eliminar' ? 'var(--rojo)' : dec === 'Reducir' ? '#854F0B' : 'var(--muted)';
+    gfRows += `<tr>
+      <td class="sub">${GF_LABELS[i] || 'Gasto ' + i}</td>
+      <td style="padding:3px 6px;"><input class="s2-input" type="number" id="cgf-${i}" value="${actual||''}" oninput="recalcGF()" style="width:110px;"></td>
+      <td style="padding:3px 6px;">
+        <select class="s2-input" id="cgf-${i}d" onchange="recalcGF()" style="width:110px;font-size:0.78rem;">
+          <option ${dec==='Mantener'?'selected':''}>Mantener</option>
+          <option ${dec==='Reducir'?'selected':''}>Reducir</option>
+          <option ${dec==='Eliminar'?'selected':''}>Eliminar</option>
+        </select>
+      </td>
+      <td style="padding:3px 6px;"><input class="s2-input" type="number" id="cgf-${i}n" value="${nuevo||''}" oninput="recalcGF()" style="width:110px;"></td>
+      <td style="padding:4px 8px;font-size:0.82rem;font-weight:600;color:${ahorro>0?'var(--verde-dark)':'var(--muted)'}" id="cgf-${i}a">${ahorro > 0 ? fmtC(ahorro) : '—'}</td>
+    </tr>`;
+  }
+
+  const htmlGF = `
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Podés actualizar tus montos y decisiones. Los cambios se guardan con el botón al final.</p>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr>
+          <th style="width:30%">Gasto</th>
+          <th>Actual (₡/mes)</th>
+          <th>Decisión</th>
+          <th>Nuevo (₡/mes)</th>
+          <th>Ahorro (₡/mes)</th>
+        </tr>
+        ${gfRows}
+        <tr class="tot">
+          <td class="lbl">TOTAL</td>
+          <td style="padding:6px 8px;font-weight:700;" id="cgf-total-antes">${fmtC(totalAntes)}</td>
+          <td></td><td></td>
+          <td style="padding:6px 8px;font-weight:700;color:var(--verde-dark);" id="cgf-total-ahorro">${fmtC(totalAhorro)}</td>
+        </tr>
+      </table>
+    </div>`;
+
+  // Gastos estacionales — leer etiquetas de sesion-f2
+  let geRows = '';
+  let totalGeAnual = 0;
+  const GE_LABELS_ALL = {1: 'Marchamo vehículo', 2: 'Impuesto sobre bienes inmuebles', 3: 'Impuesto de renta', 4: 'Renovación de patente / permisos', 5: 'Útiles escolares', 6: 'Uniformes', 7: 'Cuota de matrícula', 8: 'Libros / materiales', 9: 'Regalos navideños', 10: 'Cenas / reuniones familiares', 11: 'Decoración', 12: 'Control médico anual / exámenes', 13: 'Tratamiento dental', 14: 'Lentes / examen visual', 15: 'Medicamentos de uso estacional', 16: 'Mantenimiento vehículo (servicio anual)', 17: 'Revisión técnica vehicular (RITEVE)', 18: 'Reparaciones del hogar', 19: 'Renovación de seguro del hogar', 20: 'Otros gastos de renovación'};
+  // TODOS los ítems, editables
+  for (let i = 1; i <= 20; i++) {
+    const anual = fv('ge-'+i);
+    const mes = anual / 12;
+    totalGeAnual += anual;
+    const lbl = GE_LABELS_ALL[i] || ('Gasto estacional ' + i);
+    geRows += `<tr>
+      <td class="sub">${lbl}</td>
+      <td style="padding:3px 6px;"><input class="s2-input" type="number" id="cge-${i}" value="${anual||''}" oninput="recalcGE()" style="width:120px;"></td>
+      <td style="padding:4px 8px;font-size:0.82rem;font-weight:500;color:${anual>0?'#854F0B':'var(--muted)'}" id="cge-${i}m">${anual > 0 ? fmtC(mes) : '—'}</td>
+    </tr>`;
+  }
+
+  // Usar totales guardados directamente
+  const resFlujoActual = fv('res-flujo-actual') || parseFloat((campos['res-flujo-actual']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resFluroRec    = fv('res-flujo-rec')    || parseFloat((campos['res-flujo-rec']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resFlujoOpt    = fv('res-flujo-opt')    || parseFloat((campos['res-flujo-opt']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resGFAntes     = fv('res-gf-antes')     || parseFloat((campos['res-gf-antes']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resGFRed       = fv('res-gf-red')       || parseFloat((campos['res-gf-red']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resGeAnual     = fv('res-ge-anual')     || parseFloat((campos['res-ge-anual']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+  const resGeMes       = fv('res-ge-mes')       || parseFloat((campos['res-ge-mes']||'').replace(/[₡\s.]/g,'').replace(/,/g,''));
+
+  const dineroRec = (resGFRed || totalAhorro) + (resGeMes || totalGeAnual/12);
+
+  const htmlResumen = `
+    <div class="balance-grid" style="margin-top:4px;">
+      <div class="bal-card">
+        <div class="bal-lbl">Gastos fijos antes</div>
+        <div class="bal-val" style="font-size:1rem;">${resGFAntes ? fmtC(resGFAntes) : fmtC(totalAntes)}</div>
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Ahorro en fijos</div>
+        <div class="bal-val bal-pos" style="font-size:1rem;">${resGFRed ? fmtC(resGFRed) : fmtC(totalAhorro)}</div>
+      </div>
+      <div class="bal-card">
+        <div class="bal-lbl">Provisión estacional ÷12</div>
+        <div class="bal-val" style="font-size:1rem;color:#854F0B;">${resGeMes ? fmtC(resGeMes) : fmtC(totalGeAnual/12)}</div>
+      </div>
+    </div>
+    <div style="background:#fff;border:2px solid ${dineroRec>0?'var(--verde)':'var(--rojo)'};border-radius:12px;padding:16px 20px;margin-top:12px;text-align:center;">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:4px;">💡 Dinero que podés recuperar cada mes</div>
+      <div style="font-size:1.6rem;font-weight:700;color:${dineroRec>0?'var(--verde-dark)':'var(--rojo)'};">${fmtC(dineroRec)}</div>
+      <div style="font-size:0.75rem;color:#888;margin-top:4px;">Este dinero ya era tuyo — solo que no lo podías ver</div>
+    </div>`;
+
+  const tabs = ['📖 Para vos', '💸 Gastos Fijos Ocultos', '📅 Gastos Estacionales', '💡 Dinero Recuperado', '📝 Tu tarea'];
+
+  return `
+    <div class="s2-tabs">
+      ${tabs.map((t,i) => `<div class="s2-tab ${i===0?'active':''}" onclick="s4GoTab(${i})">${t}</div>`).join('')}
+    </div>
+
+    <!-- TAB 0: Teórico -->
+    <div class="s2-page active" id="s4p-0">
+      ${teorico
+        ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+      ${renderLink(dSes['cliente-s4-link'], dSes['cliente-s4-link-label'])}
+    </div>
+
+    <!-- TAB 1: Gastos fijos ocultos -->
+    <div class="s2-page" id="s4p-1">
+      ${htmlGF}
+      <button class="btn-guardar-s2" onclick="guardarS4Cliente()">💾 Guardar mis cambios</button>
+      <div class="save-status" id="s4-save-status"></div>
+    </div>
+
+    <!-- TAB 2: Gastos estacionales -->
+    <div class="s2-page" id="s4p-2">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Ingresá el monto anual de cada gasto. El sistema calcula automáticamente cuánto representan por mes.</p>
+      <div style="overflow-x:auto;"><table class="table-s2">
+        <tr><th style="width:50%">Gasto</th><th>Monto anual (₡)</th><th>Por mes ÷12 (₡)</th></tr>
+        ${geRows}
+        <tr class="tot">
+          <td class="lbl">TOTAL</td>
+          <td style="padding:6px 8px;font-weight:700;" id="cge-total-anual">${fmtC(totalGeAnual)}</td>
+          <td style="padding:6px 8px;font-weight:700;" id="cge-total-mes">${fmtC(totalGeAnual/12)}</td>
+        </tr>
+      </table></div>
+      <button class="btn-guardar-s2" onclick="guardarS4Cliente()">💾 Guardar mis cambios</button>
+    </div>
+
+    <!-- TAB 3: Dinero recuperado -->
+    <div class="s2-page" id="s4p-3">
+      ${htmlResumen}
+    </div>
+
+    <!-- TAB 4: Tarea -->
+    <div class="s2-page" id="s4p-4">
+      ${tarea
+        ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>`;
+}
+
+function s4GoTab(n) {
+  document.querySelectorAll('#body-s4 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s4 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+
+// ── Recalcular GF cliente ──
+function recalcGF() {
+  let totalAntes = 0, totalAhorro = 0;
+  for (let i = 1; i <= 26; i++) {
+    const actual = parseFloat(document.getElementById('cgf-'+i)?.value) || 0;
+    const nuevo  = parseFloat(document.getElementById('cgf-'+i+'n')?.value) || 0;
+    const ahorro = actual > 0 ? (actual - nuevo) : 0;
+    totalAntes += actual;
+    totalAhorro += ahorro > 0 ? ahorro : 0;
+    const aEl = document.getElementById('cgf-'+i+'a');
+    if (aEl) {
+      aEl.textContent = ahorro > 0 ? fmtC(ahorro) : '—';
+      aEl.style.color = ahorro > 0 ? 'var(--verde-dark)' : 'var(--muted)';
+    }
+  }
+  const ta = document.getElementById('cgf-total-antes');
+  const th = document.getElementById('cgf-total-ahorro');
+  if (ta) ta.textContent = fmtC(totalAntes);
+  if (th) th.textContent = fmtC(totalAhorro);
+}
+
+// ── Recalcular GE cliente ──
+function recalcGE() {
+  let totalAnual = 0;
+  for (let i = 1; i <= 20; i++) {
+    const anual = parseFloat(document.getElementById('cge-'+i)?.value) || 0;
+    totalAnual += anual;
+    const mEl = document.getElementById('cge-'+i+'m');
+    if (mEl) {
+      mEl.textContent = anual > 0 ? fmtC(anual/12) : '—';
+      mEl.style.color = anual > 0 ? '#854F0B' : 'var(--muted)';
+    }
+  }
+  const ta = document.getElementById('cge-total-anual');
+  const tm = document.getElementById('cge-total-mes');
+  if (ta) ta.textContent = fmtC(totalAnual);
+  if (tm) tm.textContent = fmtC(totalAnual/12);
+}
+
+// ── Guardar cambios S4 cliente ──
+async function guardarS4Cliente() {
+  const statusEl = document.getElementById('s4-save-status');
+  if (statusEl) { statusEl.textContent = 'Guardando...'; statusEl.className = 'save-status'; }
+  try {
+    const campos = {};
+    for (let i = 1; i <= 26; i++) {
+      const v = document.getElementById('cgf-'+i)?.value;
+      const d = document.getElementById('cgf-'+i+'d')?.value;
+      const n = document.getElementById('cgf-'+i+'n')?.value;
+      if (v) campos['gf-'+i] = v;
+      if (d) campos['gf-'+i+'d'] = d;
+      if (n) campos['gf-'+i+'n'] = n;
+    }
+    for (let i = 1; i <= 20; i++) {
+      const v = document.getElementById('cge-'+i)?.value;
+      if (v) campos['ge-'+i] = v;
+    }
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH',
+        { datos_s4: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s4: campos });
+    }
+    if (statusEl) { statusEl.textContent = '✅ Cambios guardados'; statusEl.className = 'save-status save-ok'; }
+  } catch(e) {
+    if (statusEl) { statusEl.textContent = '❌ Error al guardar'; statusEl.className = 'save-status save-err'; }
+  }
+}
+
+
+// ════════════════════════════════════════
+// SESIÓN 5 — DIAGNÓSTICO DE DEUDAS (F3)
+// ════════════════════════════════════════
+
+// ── Cálculos S5 ──
+function nv5(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+function setV5(id, val) { const e = document.getElementById(id); if (e) e.value = val !== undefined && val !== null && val !== '' ? val : ''; }
+function setFmt5(id, val) { const e = document.getElementById(id); if (e) e.value = val ? fmtC(val) : ''; }
+
+function calcS5Diag() {
+  const ing  = nv5('s5-d-ingreso');
+  const gas  = nv5('s5-d-gastos');
+  const tar  = nv5('s5-d-tarjeta');
+  const veh  = nv5('s5-d-vehiculo');
+  const hip  = nv5('s5-d-hipoteca');
+  const per  = nv5('s5-d-personal');
+  const urg  = nv5('s5-d-urgente');
+  const app  = nv5('s5-d-app');
+  const fam  = nv5('s5-d-familiar');
+  const otr  = nv5('s5-d-otra');
+  const tot  = tar+veh+hip+per+urg+app+fam+otr;
+  setFmt5('s5-d-total', tot);
+  if (!ing) return;
+  const ratioEnd = tot / ing;
+  const disponible = ing - gas - tot;
+  const margen = disponible / ing;
+  document.getElementById('s5-r-total').textContent = fmtC(tot);
+  document.getElementById('s5-r-end').textContent = (ratioEnd*100).toFixed(1) + '%';
+  document.getElementById('s5-r-disp').textContent = fmtC(disponible);
+  document.getElementById('s5-r-margen').textContent = (margen*100).toFixed(1) + '%';
+  // Semáforo
+  const diagEl = document.getElementById('s5-sem-diag');
+  const semEl  = document.getElementById('s5-sem-margen');
+  if (diagEl) {
+    if (ratioEnd <= 0.35) { diagEl.textContent = '🟢 SALUDABLE — endeudamiento controlado'; diagEl.style.color = '#0F6E56'; }
+    else if (ratioEnd <= 0.50) { diagEl.textContent = '🟡 MODERADO — cerca del límite recomendado'; diagEl.style.color = '#854F0B'; }
+    else { diagEl.textContent = '🔴 CRÍTICO — endeudamiento excesivo'; diagEl.style.color = '#A32D2D'; }
+  }
+  if (semEl) {
+    if (margen > 0.25) { semEl.textContent = '🟢 MARGEN CÓMODO — más del 25% libre'; semEl.style.color = '#0F6E56'; }
+    else if (margen > 0.15) { semEl.textContent = '🟡 MARGEN AJUSTADO — entre 15% y 25%'; semEl.style.color = '#854F0B'; }
+    else if (margen > 0) { semEl.textContent = '🔴 PELIGROSO — menos del 15% libre'; semEl.style.color = '#A32D2D'; }
+    else { semEl.textContent = '🚨 NEGATIVO — gastos superan ingresos'; semEl.style.color = '#A32D2D'; }
+  }
+}
+
+function calcS5PP() {
+  const monto   = nv5('s5-pp-monto');
+  const tea     = nv5('s5-pp-tea') / 100;
+  const plazo   = nv5('s5-pp-plazo');
+  const pagados = nv5('s5-pp-pagados');
+  const cuota   = nv5('s5-pp-cuota');
+  const abono   = nv5('s5-pp-abono');
+  if (!monto || !tea || !plazo || !cuota) return;
+  const tem = Math.pow(1 + tea, 1/12) - 1;
+  const restantes = plazo - pagados;
+  const saldo = cuota * (1 - Math.pow(1+tem, -restantes)) / tem;
+  setFmt5('s5-pp-saldo', saldo);
+  const costoTotal = cuota * plazo;
+  const intereses  = costoTotal - monto;
+  setFmt5('s5-pp-costo', costoTotal);
+  setFmt5('s5-pp-intereses', intereses);
+  setV5('s5-pp-meses-rest', restantes);
+  // Simulador abono
+  if (abono > 0) {
+    const cuotaExtra = cuota + abono;
+    const intMesSaldo = saldo * tem;
+    if (cuotaExtra <= intMesSaldo || cuota <= intMesSaldo) {
+      setV5('s5-pp-sim-actual', '—'); setV5('s5-pp-sim-extra', '—');
+      setV5('s5-pp-sim-ahorro-m', '⚠️ Cuota no cubre intereses'); return;
+    }
+    let saldoSim = saldo, mesesExtra = 0, intExtra = 0;
+    while (saldoSim > 0.01 && mesesExtra < 600) {
+      const intMes = saldoSim * tem;
+      intExtra += intMes;
+      saldoSim -= (cuotaExtra - intMes);
+      mesesExtra++;
+    }
+    let saldoSin = saldo, mesesSin = 0, intSin = 0;
+    while (saldoSin > 0.01 && mesesSin < 600) {
+      const intMes = saldoSin * tem;
+      intSin += intMes;
+      saldoSin -= (cuota - intMes);
+      mesesSin++;
+    }
+    setV5('s5-pp-sim-actual', mesesSin);
+    setV5('s5-pp-sim-extra', mesesExtra);
+    setV5('s5-pp-sim-ahorro-m', mesesSin - mesesExtra);
+    setFmt5('s5-pp-sim-int-sin', intSin);
+    setFmt5('s5-pp-sim-int-con', intExtra);
+    setFmt5('s5-pp-sim-ahorro', intSin - intExtra);
+  }
+}
+
+function calcS5TC() {
+  const saldo  = nv5('s5-tc-saldo');
+  const limite = nv5('s5-tc-limite');
+  const tea    = nv5('s5-tc-tea') / 100;
+  const minimo = nv5('s5-tc-minimo');
+  const extra  = nv5('s5-tc-extra');
+  if (!saldo || !tea) return;
+  const tem = Math.pow(1 + tea, 1/12) - 1;
+  const intMes = saldo * tem;
+  setFmt5('s5-tc-int-mensual', intMes);
+  if (limite) setV5('s5-tc-utilizacion', ((saldo/limite)*100).toFixed(1) + '%');
+
+  // Validar que los pagos cubran el interés
+  const mesesExtraEl = document.getElementById('s5-tc-meses-extra');
+  const intExtraEl   = document.getElementById('s5-tc-int-extra');
+  const ahorroEl     = document.getElementById('s5-tc-ahorro');
+
+  if (extra > 0) {
+    if (extra <= intMes) {
+      // Pago no cubre intereses — deuda crece indefinidamente
+      if (mesesExtraEl) mesesExtraEl.value = '⚠️ Pago no cubre intereses';
+      if (intExtraEl)   intExtraEl.value   = '—';
+      if (ahorroEl)     ahorroEl.value     = '—';
+      return;
+    }
+    let s = saldo, m = 0, intT = 0;
+    while (s > 0.01 && m < 600) { const i = s*tem; intT+=i; s-=(extra-i); m++; }
+    if (mesesExtraEl) mesesExtraEl.value = m;
+    if (intExtraEl)   setFmt5('s5-tc-int-extra', intT);
+
+    // Mínimo
+    if (minimo > 0 && minimo > intMes) {
+      let s2 = saldo, m2 = 0, intT2 = 0;
+      while (s2 > 0.01 && m2 < 600) { const i = s2*tem; intT2+=i; s2-=(minimo-i); m2++; }
+      if (ahorroEl) setFmt5('s5-tc-ahorro', intT2 - intT);
+    } else if (minimo > 0 && minimo <= intMes) {
+      if (ahorroEl) ahorroEl.value = '⚠️ Mínimo no cubre intereses';
+    }
+  }
+}
+
+// ── Guardar S5 cliente ──
+async function guardarS5Cliente() {
+  const st = document.getElementById('s5-save-status');
+  if (st) { st.textContent = 'Guardando...'; st.className = 'save-status'; }
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="s5-"]').forEach(e => {
+      if (!e.readOnly && e.tagName !== 'DIV' && e.value !== '') campos[e.id] = e.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH',
+        { datos_s5: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s5: campos });
+    }
+    if (st) { st.textContent = '✅ Cambios guardados'; st.className = 'save-status save-ok'; }
+  } catch(e) {
+    if (st) { st.textContent = '❌ Error al guardar'; st.className = 'save-status save-err'; }
+  }
+}
+
+// ── Render campo editable ──
+function editable5(id, val, type='number', oninput='calcS5Diag()') {
+  return `<input class="s2-input" type="${type}" id="${id}" value="${val||''}" oninput="${oninput}" style="width:100%;">`;
+}
+function readonly5(val) {
+  return `<input class="s2-input" readonly value="${val||''}" style="width:100%;">`;
+}
+function semBox(id, cls='') {
+  return `<div id="${id}" style="font-size:0.88rem;font-weight:600;padding:6px 0;"${cls}>—</div>`;
+}
+
+// ── Render Sesión 5 ──
+function renderS5() {
+  const d = _s5Data || {};
+  const campos = d.s5?.campos || d.campos || {};
+  const config = d.hojas_config || {};
+  const teorico = (_sesionDataGuardada || {})['cliente-s5-teorico'] || '';
+  const tarea   = (_sesionDataGuardada || {})['cliente-s5-tarea']   || '';
+  const dSes    = _sesionDataGuardada || {};
+  const cv = id => campos[id] || '';
+
+  // Tabs dinámicos según config
+  const tabsDef = [
+    { key: 'diag', always: true,       icon: '🧮', label: 'Diagnóstico' },
+    { key: 'pp',   always: config.pp,  icon: '💼', label: 'Préstamo Personal' },
+    { key: 'pu',   always: config.pu,  icon: '🚨', label: 'Préstamo Urgente' },
+    { key: 'cv',   always: config.cv,  icon: '🚗', label: 'Vehículo' },
+    { key: 'hi',   always: config.hi,  icon: '🏠', label: 'Hipoteca' },
+    { key: 'tc',   always: config.tc,  icon: '💳', label: 'Tarjeta' },
+    { key: 'si',   always: config.si,  icon: '🔍', label: 'Simulador' },
+    { key: 'notas',always: true,       icon: '📖', label: 'Para vos' },
+    { key: 'tarea',always: true,       icon: '📝', label: 'Tu tarea' },
+  ];
+  const tabs = tabsDef.filter(t => t.always);
+
+  const tabsHTML = tabs.map((t,i) =>
+    `<div class="s2-tab ${i===0?'active':''}" onclick="s5GoTab(${i},'${t.key}')">${t.icon} ${t.label}</div>`
+  ).join('');
+
+  // ── Hoja 0: Diagnóstico y Margen ──
+  const htmlDiag = `
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Podés actualizar tus datos. Los cálculos se actualizan automáticamente.</p>
+    <div class="section-label">💰 Datos base</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Ingreso mensual neto / IRC (₡)</td><td>${editable5('s5-d-ingreso', cv('d-ingreso'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="lbl">Gastos básicos mensuales (₡)</td><td>${editable5('s5-d-gastos', cv('d-gastos'), 'number', 'calcS5Diag()')}</td></tr>
+    </table>
+    <div class="section-label">💳 Cuotas mensuales</div>
+    <table class="table-s2">
+      <tr><td class="sub">Tarjeta(s) de crédito</td><td>${editable5('s5-d-tarjeta', cv('d-tarjeta'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Préstamo vehículo</td><td>${editable5('s5-d-vehiculo', cv('d-vehiculo'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Hipoteca</td><td>${editable5('s5-d-hipoteca', cv('d-hipoteca'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Préstamo personal</td><td>${editable5('s5-d-personal', cv('d-personal'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Préstamo urgente / informal</td><td>${editable5('s5-d-urgente', cv('d-urgente'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">App / micropréstamo</td><td>${editable5('s5-d-app', cv('d-app'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Deuda familiar</td><td>${editable5('s5-d-familiar', cv('d-familiar'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr><td class="sub">Otra deuda</td><td>${editable5('s5-d-otra', cv('d-otra'), 'number', 'calcS5Diag()')}</td></tr>
+      <tr class="tot"><td class="lbl">TOTAL DEUDAS (₡)</td><td><input class="s2-input" readonly id="s5-d-total"></td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">📊 Diagnóstico automático</div>
+    <div class="balance-grid">
+      <div class="bal-card"><div class="bal-lbl">Total deudas/mes</div><div class="bal-val" style="font-size:1rem;" id="s5-r-total">—</div></div>
+      <div class="bal-card"><div class="bal-lbl">Ratio endeudamiento</div><div class="bal-val" style="font-size:1rem;" id="s5-r-end">—</div></div>
+      <div class="bal-card"><div class="bal-lbl">Dinero disponible</div><div class="bal-val" style="font-size:1rem;" id="s5-r-disp">—</div></div>
+    </div>
+    <div style="background:#f9f7f3;border-radius:10px;padding:14px;margin-top:10px;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;">Diagnóstico general</div>
+      <div id="s5-sem-diag" style="font-size:0.88rem;font-weight:600;">—</div>
+    </div>
+    <div style="background:#f9f7f3;border-radius:10px;padding:14px;margin-top:8px;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;">Semáforo de margen</div>
+      <div id="s5-sem-margen" style="font-size:0.88rem;font-weight:600;">—</div>
+      <div style="font-size:0.78rem;color:#555;margin-top:4px;" id="s5-r-margen">—</div>
+    </div>`;
+
+  // ── Hoja PP: Préstamo Personal ──
+  const htmlPP = `
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">Actualizá los datos de tu préstamo para ver el análisis.</p>
+    <div class="section-label">Datos del préstamo</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Banco / entidad</td><td>${editable5('s5-pp-banco', cv('pp-banco'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Monto original (₡)</td><td>${editable5('s5-pp-monto', cv('pp-monto'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">Tasa anual TEA (%)</td><td>${editable5('s5-pp-tea', cv('pp-tea'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">Plazo original (meses)</td><td>${editable5('s5-pp-plazo', cv('pp-plazo'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">Meses ya pagados</td><td>${editable5('s5-pp-pagados', cv('pp-pagados'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">Cuota mensual (₡)</td><td>${editable5('s5-pp-cuota', cv('pp-cuota'), 'number', 'calcS5PP()')}</td></tr>
+    </table>
+    <div class="section-label">Indicadores</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Saldo pendiente estimado (₡)</td><td><input class="s2-input" readonly id="s5-pp-saldo"></td></tr>
+      <tr><td class="lbl">Meses restantes</td><td><input class="s2-input" readonly id="s5-pp-meses-rest"></td></tr>
+      <tr><td class="lbl">Costo total del préstamo (₡)</td><td><input class="s2-input" readonly id="s5-pp-costo"></td></tr>
+      <tr><td class="lbl">Total pagado en intereses (₡)</td><td><input class="s2-input" readonly id="s5-pp-intereses"></td></tr>
+    </table>
+    <div class="section-label">💰 Simulador — abono adicional a capital</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Monto ADICIONAL por mes (₡)</td><td>${editable5('s5-pp-abono', cv('pp-abono'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">Meses restantes sin abono</td><td><input class="s2-input readonly-gray" readonly id="s5-pp-sim-actual"></td></tr>
+      <tr><td class="lbl">Meses restantes con abono</td><td><input class="s2-input" readonly id="s5-pp-sim-extra"></td></tr>
+      <tr><td class="lbl">📅 Meses que ahorrarías</td><td><input class="s2-input" readonly id="s5-pp-sim-ahorro-m"></td></tr>
+      <tr><td class="lbl">💰 Ahorro real en intereses (₡)</td><td><input class="s2-input" readonly id="s5-pp-sim-ahorro"></td></tr>
+    </table>`;
+
+  // ── Hoja PU: Préstamo Urgente ──
+  const htmlPU = `
+    <div class="section-label">Datos del préstamo urgente</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Nombre del prestamista</td><td>${editable5('s5-pu-nombre', cv('pu-nombre'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Monto recibido (₡)</td><td>${editable5('s5-pu-monto', cv('pu-monto'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Monto total a devolver (₡)</td><td>${editable5('s5-pu-devolver', cv('pu-devolver'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Plazo en días</td><td>${editable5('s5-pu-dias', cv('pu-dias'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Cuota que pagás (₡)</td><td>${editable5('s5-pu-cuota', cv('pu-cuota'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Saldo pendiente (₡)</td><td><input class="s2-input" readonly id="s5-pu-saldo" value="${cv('pu-saldo')||''}"></td></tr>
+    </table>
+    <div class="section-label">🚨 Revelación — El costo real</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Costo absoluto del préstamo (₡)</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--rojo);padding:6px 0;">${cv('pu-costo')||'—'}</div></td></tr>
+      <tr><td class="lbl">Tasa Anual Efectiva real (TEA)</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--rojo);padding:6px 0;">${cv('pu-tea')||'—'}</div></td></tr>
+      <tr><td class="lbl">¿Cuántas veces más caro que una tarjeta?</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--rojo);padding:6px 0;">${cv('pu-vs-tarjeta')||'—'}</div></td></tr>
+      <tr><td class="lbl">🚨 Nivel de riesgo</td><td><div style="font-size:0.85rem;font-weight:700;color:var(--rojo);padding:6px 0;">${cv('pu-riesgo')||'—'}</div></td></tr>
+    </table>`;
+
+  // ── Hoja CV: Crédito Vehicular ──
+  const htmlCV = `
+    <div class="section-label">Datos del crédito vehicular</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Banco / entidad</td><td>${editable5('s5-cv-banco', cv('cv-banco'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Monto financiado (₡)</td><td>${editable5('s5-cv-monto', cv('cv-monto'), 'number', 'calcS5PP()')}</td></tr>
+      <tr><td class="lbl">TEA (%)</td><td>${editable5('s5-cv-tea', cv('cv-tea'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Plazo original (meses)</td><td>${editable5('s5-cv-plazo', cv('cv-plazo'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Meses ya pagados</td><td>${editable5('s5-cv-pagados', cv('cv-pagados'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Cuota mensual (₡)</td><td>${editable5('s5-cv-cuota', cv('cv-cuota'), 'number', '')}</td></tr>
+    </table>
+    <div class="section-label">Indicadores</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Costo mensual TOTAL del carro (₡)</td><td><div style="font-size:0.85rem;font-weight:600;padding:6px 0;">${cv('cv-costo-mensual')||'—'}</div></td></tr>
+      <tr><td class="lbl">% del ingreso destinado al carro</td><td><div style="font-size:0.85rem;font-weight:600;padding:6px 0;">${cv('cv-pct-ingreso')||'—'}</div></td></tr>
+      <tr><td class="lbl">Meses restantes</td><td><div style="font-size:0.85rem;padding:6px 0;">${cv('cv-meses-rest')||'—'}</div></td></tr>
+      <tr><td class="lbl">Saldo pendiente (₡)</td><td><div style="font-size:0.85rem;padding:6px 0;">${cv('cv-saldo')||'—'}</div></td></tr>
+    </table>
+    <div class="section-label">💰 Simulador — cuota adicional</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Cuota TOTAL nueva mensual (₡)</td><td>${editable5('s5-cv-extra', cv('cv-cuota-extra'), 'number', '')}</td></tr>
+      <tr><td class="lbl">💰 Ahorro real en intereses (₡)</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--verde-dark);padding:6px 0;">${cv('cv-sim-ahorro')||'—'}</div></td></tr>
+    </table>`;
+
+  // ── Hoja HI: Hipoteca ──
+  const htmlHI = `
+    <div class="section-label">Datos de la hipoteca</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Banco / entidad</td><td>${editable5('s5-hi-banco', cv('hi-banco'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Monto hipotecado original (₡)</td><td>${editable5('s5-hi-monto', cv('hi-monto'), 'number', '')}</td></tr>
+      <tr><td class="lbl">TEA (%)</td><td>${editable5('s5-hi-tea', cv('hi-tea'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Plazo original (meses)</td><td>${editable5('s5-hi-plazo', cv('hi-plazo'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Meses ya pagados</td><td>${editable5('s5-hi-pagados', cv('hi-pagados'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Cuota mensual (₡)</td><td>${editable5('s5-hi-cuota', cv('hi-cuota'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Cuota TOTAL que podrías pagar (₡)</td><td>${editable5('s5-hi-extra', cv('hi-cuota-extra'), 'number', '')}</td></tr>
+    </table>
+    <div class="section-label">Indicadores</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Meses restantes</td><td><div style="font-size:0.85rem;padding:6px 0;">${cv('hi-meses-rest')||'—'}</div></td></tr>
+      <tr><td class="lbl">Saldo pendiente estimado (₡)</td><td><div style="font-size:0.85rem;padding:6px 0;">${cv('hi-saldo')||'—'}</div></td></tr>
+      <tr><td class="lbl">% ingreso destinado a vivienda</td><td><div style="font-size:0.85rem;font-weight:600;padding:6px 0;">${cv('hi-pct-ingreso')||'—'}</div></td></tr>
+      <tr><td class="lbl">Costo total en intereses si seguís igual (₡)</td><td><div style="font-size:0.85rem;color:var(--rojo);font-weight:600;padding:6px 0;">${cv('hi-costo-intereses')||'—'}</div></td></tr>
+      <tr><td class="lbl">Meses que ahorrarías con cuota extra</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--verde-dark);padding:6px 0;">${cv('hi-meses-ahorro')||'—'}</div></td></tr>
+      <tr><td class="lbl">💰 Ahorro en intereses con cuota extra (₡)</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--verde-dark);padding:6px 0;">${cv('hi-ahorro-int')||'—'}</div></td></tr>
+    </table>`;
+
+  // ── Hoja TC: Tarjeta ──
+  const htmlTC = `
+    <div class="section-label">Datos de la tarjeta</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Banco / entidad</td><td>${editable5('s5-tc-banco', cv('tc-banco'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Saldo actual adeudado (₡)</td><td>${editable5('s5-tc-saldo', cv('tc-saldo'), 'number', 'calcS5TC()')}</td></tr>
+      <tr><td class="lbl">Límite de crédito (₡)</td><td>${editable5('s5-tc-limite', cv('tc-limite'), 'number', 'calcS5TC()')}</td></tr>
+      <tr><td class="lbl">TEA (%)</td><td>${editable5('s5-tc-tea', cv('tc-tea'), 'number', 'calcS5TC()')}</td></tr>
+      <tr><td class="lbl">Pago mínimo mensual (₡)</td><td>${editable5('s5-tc-minimo', cv('tc-minimo'), 'number', 'calcS5TC()')}</td></tr>
+      <tr><td class="lbl">Monto TOTAL que podés pagar/mes (₡)</td><td>${editable5('s5-tc-extra', cv('tc-pago-total'), 'number', 'calcS5TC()')}</td></tr>
+    </table>
+    <div class="section-label">Indicadores</div>
+    <table class="table-s2">
+      <tr><td class="lbl">% utilización del límite</td><td><input class="s2-input" readonly id="s5-tc-utilizacion" value="${cv('tc-utilizacion')||''}"></td></tr>
+      <tr><td class="lbl">Interés mensual que generás (₡)</td><td><input class="s2-input" readonly id="s5-tc-int-mensual"></td></tr>
+      <tr><td class="lbl">Meses para saldar pagando el total</td><td><input class="s2-input" readonly id="s5-tc-meses-extra"></td></tr>
+      <tr><td class="lbl">💰 Ahorro vs pago mínimo (₡)</td><td><input class="s2-input" readonly id="s5-tc-ahorro"></td></tr>
+    </table>`;
+
+  // ── Hoja SI: Simulador Tarjeta ──
+  const htmlSI = `
+    <div class="section-label">Datos de la tarjeta</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Banco / tarjeta</td><td>${editable5('s5-si-banco', cv('si-banco'), 'text', '')}</td></tr>
+      <tr><td class="lbl">Saldo actual (₡)</td><td>${editable5('s5-si-saldo', cv('si-saldo'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Límite de crédito (₡)</td><td>${editable5('s5-si-limite', cv('si-limite'), 'number', '')}</td></tr>
+      <tr><td class="lbl">TEA (%)</td><td>${editable5('s5-si-tea', cv('si-tea'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Pago mínimo mensual (₡)</td><td>${editable5('s5-si-minimo', cv('si-minimo'), 'number', '')}</td></tr>
+    </table>
+    <div class="section-label" style="color:var(--rojo);">🔴 Escenario A — Solo mínimo</div>
+    <div class="balance-grid">
+      <div class="bal-card"><div class="bal-lbl">Meses estimados</div><div class="bal-val" style="font-size:1rem;color:var(--rojo);">${cv('si-a-meses')||'—'}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Intereses totales</div><div class="bal-val" style="font-size:1rem;color:var(--rojo);">${cv('si-a-intereses')||'—'}</div></div>
+      <div class="bal-card"><div class="bal-lbl">Costo real total</div><div class="bal-val" style="font-size:1rem;color:var(--rojo);">${cv('si-a-total')||'—'}</div></div>
+    </div>
+    <div class="section-label" style="color:var(--verde-dark);">✅ Escenario B — Pagás más</div>
+    <table class="table-s2">
+      <tr><td class="lbl">Monto TOTAL que podés pagar/mes (₡)</td><td>${editable5('s5-si-b-pago', cv('si-b-pago'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Meses para saldar</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--verde-dark);padding:6px 0;">${cv('si-b-meses')||'—'}</div></td></tr>
+      <tr><td class="lbl">💰 Ahorro vs pago mínimo (₡)</td><td><div style="font-size:0.85rem;font-weight:600;color:var(--verde-dark);padding:6px 0;">${cv('si-b-ahorro')||'—'}</div></td></tr>
+    </table>
+    <div class="section-label" style="color:#534AB7;">🔄 Escenario C — Consolidar</div>
+    <table class="table-s2">
+      <tr><td class="lbl">TEA del préstamo personal ofrecido (%)</td><td>${editable5('s5-si-c-tea', cv('si-c-tea'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Plazo (meses)</td><td>${editable5('s5-si-c-plazo', cv('si-c-plazo'), 'number', '')}</td></tr>
+      <tr><td class="lbl">Cuota mensual (₡)</td><td><div style="font-size:0.85rem;padding:6px 0;">${cv('si-c-cuota')||'—'}</div></td></tr>
+      <tr><td class="lbl">🎯 ¿Conviene consolidar?</td><td><div style="font-size:0.85rem;font-weight:700;padding:6px 0;color:#534AB7;">${cv('si-c-conviene')||'—'}</div></td></tr>
+    </table>`;
+
+  // Construir páginas según tabs activos
+  const pagesHTML = tabs.map((t, i) => {
+    let body = '';
+    if (t.key === 'diag')  body = htmlDiag;
+    else if (t.key === 'pp')   body = htmlPP;
+    else if (t.key === 'pu')   body = htmlPU;
+    else if (t.key === 'cv')   body = htmlCV;
+    else if (t.key === 'hi')   body = htmlHI;
+    else if (t.key === 'tc')   body = htmlTC;
+    else if (t.key === 'si')   body = htmlSI;
+    else if (t.key === 'notas') body = teorico
+      ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>${renderLink(dSes['cliente-s5-link'], dSes['cliente-s5-link-label'])}`
+      : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`;
+    else if (t.key === 'tarea') body = tarea
+      ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+      : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`;
+    return `<div class="s2-page ${i===0?'active':''}" id="s5p-${i}" data-key="${t.key}">${body}</div>`;
+  }).join('');
+
+  return `
+    <div class="s2-tabs" id="s5-tabs">${tabsHTML}</div>
+    ${pagesHTML}
+    <button class="btn-guardar-s2" onclick="guardarS5Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s5-save-status"></div>`;
+}
+
+function s5GoTab(n, key) {
+  document.querySelectorAll('#body-s5 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s5 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+async function initS5() {
+  // Cargar datos guardados por la cliente si existen
+  try {
+    const arr = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId + '&limit=1');
+    if (arr && arr.length && arr[0].datos_s5) {
+      Object.entries(arr[0].datos_s5).forEach(([id, val]) => {
+        const e = document.getElementById(id);
+        if (e && !e.readOnly) e.value = val;
+      });
+    }
+  } catch(e) {}
+  calcS5Diag();
+  calcS5PP();
+  calcS5TC();
+}
+
+
+// ════════════════════════════════════════
+// SESIÓN 6 — ESTRATEGIA DE DEUDAS
+// ════════════════════════════════════════
+
+function renderS6() {
+  const datos  = _s5Data || {};          // same table sesiones_data_f3
+  const c6     = datos.s6?.campos || {}; // s6 key
+  const dSes   = _sesionDataGuardada || {};
+  const teorico = dSes['cliente-s6-teorico'] || '';
+  const tarea   = dSes['cliente-s6-tarea']   || '';
+
+  const cv = id => c6[id] || '';
+  const fmtV = v => v && v !== '—' ? v : '—';
+
+  const DEUDAS = [
+    { key:'tc', icon:'💳', label:'Tarjeta' },
+    { key:'ve', icon:'🚗', label:'Vehículo' },
+    { key:'hi', icon:'🏠', label:'Hipoteca' },
+    { key:'pe', icon:'👤', label:'Personal' },
+    { key:'ur', icon:'⚡', label:'Urgente' },
+  ];
+
+  // helper editable azul S6
+  const e6 = (id, val, type='number') =>
+    `<input class="s2-input" type="${type}" id="${id}" value="${val||''}"
+      style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;"
+      oninput="recalcS6Totals()">`;
+  const ro6 = (val) =>
+    `<input class="s2-input readonly-gray" readonly value="${val||''}" style="width:100%;">`;
+
+  // ── Hoja 1: Datos de la clienta ──
+  const htmlH1 = `
+    <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+      <span style="color:#0000cc;font-weight:600;">Azul</span> = podés actualizar · Negro = calculado por tu consultora
+    </p>
+    <div class="section-label">👤 Datos generales</div>
+    <table class="table-s2" style="max-width:420px;margin-bottom:16px;">
+      <tr><td class="lbl">Nombre</td><td style="padding:6px 8px;font-weight:500;">${cv('nombre') || (_clientaData?.nombre || '—')}</td></tr>
+      <tr><td class="lbl">Ingreso mensual neto (₡)</td><td style="padding:4px 6px;">${e6('s6-ingreso', cv('ingreso'))}</td></tr>
+    </table>
+    <div class="section-label">📋 Detalle de Deudas</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr>
+          <th style="min-width:140px;">Campo</th>
+          ${DEUDAS.map(d => `<th style="min-width:90px;">${d.icon} ${d.label}</th>`).join('')}
+          <th style="background:#f0ede6;min-width:80px;">TOTAL</th>
+        </tr>
+        <tr>
+          <td class="lbl">Saldo actual (₡)</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-s_'+d.key, cv('s_'+d.key))}</td>`).join('')}
+          <td style="padding:4px 6px;">${ro6(cv('tot_s'))}</td>
+        </tr>
+        <tr>
+          <td class="lbl">TEA (%)</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-t_'+d.key, cv('t_'+d.key))}</td>`).join('')}
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="lbl">Plazo restante (meses)</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-p_'+d.key, cv('p_'+d.key))}</td>`).join('')}
+          <td style="padding:4px 6px;">${ro6(cv('tot_p'))}</td>
+        </tr>
+        <tr>
+          <td class="lbl">Cuota mensual (₡)</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-c_'+d.key, cv('c_'+d.key))}</td>`).join('')}
+          <td style="padding:4px 6px;">${ro6(cv('tot_c'))}</td>
+        </tr>
+        <tr>
+          <td class="lbl">¿Tiene garantía?</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${d.key==='ve'||d.key==='hi' ? e6('s6-g_'+d.key, cv('g_'+d.key), 'text') : '<span style="padding:6px 8px;font-size:0.82rem;">—</span>'}</td>`).join('')}
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="lbl">Moneda</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-m_'+d.key, cv('m_'+d.key) === 'usd' ? '$' : cv('m_'+d.key) === 'col' ? '₡' : '', 'text')}</td>`).join('')}
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="lbl">Días de mora</td>
+          ${DEUDAS.map(d => `<td style="padding:3px 4px;">${e6('s6-d_'+d.key, cv('d_'+d.key)||'0')}</td>`).join('')}
+          <td>—</td>
+        </tr>
+        <tr style="background:#fdecea;">
+          <td class="lbl" style="color:var(--rojo);">Costo total restante (₡)</td>
+          ${DEUDAS.map(d => `<td style="padding:4px 6px;">${ro6(cv('ct_'+d.key))}</td>`).join('')}
+          <td style="padding:4px 6px;">${ro6(cv('tot_ct'))}</td>
+        </tr>
+        <tr style="background:#fdecea;">
+          <td class="lbl" style="color:var(--rojo);">Intereses totales restantes (₡)</td>
+          ${DEUDAS.map(d => `<td style="padding:4px 6px;">${ro6(cv('it_'+d.key))}</td>`).join('')}
+          <td style="padding:4px 6px;">${ro6(cv('tot_it'))}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="section-label" style="margin-top:16px;">📊 Resumen de carga financiera</div>
+    <table class="table-s2" style="max-width:500px;">
+      <tr><td class="lbl">Total deuda activa (₡)</td><td style="padding:6px 8px;font-weight:700;font-size:0.9rem;">${ro6(cv('res_deuda'))}</td></tr>
+      <tr><td class="lbl">Cuota total mensual (₡)</td><td style="padding:6px 8px;font-weight:700;font-size:0.9rem;">${ro6(cv('res_cuota'))}</td></tr>
+      <tr><td class="lbl">Ingreso mensual (₡)</td><td style="padding:4px 6px;">${e6('s6-ingreso2', cv('ingreso'))}</td></tr>
+      <tr><td class="lbl">Índice de endeudamiento (%)</td><td style="padding:6px 8px;font-weight:700;font-size:0.9rem;${parseFloat(cv('res_idx'))||0 > 40 ? 'color:var(--rojo)' : 'color:var(--verde-dark)'}">${cv('res_idx') || '—'}</td></tr>
+    </table>
+    <div style="background:#f9f7f3;border-radius:10px;padding:12px 14px;margin-top:10px;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:4px;font-weight:600;text-transform:uppercase;">Semáforo de riesgo</div>
+      <div style="font-size:0.88rem;font-weight:600;">${cv('res_sem') || '—'}</div>
+    </div>`;
+
+  // ── Hoja 2: Daños — resumen solo lo seleccionado ──
+  const DANOS_DEF = [
+    { id:'d1', icon:'💸', label:'Financiero' },
+    { id:'d2', icon:'🧠', label:'Psicológico' },
+    { id:'d3', icon:'👥', label:'Relacional' },
+    { id:'d4', icon:'⚖️', label:'Legal' },
+    { id:'d5', icon:'🏛️', label:'Patrimonial' },
+  ];
+
+  const danosPills = DANOS_DEF.map(d => {
+    const nivel = parseInt(cv(d.id)) || 0;
+    if (nivel === 0) return '';
+    const color = nivel >= 3 ? 'var(--rojo)' : nivel >= 2 ? '#854F0B' : '#185FA5';
+    const bg    = nivel >= 3 ? '#FDECEA' : nivel >= 2 ? '#FFF8E1' : '#E6F1FB';
+    const txt   = nivel >= 3 ? 'Severo' : nivel >= 2 ? 'Moderado' : 'Leve';
+    return `<div class="daño-pill" style="background:${bg};color:${color};">${d.icon} ${d.label} — ${txt}</div>`;
+  }).join('');
+
+  const htmlH2 = `
+    ${danosPills ? `
+    <div class="section-label">⚠️ Daños identificados</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">${danosPills}</div>` : ''}
+    <div class="section-label">📊 Perfil de Daño</div>
+    <table class="table-s2" style="max-width:600px;">
+      <tr><td class="lbl">Puntuación total (0–15)</td><td style="padding:6px 8px;font-weight:700;font-size:1rem;">${cv('puntaje') || '—'}</td></tr>
+      <tr><td class="lbl">Perfil</td><td style="padding:6px 8px;font-weight:600;">${cv('puntaje_d') || '—'}</td></tr>
+      <tr><td class="lbl">Daño dominante</td><td style="padding:6px 8px;font-weight:600;">${cv('dano_dom') || '—'}</td></tr>
+    </table>
+    <div class="section-label" style="margin-top:16px;">🎯 Método de Ataque</div>
+    <div style="background:var(--verde-light);border:1.5px solid var(--verde);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:1rem;font-weight:700;color:var(--verde-dark);margin-bottom:8px;">${cv('metodo') || '—'}</div>
+      <div style="font-size:0.85rem;color:#2a5a3a;line-height:1.7;margin-bottom:8px;">${cv('metodo_why') || '—'}</div>
+      <div style="font-size:0.82rem;color:#1a4a2e;line-height:1.8;"><strong>Orden de ataque:</strong><br>${cv('metodo_orden') || '—'}</div>
+    </div>`;
+
+  // ── Hoja 3: Análisis y Estrategia ──
+  const htmlH3 = `
+    <div class="section-label">🔍 Diagnóstico por tipo de deuda</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th style="min-width:80px;">Deuda</th><th>Saldo (₡)</th><th>TEA</th><th>Cuota (₡)</th><th>Mora</th><th>Peso</th><th style="background:#f5f0d0;">Prioridad</th></tr>
+        ${DEUDAS.map(d => `<tr>
+          <td class="lbl">${d.icon} ${d.label}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;">${cv('a_s_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;">${cv('a_t_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;">${cv('a_c_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;${parseInt(cv('a_d_'+d.key)||0)>0?'color:var(--rojo);font-weight:600;':''}">${cv('a_d_'+d.key) || '0'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;">${cv('a_w_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;font-weight:600;color:#7F6000;">${cv('a_pri_'+d.key) || '—'}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+    <div class="section-label" style="margin-top:16px;">🏆 Estrategia recomendada por deuda</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th>Deuda</th><th style="background:#f5f0d0;">Estrategia</th><th>¿Por qué?</th><th>Acción inmediata</th></tr>
+        ${DEUDAS.map(d => `<tr>
+          <td class="lbl">${d.icon} ${d.label}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;font-weight:600;color:#7F6000;">${cv('e_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.78rem;line-height:1.5;">${cv('e_why_'+d.key) || '—'}</td>
+          <td style="padding:5px 8px;font-size:0.82rem;font-weight:500;color:var(--verde-dark);">${cv('e_acc_'+d.key) || '—'}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+    <div class="section-label" style="margin-top:16px;">🌟 Recomendación global</div>
+    <div style="background:#f9f7f3;border-radius:10px;padding:14px 16px;">
+      <div style="font-size:0.85rem;line-height:1.7;margin-bottom:8px;">${cv('g_sit') || '—'}</div>
+      <div style="font-size:0.82rem;"><strong>Índice de endeudamiento:</strong> <span style="font-weight:700;">${cv('g_idx') || '—'}</span></div>
+    </div>`;
+
+  // ── Hoja 4: Negociación ──
+  const htmlH4 = `
+    <div class="section-label">📋 Parte 1 — Condiciones Actuales</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th style="min-width:80px;max-width:95px;white-space:normal;">Concepto</th>${DEUDAS.map(d=>`<th style="min-width:90px;">${d.icon} ${d.label}</th>`).join('')}<th style="background:#f5f0d0;min-width:90px;">TOTAL</th></tr>
+        <tr><td class="lbl">Saldo actual (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;">${cv('n1_s_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;">${cv('n1_tot_s')||'—'}</td></tr>
+        <tr><td class="lbl">TEA actual</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;">${cv('n1_t_'+d.key)||'—'}</td>`).join('')}<td>—</td></tr>
+        <tr><td class="lbl">Cuota mensual (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;">${cv('n1_c_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;">${cv('n1_tot_c')||'—'}</td></tr>
+        <tr style="background:#fdecea;"><td class="lbl">Costo total si no renegocia (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;color:var(--rojo);">${cv('n1_ct_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;color:var(--rojo);">${cv('n1_tot_ct')||'—'}</td></tr>
+        <tr style="background:#fdecea;"><td class="lbl">Solo intereses al banco (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;color:var(--rojo);">${cv('n1_it_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;color:var(--rojo);">${cv('n1_tot_it')||'—'}</td></tr>
+      </table>
+    </div>
+
+    <div class="section-label" style="margin-top:16px;">✏️ Parte 2 — Propuesta del Banco</div>
+    <div style="background:#E8F0FE;border:1.5px solid #4A90D9;border-radius:10px;padding:12px 16px;margin-bottom:14px;">
+      <div style="font-size:0.82rem;color:#1A3A6E;line-height:1.6;">
+        ℹ️ <strong>Nota:</strong> Los datos de la Parte 2 y el Veredicto los ingresa tu consultora después de que <strong>vos negociés directamente con tu banco</strong>. Para poder llenarlos, necesitás obtener del banco: nueva TEA propuesta, nuevo plazo y nuevo monto a financiar para cada deuda.
+      </div>
+    </div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th style="min-width:80px;max-width:95px;white-space:normal;">Concepto</th>${DEUDAS.map(d=>`<th style="min-width:90px;">${d.icon} ${d.label}</th>`).join('')}<th style="background:#f5f0d0;min-width:90px;">TOTAL</th></tr>
+        <tr>
+          <td class="lbl">Nueva TEA propuesta (%)</td>
+          ${DEUDAS.map(d => {
+            const mon = cv('m_'+d.key) === 'usd' ? ' <span style="font-size:0.7rem;color:#185FA5;">($)</span>' : ' <span style="font-size:0.7rem;color:var(--verde-dark);">(₡)</span>';
+            return `<td style="padding:3px 4px;">${e6('s6-nt_'+d.key, cv('nt_'+d.key))}</td>`;
+          }).join('')}
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="lbl">Nuevo plazo (meses)</td>
+          ${DEUDAS.map(d=>`<td style="padding:3px 4px;">${e6('s6-np_'+d.key, cv('np_'+d.key))}</td>`).join('')}
+          <td>—</td>
+        </tr>
+        <tr>
+          <td class="lbl">Nuevo monto <span style="font-size:0.72rem;color:var(--muted);">(moneda original)</span></td>
+          ${DEUDAS.map(d => {
+            const mon = cv('m_'+d.key) === 'usd' ? '$' : '₡';
+            return `<td style="padding:3px 4px;position:relative;"><span style="position:absolute;top:6px;left:6px;font-size:0.72rem;color:var(--muted);z-index:1;">${mon}</span>${e6('s6-nm_'+d.key, cv('nm_'+d.key))}</td>`;
+          }).join('')}
+          <td>—</td>
+        </tr>
+        <tr><td class="lbl" style="color:#7F6000;">Estrategia aplicada</td>${DEUDAS.map(d=>`<td style="padding:4px 6px;">${ro6(cv('n2_e_'+d.key))}</td>`).join('')}<td>—</td></tr>
+        <tr>
+          <td class="lbl" style="color:var(--verde-dark);">Nueva cuota calculada</td>
+          ${DEUDAS.map(d => {
+            const mon = cv('m_'+d.key) === 'usd' ? '$' : '₡';
+            const val = cv('n2_nc_'+d.key) || '—';
+            // Strip existing currency symbol and re-add correct one
+            const clean = val.replace(/^[₡$]\s*/,'');
+            const display = val === '—' ? '—' : mon + clean;
+            return `<td style="padding:4px 6px;"><span style="font-size:0.82rem;font-weight:600;color:var(--verde-dark);">${display}</span></td>`;
+          }).join('')}
+          <td style="padding:4px 6px;"><span style="font-size:0.82rem;font-weight:700;color:var(--verde-dark);">${cv('n2_tot_nc')||'—'}</span></td>
+        </tr>
+        <tr>
+          <td class="lbl">Cambio en cuota</td>
+          ${DEUDAS.map(d=>`<td style="padding:4px 6px;"><div style="font-size:0.78rem;line-height:1.4;white-space:normal;min-width:85px;">${cv('n2_cc_'+d.key)||'—'}</div></td>`).join('')}
+          <td style="padding:4px 6px;"><div style="font-size:0.78rem;line-height:1.4;white-space:normal;min-width:85px;">${cv('n2_tot_cc')||'—'}</div></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section-label" style="margin-top:16px;">✅ Veredicto por deuda</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th>Deuda</th>${DEUDAS.map(d=>`<th>${d.icon} ${d.label}</th>`).join('')}</tr>
+        <tr><td class="lbl">¿La propuesta mejora?</td>${DEUDAS.map(d=>`<td style="padding:4px 6px;"><div style="font-size:0.78rem;line-height:1.4;white-space:normal;min-width:85px;font-weight:600;">${cv('v_'+d.key)||'—'}</div></td>`).join('')}</tr>
+      </table>
+    </div>
+
+    <div class="section-label" style="margin-top:16px;">💰 Parte 3 — Proyección con Estrategia Estimada</div>
+    <div style="overflow-x:auto;">
+      <table class="table-s2">
+        <tr><th style="min-width:80px;max-width:95px;white-space:normal;">Concepto</th>${DEUDAS.map(d=>`<th style="min-width:90px;">${d.icon} ${d.label}</th>`).join('')}<th style="background:#f5f0d0;min-width:90px;">TOTAL</th></tr>
+        <tr><td class="lbl">Estrategia simulada</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.78rem;font-weight:600;color:#7F6000;">${cv('p3_st_'+d.key)||'—'}</td>`).join('')}<td>—</td></tr>
+        <tr style="background:#fdecea;"><td class="lbl">Costo total actual (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;color:var(--rojo);">${cv('p3_ca_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;color:var(--rojo);">${cv('p3_tot_ca')||'—'}</td></tr>
+        <tr style="background:#FFF8E1;"><td class="lbl">Costo estimado con estrategia (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;color:#854F0B;">${cv('p3_ce_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;color:#854F0B;">${cv('p3_tot_ce')||'—'}</td></tr>
+        <tr style="background:var(--verde-light);"><td class="lbl">→ Ahorro estimado (₡)</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;font-weight:600;color:var(--verde-dark);">${cv('p3_ah_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;color:var(--verde-dark);">${cv('p3_tot_ah')||'—'}</td></tr>
+        <tr><td class="lbl">→ Meses de cuota libre</td>${DEUDAS.map(d=>`<td style="padding:5px 8px;font-size:0.82rem;">${cv('p3_m_'+d.key)||'—'}</td>`).join('')}<td style="padding:5px 8px;font-size:0.82rem;font-weight:700;">${cv('p3_tot_m')||'—'}</td></tr>
+      </table>
+    </div>
+
+    <div class="section-label" style="margin-top:16px;">📊 Resumen Total</div>
+    <table class="table-s2" style="max-width:600px;">
+      <tr style="background:#fdecea;"><td class="lbl" style="width:55%;">Costo total SIN renegociar (₡)</td><td style="padding:6px 8px;font-weight:700;color:var(--rojo);">${cv('rs_sin')||'—'}</td></tr>
+      <tr style="background:#FFF8E1;"><td class="lbl">Costo estimado aplicando estrategias (₡)</td><td style="padding:6px 8px;font-weight:700;color:#854F0B;">${cv('rs_est')||'—'}</td></tr>
+      <tr style="background:#E8F0FE;"><td class="lbl">Costo total real con propuesta del banco (₡)</td><td style="padding:6px 8px;font-weight:700;color:#185FA5;">${cv('rs_real')||'—'}</td></tr>
+      <tr style="background:var(--verde-light);"><td class="lbl">💡 Ahorro estimado total (₡)</td><td style="padding:6px 8px;font-weight:700;color:var(--verde-dark);">${cv('rs_ahe')||'—'}</td></tr>
+      <tr style="background:var(--verde-light);"><td class="lbl">✅ Ahorro real confirmado tras negociación (₡)</td><td style="padding:6px 8px;font-weight:700;color:var(--verde-dark);">${cv('rs_ahr')||'—'}</td></tr>
+      <tr><td class="lbl">💡 Meses de cuota libre estimados</td><td style="padding:6px 8px;font-weight:700;">${cv('rs_mes')||'—'}</td></tr>
+    </table>`;
+
+  const tabs = ['📝 Datos', '🎯 Daños y Método', '📊 Análisis', '📈 Negociación', '📖 Para vos', '📝 Tu tarea'];
+
+  return `
+    <div class="s2-tabs" id="s6-tabs">
+      ${tabs.map((t,i) => `<div class="s2-tab ${i===0?'active':''}" onclick="s6GoTab(${i})">${t}</div>`).join('')}
+    </div>
+
+    <div class="s2-page active" id="s6p-0">${htmlH1}</div>
+    <div class="s2-page" id="s6p-1">${htmlH2}</div>
+    <div class="s2-page" id="s6p-2">${htmlH3}</div>
+    <div class="s2-page" id="s6p-3">${htmlH4}</div>
+    <div class="s2-page" id="s6p-4">
+      ${teorico
+        ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>${renderLink(dSes['cliente-s6-link'], dSes['cliente-s6-link-label'])}`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+    </div>
+    <div class="s2-page" id="s6p-5">
+      ${tarea
+        ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>`
+        : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>
+    <button class="btn-guardar-s2" onclick="guardarS6Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s6-save-status"></div>`;
+}
+
+function s6GoTab(n) {
+  document.querySelectorAll('#body-s6 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s6 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+
+// ── S6 recalc totals (placeholder — totals are server-calculated) ──
+function recalcS6Totals() {
+  // Sync ingreso fields
+  const v1 = document.getElementById('s6-ingreso')?.value;
+  const v2 = document.getElementById('s6-ingreso2');
+  if (v1 && v2 && v2.value !== v1) v2.value = v1;
+}
+
+// ── Guardar S6 cliente ──
+async function guardarS6Cliente() {
+  const st = document.getElementById('s6-save-status');
+  if (st) { st.textContent = 'Guardando...'; st.className = 'save-status'; }
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="s6-"]').forEach(e => {
+      if (!e.readOnly && e.tagName !== 'DIV' && e.value !== '') campos[e.id] = e.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH',
+        { datos_s6: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s6: campos });
+    }
+    if (st) { st.textContent = '✅ Cambios guardados'; st.className = 'save-status save-ok'; }
+  } catch(e) {
+    if (st) { st.textContent = '❌ Error al guardar'; st.className = 'save-status save-err'; }
+  }
+}
+
+
+// ════════════════════════════════════════
+// SESIÓN 7 — FONDO DE EMERGENCIA
+// ════════════════════════════════════════
+
+function fmtM(n) { return isNaN(n)||!n ? '—' : '₡' + Math.round(n).toLocaleString('es-CR'); }
+
+async function guardarS7Cliente() {
+  const st = document.getElementById('s7-save-status');
+  if (st) { st.textContent = 'Guardando...'; st.className = 'save-status'; }
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="s7-"]').forEach(e => {
+      if (!e.readOnly && e.tagName !== 'DIV' && e.tagName !== 'SPAN' && e.value !== '') campos[e.id] = e.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH',
+        { datos_s7: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s7: campos });
+    }
+    if (st) { st.textContent = '✅ Cambios guardados'; st.className = 'save-status save-ok'; }
+  } catch(e) {
+    if (st) { st.textContent = '❌ Error al guardar'; st.className = 'save-status save-err'; }
+  }
+}
+
+function calcS7() {
+  // Perfil
+  const qs = ['s7-q1','s7-q2','s7-q3','s7-q4'].map(id => document.getElementById(id)?.value || '');
+  let score = 0;
+  if (qs[0] === 'no')  score += 3;
+  if (qs[1] === 'no')  score += 2;
+  if (qs[2] === 'si')  score += 2;
+  if (qs[3] === 'si')  score -= 1;
+  const perfiles = [
+    { min: 5, max: 99, nombre: 'ALTO',   meses: 12, desc: 'Alta inestabilidad o vulnerabilidad — máxima protección' },
+    { min: 2, max: 4,  nombre: 'MEDIO ALTO', meses: 9, desc: 'Riesgo moderado-alto — mayor protección recomendada' },
+    { min: -1, max: 1, nombre: 'MEDIO',  meses: 6, desc: 'Estabilidad básica con algún factor de atención' },
+    { min: -4, max: -2, nombre: 'BAJO',  meses: 3, desc: 'Buena estabilidad, múltiples fuentes de ingreso' },
+  ];
+  const perfil = perfiles.find(p => score >= p.min && score <= p.max) || perfiles[2];
+  const pdesc = document.getElementById('s7-perfil-desc');
+  const pmeses = document.getElementById('s7-meses-rec');
+  if (pdesc) pdesc.textContent = qs.some(q=>q==='') ? '— completá las preguntas —' : perfil.desc;
+  if (pmeses) pmeses.textContent = qs.some(q=>q==='') ? '—' : perfil.meses + ' meses';
+
+  // Gastos
+  const ids = ['s7-alquiler','s7-servicios','s7-condo','s7-super','s7-comida-fuera',
+    's7-transporte','s7-cuota-veh','s7-riteve','s7-medicamentos','s7-consultas','s7-seguro-salud',
+    's7-educacion','s7-utiles','s7-min-tc','s7-cuota-personal','s7-otras-deudas','s7-celular','s7-otros'];
+  const total = ids.reduce((s, id) => s + (parseFloat(document.getElementById(id)?.value)||0), 0);
+  const tEl = document.getElementById('s7-total-gastos');
+  if (tEl) tEl.textContent = fmtM(total);
+
+  // Resultados
+  const rg = document.getElementById('s7-res-gasto'); if (rg) rg.textContent = fmtM(total);
+  const rm = document.getElementById('s7-res-meses'); if (rm) rm.textContent = qs.some(q=>q==='') ? '—' : perfil.meses + ' meses';
+  const rp = document.getElementById('s7-res-perfil'); if (rp) rp.textContent = qs.some(q=>q==='') ? '—' : perfil.nombre;
+
+  if (total > 0 && !qs.some(q=>q==='')) {
+    const meta = total * perfil.meses;
+    const s3 = total * 3; const s6 = total * 6; const s9 = total * 9; const s12 = total * 12;
+    ['s7-sc-3','s7-sc-6','s7-sc-9','s7-sc-12'].forEach((id, i) => {
+      const el = document.getElementById(id); if (el) el.textContent = fmtM([s3,s6,s9,s12][i]);
+    });
+    ['s7-sc-3-rec','s7-sc-6-rec','s7-sc-9-rec','s7-sc-12-rec'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = [3,6,9,12][i] === perfil.meses ? '⭐ Tu meta' : '';
+    });
+    const mf = document.getElementById('s7-meta-fondo'); if (mf) mf.textContent = fmtM(meta);
+    const pi = document.getElementById('s7-plan-intermedio'); if (pi) pi.textContent = fmtM(total);
+    const pf = document.getElementById('s7-plan-final'); if (pf) pf.textContent = fmtM(meta);
+  }
+}
+
+function calcS7Rec() {
+  const usado = parseFloat(document.getElementById('s7-r-monto')?.value) || 0;
+  const aporte = parseFloat(document.getElementById('s7-r-aporte')?.value) || 0;
+  if (!usado || !aporte) return;
+  const meses = Math.ceil(usado / aporte);
+  const fecha = new Date();
+  fecha.setMonth(fecha.getMonth() + meses);
+  const mEl = document.getElementById('s7-r-meses'); if (mEl) mEl.textContent = meses + ' meses';
+  const fEl = document.getElementById('s7-r-fecha');
+  if (fEl) fEl.textContent = fecha.toLocaleDateString('es-CR', { month: 'long', year: 'numeric' });
+}
+
+function renderS7() {
+  const d  = _s7Data || {};
+  const cv = id => d[id] || '';
+  const dSes = _sesionDataGuardada || {};
+  const teorico = dSes['cliente-s7-teorico'] || '';
+  const tarea   = dSes['cliente-s7-tarea']   || '';
+
+  const inp = (id, val) =>
+    `<input class="s2-input" type="number" id="${id}" value="${val||''}"
+      style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;"
+      oninput="calcS7()">`;
+  const sel = (id, val, opts) =>
+    `<select class="s2-input" id="${id}" style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;" onchange="calcS7()">
+      <option value="">— Seleccioná —</option>
+      ${opts.map(o => `<option value="${o.v}" ${val===o.v?'selected':''}>${o.l}</option>`).join('')}
+    </select>`;
+  const ro = (id, txt) =>
+    `<div id="${id}" style="font-size:0.88rem;font-weight:600;padding:6px 0;">${txt||'—'}</div>`;
+
+  const siNo = [{v:'si',l:'Sí'},{v:'no',l:'No'}];
+
+  return `
+    <div class="s2-tabs" id="s7-tabs">
+      ${['📋 Mis Datos','📊 Resultado','🔄 Reconstrucción','📖 Para vos','📝 Tu tarea'].map((t,i)=>
+        `<div class="s2-tab ${i===0?'active':''}" onclick="s7GoTab(${i})">${t}</div>`
+      ).join('')}
+    </div>
+
+    <!-- Tab 0: Secciones 1 y 2 — editables -->
+    <div class="s2-page active" id="s7p-0">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+        <span style="color:#0000cc;font-weight:600;">Azul</span> = podés actualizar · Los resultados se recalculan automáticamente
+      </p>
+      <div class="section-label">Sección 1 · Perfil de Riesgo</div>
+      <table class="table-s2" style="max-width:560px;">
+        <tr><td class="lbl">¿Tu empleo es estable con contrato fijo?</td><td style="padding:4px 6px;min-width:160px;">${sel('s7-q1',cv('q1'),siNo)}</td></tr>
+        <tr><td class="lbl">¿Tenés otro ingreso además del principal?</td><td style="padding:4px 6px;">${sel('s7-q2',cv('q2'),siNo)}</td></tr>
+        <tr><td class="lbl">¿Tenés dependientes (hijos, padres, etc.)?</td><td style="padding:4px 6px;">${sel('s7-q3',cv('q3'),siNo)}</td></tr>
+        <tr><td class="lbl">¿Sos trabajadora independiente / freelance?</td><td style="padding:4px 6px;">${sel('s7-q4',cv('q4'),siNo)}</td></tr>
+      </table>
+      <div id="s7-perfil-desc" style="background:#f9f7f3;border-radius:10px;padding:10px 14px;margin:10px 0;font-size:0.85rem;font-style:italic;">— completá las preguntas —</div>
+      <div style="background:var(--verde-light);border-radius:10px;padding:10px 14px;margin-bottom:16px;">
+        <span style="font-size:0.8rem;color:var(--muted);">Meses recomendados:</span>
+        <span id="s7-meses-rec" style="font-weight:700;font-size:1rem;margin-left:8px;">—</span>
+      </div>
+
+      <div class="section-label">Sección 2 · Gastos Esenciales Mensuales</div>
+      <p style="font-size:0.78rem;color:var(--muted);margin-bottom:10px;">Solo los básicos para vivir</p>
+
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">🏠 Vivienda</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Alquiler o cuota hipotecaria</td><td style="padding:3px 6px;">${inp('s7-alquiler',cv('alquiler'))}</td></tr>
+        <tr><td class="lbl">Servicios (luz, agua, internet, teléfono)</td><td style="padding:3px 6px;">${inp('s7-servicios',cv('servicios'))}</td></tr>
+        <tr><td class="lbl">Condominio / mantenimiento</td><td style="padding:3px 6px;">${inp('s7-condo',cv('condo'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">🛒 Alimentación</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Supermercado y mercado</td><td style="padding:3px 6px;">${inp('s7-super',cv('super'))}</td></tr>
+        <tr><td class="lbl">Alimentación fuera del hogar</td><td style="padding:3px 6px;">${inp('s7-comida-fuera',cv('comida-fuera'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">🚗 Transporte</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Combustible / tarifa bus y tren</td><td style="padding:3px 6px;">${inp('s7-transporte',cv('transporte'))}</td></tr>
+        <tr><td class="lbl">Cuota préstamo vehículo</td><td style="padding:3px 6px;">${inp('s7-cuota-veh',cv('cuota-veh'))}</td></tr>
+        <tr><td class="lbl">RITEVE, marchamo y seguro (mensualizado)</td><td style="padding:3px 6px;">${inp('s7-riteve',cv('riteve'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">💊 Salud</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Medicamentos habituales</td><td style="padding:3px 6px;">${inp('s7-medicamentos',cv('medicamentos'))}</td></tr>
+        <tr><td class="lbl">Consultas médicas recurrentes</td><td style="padding:3px 6px;">${inp('s7-consultas',cv('consultas'))}</td></tr>
+        <tr><td class="lbl">Seguro complementario de salud</td><td style="padding:3px 6px;">${inp('s7-seguro-salud',cv('seguro-salud'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">📚 Educación y Dependientes</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Colegio, universidad o guardería</td><td style="padding:3px 6px;">${inp('s7-educacion',cv('educacion'))}</td></tr>
+        <tr><td class="lbl">Útiles y materiales básicos</td><td style="padding:3px 6px;">${inp('s7-utiles',cv('utiles'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">💳 Deudas — Pagos Mínimos</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Pago mínimo tarjetas de crédito</td><td style="padding:3px 6px;">${inp('s7-min-tc',cv('min-tc'))}</td></tr>
+        <tr><td class="lbl">Cuota préstamo personal</td><td style="padding:3px 6px;">${inp('s7-cuota-personal',cv('cuota-personal'))}</td></tr>
+        <tr><td class="lbl">Otras deudas (mínimos)</td><td style="padding:3px 6px;">${inp('s7-otras-deudas',cv('otras-deudas'))}</td></tr>
+      </table>
+      <div class="section-label" style="font-size:0.72rem;background:none;color:#888;padding:0;margin:8px 0 4px;">📱 Comunicación y Otros</div>
+      <table class="table-s2">
+        <tr><td class="lbl">Plan de teléfono celular</td><td style="padding:3px 6px;">${inp('s7-celular',cv('celular'))}</td></tr>
+        <tr><td class="lbl">Otros gastos básicos recurrentes</td><td style="padding:3px 6px;">${inp('s7-otros',cv('otros'))}</td></tr>
+      </table>
+      <div style="background:#FFF8E1;border-radius:10px;padding:12px 16px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-weight:700;font-size:0.88rem;">TOTAL GASTOS ESENCIALES POR MES</span>
+        <span id="s7-total-gastos" style="font-weight:700;font-size:1.1rem;color:#854F0B;">₡0</span>
+      </div>
+    </div>
+
+    <!-- Tab 1: Resultado — solo lectura -->
+    <div class="s2-page" id="s7p-1">
+      <div class="section-label">Resumen de tu situación</div>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">Gasto mensual esencial</td><td id="s7-res-gasto" style="padding:6px 8px;font-weight:700;">—</td></tr>
+        <tr><td class="lbl">Meses recomendados según tu perfil</td><td id="s7-res-meses" style="padding:6px 8px;font-weight:700;">—</td></tr>
+        <tr><td class="lbl">Tu perfil de riesgo</td><td id="s7-res-perfil" style="padding:6px 8px;font-weight:700;">—</td></tr>
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">Los 4 Escenarios: ¿Cuánto Necesitás?</div>
+      <table class="table-s2">
+        <tr><th>Escenario</th><th>Meses</th><th>Monto objetivo</th><th></th></tr>
+        <tr><td class="lbl">Mínimo</td><td style="padding:5px 8px;">3</td><td id="s7-sc-3" style="padding:5px 8px;font-weight:600;">—</td><td id="s7-sc-3-rec" style="padding:5px 8px;color:var(--verde-dark);"></td></tr>
+        <tr><td class="lbl">Estándar</td><td style="padding:5px 8px;">6</td><td id="s7-sc-6" style="padding:5px 8px;font-weight:600;">—</td><td id="s7-sc-6-rec" style="padding:5px 8px;color:var(--verde-dark);"></td></tr>
+        <tr><td class="lbl">Medio Alto</td><td style="padding:5px 8px;">9</td><td id="s7-sc-9" style="padding:5px 8px;font-weight:600;">—</td><td id="s7-sc-9-rec" style="padding:5px 8px;color:var(--verde-dark);"></td></tr>
+        <tr><td class="lbl">Alto</td><td style="padding:5px 8px;">12</td><td id="s7-sc-12" style="padding:5px 8px;font-weight:600;">—</td><td id="s7-sc-12-rec" style="padding:5px 8px;color:var(--verde-dark);"></td></tr>
+      </table>
+
+      <div style="background:var(--verde);border-radius:12px;padding:16px 20px;margin:14px 0;text-align:center;">
+        <div style="font-size:0.75rem;color:rgba(255,255,255,0.8);margin-bottom:4px;">🎯 MONTO IDEAL DE TU FONDO DE EMERGENCIA</div>
+        <div id="s7-meta-fondo" style="font-size:1.5rem;font-weight:700;color:#fff;">—</div>
+      </div>
+
+      <div class="section-label">Plan Progresivo</div>
+      <table class="table-s2">
+        <tr><th>Etapa</th><th>Meta</th><th>Qué significa</th><th>Sensación</th></tr>
+        <tr><td class="lbl">🌱 Arranque</td><td style="padding:5px 8px;font-weight:600;">₡200.000</td><td style="padding:5px 8px;font-size:0.8rem;">Tu primer colchón de seguridad</td><td style="padding:5px 8px;font-size:0.8rem;">Primer respiro</td></tr>
+        <tr><td class="lbl">🌿 Intermedio</td><td id="s7-plan-intermedio" style="padding:5px 8px;font-weight:600;">—</td><td style="padding:5px 8px;font-size:0.8rem;">Un mes completo de gastos esenciales</td><td style="padding:5px 8px;font-size:0.8rem;">Estabilidad inicial</td></tr>
+        <tr><td class="lbl">🌳 Meta final</td><td id="s7-plan-final" style="padding:5px 8px;font-weight:600;">—</td><td style="padding:5px 8px;font-size:0.8rem;">Tu fondo completo según perfil</td><td style="padding:5px 8px;font-size:0.8rem;">Tranquilidad real</td></tr>
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">¿Dónde Guardar tu Fondo en Costa Rica?</div>
+      <table class="table-s2">
+        <tr><th>Opción</th><th>Tipo</th><th>Riesgo / Liquidez</th><th>Mejor para</th></tr>
+        <tr><td class="lbl">Cuenta de ahorro (BAC, BN, Popular)</td><td style="padding:5px 8px;font-size:0.8rem;">Ahorro líquido</td><td style="padding:5px 8px;font-size:0.8rem;">Riesgo 0 · Acceso inmediato</td><td style="padding:5px 8px;font-size:0.8rem;">1 mes de reserva rápida</td></tr>
+        <tr><td class="lbl">Fondo mercado monetario (BN, BCR, Popular Valores)</td><td style="padding:5px 8px;font-size:0.8rem;">Fondo inversión</td><td style="padding:5px 8px;font-size:0.8rem;">Riesgo muy bajo · 1-2 días hábiles</td><td style="padding:5px 8px;font-size:0.8rem;">El resto del fondo</td></tr>
+        <tr><td class="lbl">CDPs a plazo fijo</td><td style="padding:5px 8px;font-size:0.8rem;">Depósito a plazo</td><td style="padding:5px 8px;font-size:0.8rem;">Riesgo bajo · Penalización por retiro</td><td style="padding:5px 8px;font-size:0.8rem;color:var(--rojo);font-weight:700;">NO recomendado</td></tr>
+      </table>
+      <div style="background:var(--verde-light);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:0.82rem;line-height:1.6;">
+        💚 El fondo de emergencia no es lujo: es la diferencia entre un susto y una crisis. Construirlo de a poco está perfectamente bien. Lo importante es empezar.
+      </div>
+    </div>
+
+    <!-- Tab 2: Reconstrucción — datos editables, resultado y protocolo solo lectura -->
+    <div class="s2-page" id="s7p-2">
+      <div class="section-label">Datos para el Plan de Reconstrucción</div>
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+        <span style="color:#0000cc;font-weight:600;">Azul</span> = podés actualizar
+      </p>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">Monto que usaste del fondo (₡)</td><td style="padding:3px 6px;">
+          <input class="s2-input" type="number" id="s7-r-monto" value="${cv('r-monto')}"
+            style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;"
+            oninput="calcS7Rec()">
+        </td></tr>
+        <tr><td class="lbl">¿Cuánto podés destinar para reconstruir cada mes? (₡)</td><td style="padding:3px 6px;">
+          <input class="s2-input" type="number" id="s7-r-aporte" value="${cv('r-aporte')}"
+            style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;"
+            oninput="calcS7Rec()">
+        </td></tr>
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">Resultado</div>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">⏱️ Meses para reconstruir completamente</td><td id="s7-r-meses" style="padding:6px 8px;font-weight:700;">—</td></tr>
+        <tr><td class="lbl">📅 Mes aproximado en que completás el fondo</td><td id="s7-r-fecha" style="padding:6px 8px;font-weight:700;">—</td></tr>
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">Protocolo de 5 Pasos</div>
+      <table class="table-s2">
+        <tr><th style="width:50px;">Paso</th><th>Acción</th><th>Descripción</th></tr>
+        <tr><td style="padding:6px 8px;text-align:center;font-weight:700;">1</td><td class="lbl">Ese mismo mes</td><td style="padding:5px 8px;font-size:0.82rem;">Activá el plan de reconstrucción. No esperés al mes siguiente.</td></tr>
+        <tr><td style="padding:6px 8px;text-align:center;font-weight:700;">2</td><td class="lbl">Calculá el déficit</td><td style="padding:5px 8px;font-size:0.82rem;">¿Cuánto usaste? ¿En cuántos meses realistas lo repones?</td></tr>
+        <tr><td style="padding:6px 8px;text-align:center;font-weight:700;">3</td><td class="lbl">Asigná un monto fijo</td><td style="padding:5px 8px;font-size:0.82rem;">Aunque sea pequeño, algo fijo mensual funciona mejor.</td></tr>
+        <tr><td style="padding:6px 8px;text-align:center;font-weight:700;">4</td><td class="lbl">No abras deuda nueva</td><td style="padding:5px 8px;font-size:0.82rem;">Si podés evitarlo, no contraigás nuevas deudas mientras reconstruís.</td></tr>
+        <tr><td style="padding:6px 8px;text-align:center;font-weight:700;">5</td><td class="lbl">Reflexionás</td><td style="padding:5px 8px;font-size:0.82rem;">¿Era prevenible? ¿Hay algo en el presupuesto que necesita ajustarse?</td></tr>
+      </table>
+      <div style="background:var(--verde-light);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:0.82rem;line-height:1.6;">
+        💚 Usar el fondo no es un fracaso. Para eso lo construiste. La clave es reconstruirlo de inmediato y sin culpa.
+      </div>
+    </div>
+
+    <!-- Tab 3 y 4: Para vos y Tarea -->
+    <div class="s2-page" id="s7p-3">
+      ${teorico ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>${renderLink(dSes['cliente-s7-link'], dSes['cliente-s7-link-label'])}` : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+    </div>
+    <div class="s2-page" id="s7p-4">
+      ${tarea ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>` : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>
+
+    <button class="btn-guardar-s2" onclick="guardarS7Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s7-save-status"></div>`;
+}
+
+function s7GoTab(n) {
+  document.querySelectorAll('#body-s7 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s7 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+  if (n === 1) calcS7(); // recalc on viewing results
+}
+
+// ════════════════════════════════════════
+// SESIÓN 8 — PENSIONES
+// ════════════════════════════════════════
+
+async function guardarS8Cliente() {
+  const st = document.getElementById('s8-save-status');
+  if (st) { st.textContent = 'Guardando...'; st.className = 'save-status'; }
+  try {
+    const campos = {};
+    document.querySelectorAll('[id^="s8-"]').forEach(e => {
+      if (!e.readOnly && e.tagName !== 'DIV' && e.tagName !== 'SPAN' && e.value !== '') campos[e.id] = e.value;
+    });
+    const existe = await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId);
+    if (existe && existe.length > 0) {
+      await db('sesiones_data_cliente?clienta_id=eq.' + _clientaId, 'PATCH',
+        { datos_s8: campos, updated_at: new Date().toISOString() });
+    } else {
+      await db('sesiones_data_cliente', 'POST', { clienta_id: _clientaId, datos_s8: campos });
+    }
+    if (st) { st.textContent = '✅ Cambios guardados'; st.className = 'save-status save-ok'; }
+  } catch(e) {
+    if (st) { st.textContent = '❌ Error al guardar'; st.className = 'save-status save-err'; }
+  }
+}
+
+function renderS8() {
+  const d   = _s8Data || {};
+  const cv  = id => d[id] || '';
+  const opc = _opcData || {};
+  const dSes = _sesionDataGuardada || {};
+  const teorico = dSes['cliente-s8-teorico'] || '';
+  const tarea   = dSes['cliente-s8-tarea']   || '';
+
+  const inp = (id, val, type='number') =>
+    `<input class="s2-input" type="${type}" id="${id}" value="${val||''}"
+      style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;"
+      oninput="calcS8Rend()">`;
+  const selS8 = (id, val, opts) =>
+    `<select class="s2-input" id="${id}" style="width:100%;color:#0000cc;font-weight:600;border-color:#aac4e8;background:#f0f6ff;" onchange="calcS8Rend()">
+      ${opts.map(o => `<option value="${o.v||o}" ${(val===o.v||val===o)?'selected':''}>${o.l||o}</option>`).join('')}
+    </select>`;
+  const ro = (id, val) =>
+    `<input class="s2-input" readonly id="${id}" value="${val||''}" style="width:100%;background:#f5f5f5;">`;
+
+  const opcNames = ['Popular Pensiones','BN Vital','BAC Pensiones','Vida Plena (INS)','Mutual Pensiones','CCSS OPC','BCR Pensiones'];
+  const laboral = ['Asalariada','Freelance / independiente','Mixta (asalariada + freelance)','Pausa laboral (maternidad / cuidado / otra)','Regresó al mercado laboral'];
+
+  // Pre-fill rendimiento from opcData
+  const selOpc = cv('p-opc-rop');
+  const opcRend = selOpc && opc[selOpc] ? opc[selOpc] : {};
+  const rend12 = opcRend.r12 ? (opcRend.r12*100).toFixed(2)+'%' : cv('p-rend-12') || '';
+  const rend60 = opcRend.r60 ? (opcRend.r60*100).toFixed(2)+'%' : cv('p-rend-60') || '';
+
+  // OPC reference table
+  const opcTableRows = opcNames.map(n => {
+    const od = opc[n] || {};
+    const fmt = v => v ? (v*100).toFixed(2)+'%' : '—';
+    return `<tr>
+      <td class="lbl">${n}</td>
+      <td style="padding:6px 8px;font-weight:600;color:#0000cc;">${fmt(od.r12)}</td>
+      <td style="padding:6px 8px;font-weight:600;color:#0000cc;">${fmt(od.r60)}</td>
+      <td style="padding:6px 8px;font-weight:600;color:#0000cc;">${fmt(od.r120)}</td>
+    </tr>`;
+  }).join('');
+
+  // Simulador data from _s8Data
+  const sim = d.simulador || {};
+  const simRow = (lbl, id, det='') => `
+    <tr>
+      <td class="lbl">${lbl}</td>
+      <td style="padding:6px 8px;font-weight:600;">${cv(id)||'—'}</td>
+      ${det ? `<td style="padding:5px 8px;font-size:0.78rem;color:var(--muted);">${det}</td>` : ''}
+    </tr>`;
+
+  return `
+    <div class="s2-tabs" id="s8-tabs">
+      ${['📋 Datos Clienta','📊 Referencia OPC','🔢 Simulador','📖 Para vos','📝 Tu tarea'].map((t,i)=>
+        `<div class="s2-tab ${i===0?'active':''}" onclick="s8GoTab(${i})">${t}</div>`
+      ).join('')}
+    </div>
+
+    <!-- Tab 0: Datos Clienta — editables -->
+    <div class="s2-page active" id="s8p-0">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+        <span style="color:#0000cc;font-weight:600;">Azul</span> = podés actualizar
+      </p>
+
+      <div class="section-label">Bloque 1 — Datos Personales</div>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">Edad actual (años)</td><td style="padding:3px 6px;">${inp('s8-edad',cv('p-edad'))}</td></tr>
+        <tr><td class="lbl">Edad deseada de retiro</td><td style="padding:3px 6px;">${inp('s8-retiro',cv('p-retiro'))}</td></tr>
+        <tr><td class="lbl">Expectativa de vida (años)</td><td style="padding:3px 6px;">${inp('s8-expectativa',cv('p-expectativa'))}</td></tr>
+        <tr><td class="lbl">Ingreso mensual NETO deseado en retiro (₡)</td><td style="padding:3px 6px;">${inp('s8-ingreso-deseado',cv('p-ingreso-deseado'))}</td></tr>
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">Bloque 2 — Datos de SUPEN</div>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">Cuotas IVM acumuladas a hoy</td><td style="padding:3px 6px;">${inp('s8-cuotas-ivm',cv('p-cuotas-ivm'))}</td></tr>
+        <tr><td class="lbl">Cuotas IVM restantes para las 300</td><td style="padding:6px 8px;">${ro('s8-cuotas-restantes', cv('p-cuotas-restantes'))}</td></tr>
+        <tr><td class="lbl">Salario de referencia promedio estimado (₡)</td><td style="padding:3px 6px;">${inp('s8-salario-ref',cv('p-salario-ref'))}</td></tr>
+        <tr><td class="lbl">Saldo ROP actual (₡)</td><td style="padding:3px 6px;">${inp('s8-saldo-rop',cv('p-saldo-rop'))}</td></tr>
+        <tr>
+          <td class="lbl">OPC que administra su ROP</td>
+          <td style="padding:3px 6px;">${selS8('s8-opc-rop', cv('p-opc-rop'), opcNames)}</td>
+        </tr>
+        <tr><td class="lbl">Rendimiento neto últimos 12 meses OPC</td><td style="padding:6px 8px;font-weight:600;color:var(--verde-dark);">${rend12 || '—'}</td></tr>
+        <tr><td class="lbl">Rendimiento neto últimos 5 años OPC</td><td style="padding:6px 8px;font-weight:600;color:var(--verde-dark);">${rend60 || '—'}</td></tr>
+        <tr>
+          <td class="lbl">¿Tiene pensión voluntaria activa?</td>
+          <td style="padding:3px 6px;">${selS8('s8-tiene-voluntaria', cv('p-tiene-voluntaria')||'No', [{v:'No',l:'No'},{v:'Sí',l:'Sí'}])}</td>
+        </tr>
+        ${cv('p-tiene-voluntaria')==='Sí'?`
+        <tr><td class="lbl">Saldo pensión voluntaria actual (₡)</td><td style="padding:3px 6px;">${inp('s8-saldo-vol',cv('p-saldo-vol'))}</td></tr>
+        <tr><td class="lbl">Aporte mensual a pensión voluntaria (₡)</td><td style="padding:3px 6px;">${inp('s8-aporte-vol',cv('p-aporte-vol'))}</td></tr>
+        ` : ''}
+      </table>
+
+      <div class="section-label" style="margin-top:16px;">Bloque 3 — Situación Laboral</div>
+      <table class="table-s2" style="max-width:500px;">
+        <tr><td class="lbl">Perfil laboral actual</td><td style="padding:3px 6px;">${selS8('s8-perfil-laboral', cv('p-perfil-laboral'), laboral)}</td></tr>
+        <tr><td class="lbl">Salario bruto mensual asalariado (₡)</td><td style="padding:3px 6px;">${inp('s8-salario-bruto',cv('p-salario-bruto'))}</td></tr>
+        <tr><td class="lbl">Ingresos freelance mensuales estimados (₡)</td><td style="padding:3px 6px;">${inp('s8-ingreso-freelance',cv('p-ingreso-freelance'))}</td></tr>
+        <tr>
+          <td class="lbl">¿Está cotizando al IVM actualmente?</td>
+          <td style="padding:3px 6px;">${selS8('s8-cotiza-ivm', cv('p-cotiza-ivm')||'Sí', [{v:'Sí',l:'Sí'},{v:'No',l:'No'}])}</td>
+        </tr>
+        <tr><td class="lbl">Años de pausa laboral (si aplica)</td><td style="padding:3px 6px;">${inp('s8-años-pausa',cv('p-años-pausa'))}</td></tr>
+        <tr>
+          <td class="lbl">¿Planea cambiar situación laboral?</td>
+          <td style="padding:3px 6px;">${selS8('s8-planea-cambio', cv('p-planea-cambio')||'No', [{v:'No',l:'No'},{v:'Sí',l:'Sí'}])}</td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Tab 1: Referencia OPC — solo lectura -->
+    <div class="s2-page" id="s8p-1">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+        Fuente: <strong>www.supen.fi.cr</strong> · Actualizada trimestralmente por tu consultora.
+      </p>
+      <table class="table-s2">
+        <tr><th>OPC</th><th>Rend. 12 meses</th><th>Rend. 5 años</th><th>Rend. 10 años</th></tr>
+        ${opcTableRows}
+      </table>
+      <div style="background:#FFF8E1;border-radius:8px;padding:10px 14px;margin-top:12px;font-size:0.78rem;line-height:1.6;">
+        ⚠️ Comparar siempre el rendimiento NETO (después de comisiones) · Podés cambiar de OPC una vez al año sin costo · Rendimientos a 5 y 10 años son más representativos del desempeño de largo plazo
+      </div>
+    </div>
+
+    <!-- Tab 2: Simulador — solo observar -->
+    <div class="s2-page" id="s8p-2">
+      <p style="font-size:0.8rem;color:var(--muted);margin-bottom:12px;">
+        Esta hoja se calcula automáticamente. Es solo para observar los resultados.
+      </p>
+      <div class="section-label">Cálculo IVM</div>
+      <table class="table-s2">
+        ${simRow('Años hasta el retiro','s-años-retiro')}
+        ${simRow('Cuotas IVM proyectadas al retiro','s-cuotas-proy')}
+        ${simRow('Tasa de reemplazo IVM','s-tasa-reemplazo')}
+        ${simRow('Pensión mensual estimada IVM (₡)','s-pension-ivm')}
+      </table>
+      <div class="section-label" style="margin-top:14px;">ROP y Pensión Voluntaria</div>
+      <table class="table-s2">
+        ${simRow('Saldo ROP proyectado al retiro (₡)','s-rop-proy')}
+        ${simRow('Renta mensual sostenible del ROP (₡)','s-renta-rop')}
+        ${simRow('Renta mensual pensión voluntaria (₡)','s-renta-vol')}
+      </table>
+      <div class="section-label" style="margin-top:14px;">Resultado — Brecha y Plan</div>
+      <table class="table-s2">
+        ${simRow('Ingreso mensual TOTAL proyectado en el retiro','s-total-proy')}
+        ${simRow('Ingreso mensual deseado en el retiro','s-deseado')}
+        ${simRow('Capital adicional necesario al retiro (₡)','s-capital')}
+        ${simRow('💡 Ahorro mensual necesario DESDE HOY (₡)','s-ahorro-mensual')}
+      </table>
+      <div style="background:var(--verde-light);border-radius:10px;padding:12px 14px;margin-top:12px;font-size:0.78rem;line-height:1.6;">
+        💡 Este simulador es una estimación orientativa. La pensión IVM se calcula con la fórmula oficial CCSS. Los montos reales dependen del historial exacto de cuotas y salarios en la CCSS. Revisión recomendada: anual o ante cualquier cambio laboral.
+      </div>
+    </div>
+
+    <!-- Tab 3 y 4 -->
+    <div class="s2-page" id="s8p-3">
+      ${teorico ? `<div class="teorico-box"><h4>✍️ Para vos</h4><p>${teorico}</p></div>${renderLink(dSes['cliente-s8-link'], dSes['cliente-s8-link-label'])}` : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará notas aquí pronto.</div>`}
+    </div>
+    <div class="s2-page" id="s8p-4">
+      ${tarea ? `<div class="tarea-box"><h4>✅ Para la próxima sesión</h4><p>${tarea}</p></div>` : `<div class="locked-msg" style="color:var(--muted);">Tu consultora agregará la tarea aquí pronto.</div>`}
+    </div>
+
+    <button class="btn-guardar-s2" onclick="guardarS8Cliente()">💾 Guardar mis cambios</button>
+    <div class="save-status" id="s8-save-status"></div>`;
+}
+
+function s8GoTab(n) {
+  document.querySelectorAll('#body-s8 .s2-tab').forEach((t,i) => t.classList.toggle('active', i===n));
+  document.querySelectorAll('#body-s8 .s2-page').forEach((p,i) => p.classList.toggle('active', i===n));
+}
+
+function calcS8Rend() {
+  // Update rend display when OPC changes
+  const opc = document.getElementById('s8-opc-rop')?.value;
+  if (!opc || !_opcData || !_opcData[opc]) return;
+  const od = _opcData[opc];
+  // Update visible text in tab 0 rows (they are static divs, re-render not needed for now)
+}
+
+// ── Iniciar ──
+init();
+</script>
+</body>
+</html>
